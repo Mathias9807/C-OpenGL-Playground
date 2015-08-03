@@ -1,0 +1,12 @@
+C-OpenGL-Playground
+
+Compile:
+	The source files that need to be compiled are: 
+		· Every file that starts with g_
+		· Every file that starts with v_
+		· One file that starts with sys_
+
+	The sys_*.c file holds platform dependant functions. In theory it can be rewritten to make the program run on anything that at least supports OpenGL. 
+	
+Dependecies:
+	The project uses GLEW and the Open Asset Import Library (Assimp). By default it uses SDL2 for platform specific tasks such as opening a window. 
