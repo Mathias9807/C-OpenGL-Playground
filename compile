@@ -1,0 +1,20 @@
+#!/bin/sh
+
+cd "`dirname "$0"`"
+
+OUT="3D"
+LOG=$OUT.log
+
+INCLUDES="-I./include"
+LIBS="-L./libs -F/Library/Frameworks \
+	-framework SDL2 -framework OpenGL \
+	-lGLEW -lassimp"
+
+SRC_FILES="src/g_*.c src/v_*.c src/sys_sdl.c"
+
+ADD_PARAMS="-Wall -std=c99"
+
+`gcc -o $OUT \
+	$INCLUDES $LIBS \
+	$SRC_FILES $ADD_PARAMS` > $LOG
+
