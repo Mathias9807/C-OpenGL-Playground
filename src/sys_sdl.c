@@ -134,4 +134,5 @@ int main(int argc, char** argv) {
 	
 	G_Quit();
 	V_Quit();
+	return 0;
 }

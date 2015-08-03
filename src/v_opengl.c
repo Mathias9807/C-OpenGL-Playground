@@ -153,12 +153,11 @@ void V_GetBoneMatrix(bone_t* bone, unsigned int time, mat4x4 r) {
 		if (bone->keys[i].time > time && bone->keys[i-1].time < time) {
 			float delta = (float) (time - bone->keys[i-1].time) / (bone->keys[i].time - bone->keys[i-1].time);
 			float iDelta = 1 - delta;
-			quat inter = (quat) {
-				iDelta * bone->keys[i-1].value[0] + delta * bone->keys[i].value[0], 
-				iDelta * bone->keys[i-1].value[1] + delta * bone->keys[i].value[1], 
-				iDelta * bone->keys[i-1].value[2] + delta * bone->keys[i].value[2], 
-				iDelta * bone->keys[i-1].value[3] + delta * bone->keys[i].value[3]
-			};
+			quat inter;
+			inter[0] = iDelta * bone->keys[i-1].value[0] + delta * bone->keys[i].value[0]; 
+			inter[1] = iDelta * bone->keys[i-1].value[1] + delta * bone->keys[i].value[1]; 
+			inter[2] = iDelta * bone->keys[i-1].value[2] + delta * bone->keys[i].value[2]; 
+			inter[3] = iDelta * bone->keys[i-1].value[3] + delta * bone->keys[i].value[3];
 			mat4x4_from_quat(r, inter);
 			return;
 		}
