@@ -11,9 +11,10 @@ out vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
 uniform mat4 matProj, matView, matModel, matShadow;
 uniform mat4 bindPose[2];
 uniform mat4 bones[2];
+uniform float uvScale;
 
 void main() {
-	uv = uv_in;
+	uv = uv_in * uvScale;
 	normal = (matModel * vec4(normal_in, 0)).xyz;
 //	vec4 vert = vec4(vertex_in.x, vertex_in.y, vertex_in.z, 1);
 //	vec4 vertex_bone = ((bindPose[0]) * bones[0] * vert) * weights_in.x;

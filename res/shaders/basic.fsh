@@ -21,8 +21,8 @@ void main() {
 	//	shadow /= 2;
 	
 	vec3 light = vec3(0.2);
-	light += texture(tex0, uv.st).rgb * 1 * max(dot(normal_i, lightDir), 0);
-	light += spec * pow(
+	light += texture(tex0, uv.st).rgb * max(dot(normal_i, lightDir), 0);
+	light += spec * 3 * pow(
 		max(dot(
 			reflect(
 				normalize(camPos - vertex_w.xyz), 
@@ -30,7 +30,7 @@ void main() {
 			-lightDir), 
 		0), 
 	60);
-	light += 0.1 * spec * texture(texSky, 
+	light += spec * texture(texSky, 
 		-reflect(normalize(camPos - vertex_w.xyz), normal_i)).xyz;
 	
 	light /= 1.5;

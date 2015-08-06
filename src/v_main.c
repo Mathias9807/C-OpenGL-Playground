@@ -5,11 +5,11 @@
 #include "g_main.h"
 #include "v_opengl.h"
 
-model_t model, plane, pillar, cube, sphere;
+model_t model, plane, pillar, cube, sphere, walther;
 mat4x4 matProj, matView, matModel, matShadow, identity;
 GLuint shader, planeShader, depthShader, skyShader;
 struct fbo post0, post1, depth, shadow;
-GLuint grassTexture, roughTexture, skyMap;
+GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, blackTexture, whiteTexture;
 const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9;
 
 void V_Init() {
@@ -28,9 +28,14 @@ void V_Init() {
 	V_LoadAssimp("plane.obj", &plane);
 	V_LoadAssimp("Cube.obj", &cube);
 	V_LoadAssimp("Sphere.obj", &sphere);
+	V_LoadAssimp("Walther.obj", &walther);
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
+	waltherTexture = V_LoadTexture("Walther.png");
+	specTexture = V_LoadTexture("SpecularGrain.png");
+	blackTexture = V_LoadTexture("Black.png");
+	whiteTexture = V_LoadTexture("White.png");
 	
 	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
@@ -52,6 +57,7 @@ void V_Init() {
 	V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
 	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam1f("uvScale", 1);
 	
 	V_SetShader(skyShader);
 	V_SetParam1i("tex", texSky);
@@ -64,25 +70,39 @@ void V_Init() {
 	V_SetParam1i("shadow", texShadow);
 	V_SetParam1i("depth", 1);
 	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
 	
 	V_SetDepthTesting(true);
 }
 
 void V_RenderScene() {
-	mat4x4_translate(matModel, 0, 5, -5);
+	mat4x4_translate(matModel, 0, -1, 0);
+	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
+	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
 	V_SetParam4m("matModel", matModel);
-	V_RenderModel(&sphere);
+	V_SetParam1f("uvScale", 10);
+	V_BindTexture(whiteTexture, texDiff);
+	V_BindTexture(specTexture, texSpec);
+	V_RenderModel(&plane);
+	
+	/*mat4x4_translate(matModel, 0, 5, -5);
+	V_SetParam4m("matModel", matModel);
+	V_BindTexture(waltherTexture, texDiff);
+	V_BindTexture(blackTexture, texSpec);
+	V_RenderModel(&walther);
 	for (int x = -2; x <= 2; x++) 
 		for (int y = -2; y <= 2; y++) {
 			V_BindTexture(grassTexture, texDiff);
+			V_BindTexture(blackTexture, texSpec);
 			mat4x4_translate(matModel, x * 128, 0, y * 128);
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&model);
-			V_BindTexture(roughTexture, texDiff);
+			V_BindTexture(whiteTexture, texDiff);
+			V_BindTexture(specTexture, texSpec);
 			mat4x4_translate_in_place(matModel, 0, -4, 0);
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&pillar);
-		}
+		}*/
 }
 
 void V_Tick() {
@@ -90,14 +110,14 @@ void V_Tick() {
 	mat4x4_rotate_Y(matView, matView, -G_camRot);
 	mat4x4_translate_in_place(matView, -G_camPos[0], -G_camPos[1], -G_camPos[2]);
 	
-	V_SetFBO(shadow);
+	/*V_SetFBO(shadow);
 	V_ClearDepth();
 	V_SetShader(depthShader);
 	V_SetDepthTesting(1);
 	V_SetParam4m("matProj", matShadow);
 	V_SetParam4m("matView", identity);
 	V_SetParam1f("farPlane", 1);
-	V_RenderScene();
+	V_RenderScene();*/
 	
 	V_SetFBO(post0);
 	V_ClearDepth();

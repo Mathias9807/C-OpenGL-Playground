@@ -15,7 +15,8 @@ void V_LoadAssimp(char* path, model_t* m) {
 	char fullPath[16];
 	Sys_GetResourcePath(path, fullPath);
 	
-	const struct aiScene* scene = aiImportFile(fullPath, aiProcess_Triangulate);
+	const struct aiScene* scene = aiImportFile(fullPath, 
+		aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs);
 	if (scene == NULL) {
 		printf("Failed to load model: %s\n", path);
 		return;

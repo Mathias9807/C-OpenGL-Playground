@@ -8,6 +8,7 @@ uniform int w, h;
 uniform sampler2D tex0, shadow;
 uniform vec2 dir;
 uniform float farPlane;
+uniform vec3 modColor;
 
 int maxRadius = 3;
 float blurScale = 2, blurStartDist = farPlane / 4 * 3, 
@@ -41,6 +42,7 @@ void main() {
 		strength += localStrength;
 	}*/
 	blur /= strength;
+	blur *= vec4(modColor, 1);
 	
 	color_out = vec4(blur.rgb, rawDepth);
 }
