@@ -7,10 +7,12 @@
 #include <linmath.h>
 #include <math.h>
 
+#define PITCH_LIMIT M_PI/2
+
 float G_moveSpeed = 8;
-float G_rotSpeed = 5;
+float G_rotSpeed = 3;
 vec3 G_camPos;
-float G_camRot;
+vec3 G_camRot;
 
 void G_Init() {
 	G_camPos[2] = 2.5;
@@ -26,11 +28,16 @@ void G_Tick() {
 	if (In_IsKeyPressed(IN_D))		dir[0]		+= moveSpeed;
 	if (In_IsKeyPressed(IN_UP))		dir[1]		+= moveSpeed;
 	if (In_IsKeyPressed(IN_DOWN))	dir[1]		-= moveSpeed;
-	if (In_IsKeyPressed(IN_RIGHT))	G_camRot	+= rotSpeed;
-	if (In_IsKeyPressed(IN_LEFT))	G_camRot	-= rotSpeed;
+	if (In_IsKeyPressed(IN_RIGHT))	G_camRot[1]	+= rotSpeed;
+	if (In_IsKeyPressed(IN_LEFT))	G_camRot[1]	-= rotSpeed;
+	if (In_IsKeyPressed(IN_PITCH_UP))	G_camRot[0]	+= rotSpeed;
+	if (In_IsKeyPressed(IN_PITCH_DOWN))	G_camRot[0]	-= rotSpeed;
 	
-	float c = cos(G_camRot);
-	float s = sin(G_camRot);
+	if (G_camRot[0] > PITCH_LIMIT) G_camRot[0] = PITCH_LIMIT;
+	else if (G_camRot[0] < -PITCH_LIMIT) G_camRot[0] = -PITCH_LIMIT;
+	
+	float c = cos(G_camRot[1]);
+	float s = sin(G_camRot[1]);
 	G_camPos[0] += -dir[2] * s + dir[0] * c;
 	G_camPos[2] += dir[2] * c + dir[0] * s;
 	G_camPos[1] += dir[1];

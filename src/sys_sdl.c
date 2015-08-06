@@ -84,6 +84,8 @@ bool In_IsKeyPressed(int key) {
 		case IN_D: return state[SDL_SCANCODE_D];
 		case IN_LEFT: return state[SDL_SCANCODE_LEFT];
 		case IN_RIGHT: return state[SDL_SCANCODE_RIGHT];
+		case IN_PITCH_UP: return state[SDL_SCANCODE_UP];
+		case IN_PITCH_DOWN: return state[SDL_SCANCODE_DOWN];
 		case IN_UP: return state[SDL_SCANCODE_SPACE];
 		case IN_DOWN: return state[SDL_SCANCODE_LSHIFT];
 	}

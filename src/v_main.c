@@ -107,7 +107,8 @@ void V_RenderScene() {
 
 void V_Tick() {
 	mat4x4_identity(matView);
-	mat4x4_rotate_Y(matView, matView, -G_camRot);
+	mat4x4_rotate_X(matView, matView, -G_camRot[0]);
+	mat4x4_rotate_Y(matView, matView, -G_camRot[1]);
 	mat4x4_translate_in_place(matView, -G_camPos[0], -G_camPos[1], -G_camPos[2]);
 	
 	/*V_SetFBO(shadow);
