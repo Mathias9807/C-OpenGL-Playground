@@ -12,6 +12,8 @@ float G_rotSpeed;
 vec3 G_camPos;
 vec3 G_camRot;
 
+mat4x4 G_gunMat;
+
 void G_Init();
 void G_Tick();
 void G_Quit();

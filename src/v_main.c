@@ -85,6 +85,12 @@ void V_RenderScene() {
 	V_BindTexture(specTexture, texSpec);
 	V_RenderModel(&plane);
 	
+	V_SetParam4m("matModel", G_gunMat);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(waltherTexture, texDiff);
+	V_BindTexture(waltherTexture, texSpec);
+	V_RenderModel(&walther);
+	
 	/*mat4x4_translate(matModel, 0, 5, -5);
 	V_SetParam4m("matModel", matModel);
 	V_BindTexture(waltherTexture, texDiff);

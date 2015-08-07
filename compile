@@ -17,4 +17,3 @@ ADD_PARAMS="-Wall -std=c99"
 `gcc -o $OUT \
 	$INCLUDES $LIBS \
 	$SRC_FILES $ADD_PARAMS` > $LOG
-
