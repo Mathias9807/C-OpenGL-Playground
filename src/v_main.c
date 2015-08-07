@@ -9,8 +9,8 @@ model_t model, plane, pillar, cube, sphere, walther;
 mat4x4 matProj, matView, matModel, matShadow, identity;
 GLuint shader, planeShader, depthShader, skyShader;
 struct fbo post0, post1, depth, shadow;
-GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, blackTexture, whiteTexture;
-const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9;
+GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal;
+const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9, texNormal = 10;
 
 void V_Init() {
 	V_InitOpenGL();
@@ -27,15 +27,17 @@ void V_Init() {
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
 	V_LoadAssimp("plane.obj", &plane);
 	V_LoadAssimp("Cube.obj", &cube);
-	V_LoadAssimp("Sphere.obj", &sphere);
+	V_LoadAssimp("Disco.obj", &sphere);
 	V_LoadAssimp("Walther.obj", &walther);
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
 	waltherTexture = V_LoadTexture("Walther.png");
 	specTexture = V_LoadTexture("SpecularGrain.png");
+	normalTexture = V_LoadTexture("NormalMap.png");
 	blackTexture = V_LoadTexture("Black.png");
 	whiteTexture = V_LoadTexture("White.png");
+	flatNormal = V_LoadTexture("FlatNormal.png");
 	
 	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
@@ -47,10 +49,12 @@ void V_Init() {
 	V_BindCubeMap(skyMap, texSky);
 	V_BindTexture(grassTexture, texDiff);
 	V_BindTexture(roughTexture, texSpec);
+	V_BindTexture(normalTexture, texNormal);
 	
 	V_SetShader(shader);
 	V_SetParam1i("tex0", texDiff);
 	V_SetParam1i("tex1", texSpec);
+	V_SetParam1i("tex2", texNormal);
 	V_SetParam1i("texShadow", texShadow);
 	V_SetParam1i("texSky", texSky);
 	V_SetParam4m("matProj", matProj);
@@ -76,6 +80,7 @@ void V_Init() {
 }
 
 void V_RenderScene() {
+	V_BindTexture(normalTexture, texNormal);
 	mat4x4_translate(matModel, 0, -1, 0);
 	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
 	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
@@ -91,11 +96,13 @@ void V_RenderScene() {
 	V_BindTexture(waltherTexture, texSpec);
 	V_RenderModel(&walther);
 	
-	/*mat4x4_translate(matModel, 0, 5, -5);
+	V_BindTexture(flatNormal, texNormal);
+	mat4x4_translate(matModel, 0, 5, -5);
 	V_SetParam4m("matModel", matModel);
-	V_BindTexture(waltherTexture, texDiff);
-	V_BindTexture(blackTexture, texSpec);
-	V_RenderModel(&walther);
+	V_BindTexture(whiteTexture, texDiff);
+	V_BindTexture(whiteTexture, texSpec);
+	V_RenderModel(&sphere);
+	V_BindTexture(normalTexture, texNormal);
 	for (int x = -2; x <= 2; x++) 
 		for (int y = -2; y <= 2; y++) {
 			V_BindTexture(grassTexture, texDiff);
@@ -108,7 +115,7 @@ void V_RenderScene() {
 			mat4x4_translate_in_place(matModel, 0, -4, 0);
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&pillar);
-		}*/
+		}
 }
 
 void V_Tick() {

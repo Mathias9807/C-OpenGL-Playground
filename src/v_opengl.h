@@ -28,6 +28,7 @@ typedef struct {
 	VBO_t uv;
 	VBO_t normal;
 	VBO_t weights;
+	VBO_t tangents;
 	VBO_t index;
 	int vertCount;
 	int indexCount;

@@ -4,15 +4,17 @@ layout(location = 0)out vec4 color_out;
 
 in vec3 uv, normal;
 in vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
+in mat3 matNormal;
 
-uniform sampler2D	tex0, tex1, texShadow;
+uniform mat4 matProj, matView, matModel, matShadow;
+uniform sampler2D	tex0, tex1, tex2, texShadow;
 uniform samplerCube texSky;
 uniform float		time;
 uniform float		farPlane;
 uniform vec3		bgColor, camPos;
 
 void main() {
-	vec3 normal_i = normalize(normal);
+	vec3 normal_i = normalize((matModel * vec4(matNormal * (texture(tex2, uv.st).xyz * 2 - 1), 0)).xyz);
 	vec3 lightDir = normalize(vec3(1, 1, 1));
 	vec3 spec = texture(tex1, uv.st).rgb;
 	

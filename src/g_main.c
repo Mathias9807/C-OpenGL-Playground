@@ -30,12 +30,12 @@ void G_Tick() {
 	if (In_IsKeyPressed(IN_A))		dir[0]		-= moveSpeed;
 	if (In_IsKeyPressed(IN_S))		dir[2]		+= moveSpeed;
 	if (In_IsKeyPressed(IN_D))		dir[0]		+= moveSpeed;
-//	if (In_IsKeyPressed(IN_UP))		dir[1]		+= moveSpeed;
-//	if (In_IsKeyPressed(IN_DOWN))	dir[1]		-= moveSpeed;
+	if (In_IsKeyPressed(IN_UP))		dir[1]		+= moveSpeed;
+	if (In_IsKeyPressed(IN_DOWN))	dir[1]		-= moveSpeed;
 	if (In_IsKeyPressed(IN_RIGHT))	G_camRot[1]	+= rotSpeed;
 	if (In_IsKeyPressed(IN_LEFT))	G_camRot[1]	-= rotSpeed;
-//	if (In_IsKeyPressed(IN_PITCH_UP))	G_camRot[0]	+= rotSpeed;
-//	if (In_IsKeyPressed(IN_PITCH_DOWN))	G_camRot[0]	-= rotSpeed;
+	if (In_IsKeyPressed(IN_PITCH_UP))	G_camRot[0]	+= rotSpeed;
+	if (In_IsKeyPressed(IN_PITCH_DOWN))	G_camRot[0]	-= rotSpeed;
 	
 	if (G_camRot[0] > PITCH_LIMIT) G_camRot[0] = PITCH_LIMIT;
 	else if (G_camRot[0] < -PITCH_LIMIT) G_camRot[0] = -PITCH_LIMIT;

@@ -130,6 +130,16 @@ void V_LoadAssimp(char* path, model_t* m) {
 	}
 	V_InitVBO(&vao->normal, 2, 3, GL_FLOAT);
 	
+	vao->tangents.bufferSize = 3 * vertCount * sizeof(float);
+	vao->tangents.buffer = malloc(vao->tangents.bufferSize);
+	for (int i = 0; i < vertCount; i++) {
+		struct aiVector3D v = mesh->mTangents[i];
+		((float*)vao->tangents.buffer)[i * 3 + 0] = v.x;
+		((float*)vao->tangents.buffer)[i * 3 + 1] = v.y;
+		((float*)vao->tangents.buffer)[i * 3 + 2] = v.z;
+	}
+	V_InitVBO(&vao->tangents, 4, 3, GL_FLOAT);
+	
 	glGenBuffers(1, &vao->index.id);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vao->index.id);
 	vao->index.type = GL_UNSIGNED_INT;
@@ -178,6 +188,7 @@ void V_RenderModel(model_t* m) {
 	if (m->vao.uv.buffer) glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 	if (m->vao.weights.buffer) glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->vao.index.id);
 	
 	glDrawElements(GL_TRIANGLES, m->vao.indexCount, m->vao.index.type, (void*) 0);
@@ -186,6 +197,7 @@ void V_RenderModel(model_t* m) {
 	if (m->vao.uv.buffer) glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	if (m->vao.weights.buffer) glDisableVertexAttribArray(3);
+	glDisableVertexAttribArray(4);
 }
 
 void V_AiToLinMat(struct aiMatrix4x4* ai, mat4x4 lin) {
