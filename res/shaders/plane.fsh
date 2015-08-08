@@ -11,8 +11,8 @@ uniform float farPlane;
 uniform vec3 modColor;
 
 int maxRadius = 3;
-float blurScale = 2, blurStartDist = farPlane / 4 * 3, 
-	blurLength = farPlane - blurStartDist, 
+float blurScale = 2, blurStartDist = abs(farPlane) * 3.0 / 4.0, 
+	blurLength = abs(farPlane) - blurStartDist, 
 	nearBlurEnd = 0.3;
 
 void main() {
