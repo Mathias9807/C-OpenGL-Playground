@@ -21,6 +21,9 @@ void V_InitOpenGL() {
 	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	printf("OpenGL implementation provided by %s\n", glGetString(GL_VENDOR));
 	
+	glEnable(GL_CULL_FACE);
+	V_SetFaceCullingBack(true);
+	
 	animStartTime = Sys_TimeMillis();
 }
 
@@ -84,7 +87,7 @@ void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {
 	fbo->numAtt = 0;
 	glGenTextures(1, &fbo->attD);
 	glBindTexture(GL_TEXTURE_2D, fbo->attD);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -123,6 +126,10 @@ void V_SetTexMipmapLinear(bool b) {
 
 void V_MakeProjection(mat4x4 m, float fov, float aspect, float near, float far) {
 	mat4x4_perspective(m, fov, aspect, near, far);
+}
+
+void V_SetFaceCullingBack(bool back) {
+	glCullFace(back ? GL_BACK : GL_FRONT);
 }
 
 void V_SetAnimMatrix(model_t* m, unsigned int time, mat4x4 r) {

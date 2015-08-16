@@ -18,7 +18,7 @@ void V_Init() {
 	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 1);
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 1);
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
-	V_CreateDepthFBO(&shadow, 1024, 1024);
+	V_CreateDepthFBO(&shadow, 512, 512);
 	shader = V_LoadShaders("basic");
 	planeShader = V_LoadShaders("plane");
 	depthShader = V_LoadShaders("depth");
@@ -41,9 +41,14 @@ void V_Init() {
 	
 	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
-	mat4x4_rotate_X(matShadow, matShadow, -M_PI / 16);
-	mat4x4_scale_aniso(matShadow, matShadow, 0.1, 0.1, 0.1);
+	vec4 lightDir = (vec4) {1, 1, 1, 0};
+	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
+	mat4x4_look_at(matShadow, lightDir, (vec3){0, 0, 0}, (vec3){0, 1, 0});
+	mat4x4 ortho;
+	mat4x4_ortho(ortho, -20, 20, -20, 20, -40, 40);
+	mat4x4_mul(matShadow, ortho, matShadow);
 	mat4x4_identity(identity);
+	
 	V_BindTexture(depth.attD, texDepth);
 	V_BindTexture(shadow.attD, texShadow);
 	V_BindCubeMap(skyMap, texSky);
@@ -62,6 +67,7 @@ void V_Init() {
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
 	V_SetParam1f("farPlane", V_FAR);
 	V_SetParam1f("uvScale", 1);
+	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
 	
 	V_SetShader(skyShader);
 	V_SetParam1i("tex", texSky);
@@ -90,13 +96,6 @@ void V_RenderScene() {
 	V_BindTexture(specTexture, texSpec);
 	V_RenderModel(&plane);
 	
-	V_SetParam4m("matModel", G_gunMat);
-	V_SetParam1f("uvScale", 1);
-	V_BindTexture(waltherTexture, texDiff);
-	V_BindTexture(waltherTexture, texSpec);
-	V_RenderModel(&walther);
-	
-	V_BindTexture(flatNormal, texNormal);
 	mat4x4_translate(matModel, 0, 5, -5);
 	V_SetParam4m("matModel", matModel);
 	V_BindTexture(whiteTexture, texDiff);
@@ -118,20 +117,30 @@ void V_RenderScene() {
 		}
 }
 
+void V_RenderNearScene() {
+	V_SetParam4m("matModel", G_gunMat);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(flatNormal, texNormal);
+	V_BindTexture(waltherTexture, texDiff);
+	V_BindTexture(waltherTexture, texSpec);
+	V_RenderModel(&walther);
+}
+
 void V_Tick() {
 	mat4x4_identity(matView);
 	mat4x4_rotate_X(matView, matView, -G_camRot[0]);
 	mat4x4_rotate_Y(matView, matView, -G_camRot[1]);
 	mat4x4_translate_in_place(matView, -G_camPos[0], -G_camPos[1], -G_camPos[2]);
 	
-	/*V_SetFBO(shadow);
+	V_SetFBO(shadow);
+	V_SetFaceCullingBack(false);
 	V_ClearDepth();
 	V_SetShader(depthShader);
 	V_SetDepthTesting(1);
 	V_SetParam4m("matProj", matShadow);
 	V_SetParam4m("matView", identity);
 	V_SetParam1f("farPlane", 1);
-	V_RenderScene();*/
+	V_RenderScene();
 	
 	V_SetFBO(post0);
 	V_ClearDepth();
@@ -140,6 +149,7 @@ void V_Tick() {
 	V_SetDepthTesting(0);
 	V_SetParam4m("matView", matView);
 	V_RenderModel(&cube);
+	V_SetFaceCullingBack(true);
 	V_SetDepthTesting(1);
 	
 	V_SetShader(shader);
@@ -148,6 +158,7 @@ void V_Tick() {
 	V_SetParam4m("matView", matView);
 	
 	V_RenderScene();
+	V_RenderNearScene();
 	V_SetDepthTesting(0);
 	
 	V_SetFBO(post1);

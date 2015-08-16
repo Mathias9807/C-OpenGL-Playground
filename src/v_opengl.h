@@ -90,6 +90,7 @@ void V_BindCubeMap(unsigned id, int pos);
 void V_SetTexInterLinear(bool b);
 void V_SetTexMipmapLinear(bool b);
 void V_MakeProjection(mat4x4 m, float fov, float aspect, float near, float far);
+void V_SetFaceCullingBack(bool back);
 
 GLuint V_LoadShaders(char* name);
 GLuint V_LoadTexture(char* name);

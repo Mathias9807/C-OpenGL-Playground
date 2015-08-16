@@ -46,17 +46,17 @@ void G_Tick() {
 	G_camPos[2] += dir[2] * c + dir[0] * s;
 	G_camPos[1] += dir[1];
 	
-	curGunPos[0] = (curGunPos[0] - prefGunPos[0]) / 1.2 + prefGunPos[0] + dir[0] * 0.05;
-	curGunPos[1] = prefGunPos[1];
-	curGunPos[2] = prefGunPos[2];
-	curGunYRot = 0.8 * ((curGunYRot - G_camRot[1]) / 1.05 + G_camRot[1]) + 0.2 * G_camRot[1];
-	curGunZRot += dir[0] * 0.15;
-	curGunZRot = curGunZRot / 1.05;
+	//curGunPos[0] = (curGunPos[0] - prefGunPos[0]) / 1.2 + prefGunPos[0] + dir[0] * 0.05;
+	//curGunPos[1] = prefGunPos[1];
+	//curGunPos[2] = prefGunPos[2];
+	//curGunYRot = 0.8 * ((curGunYRot - G_camRot[1]) / 1.05 + G_camRot[1]) + 0.2 * G_camRot[1];
+	//curGunZRot += dir[0] * 0.15;
+	//curGunZRot = curGunZRot / 1.05;
 	mat4x4_translate(G_gunMat, G_camPos[0], G_camPos[1], G_camPos[2]);
-	mat4x4_rotate_Y(G_gunMat, G_gunMat, curGunYRot + M_PI);
+	mat4x4_rotate_Y(G_gunMat, G_gunMat, G_camRot[1] + M_PI);
 	mat4x4_rotate_X(G_gunMat, G_gunMat, -G_camRot[0]);
-	mat4x4_translate_in_place(G_gunMat, curGunPos[0], curGunPos[1], curGunPos[2]);
-	mat4x4_rotate_Z(G_gunMat, G_gunMat, curGunZRot);
+	mat4x4_translate_in_place(G_gunMat, prefGunPos[0], prefGunPos[1], prefGunPos[2]);
+	//mat4x4_rotate_Z(G_gunMat, G_gunMat, curGunZRot);
 	mat4x4_scale_aniso(G_gunMat, G_gunMat, 0.05, 0.05, 0.05);
 	lastGunPos[0] = curGunPos[0];
 	lastGunPos[1] = curGunPos[1];
