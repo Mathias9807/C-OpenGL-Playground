@@ -45,6 +45,7 @@ build/
 *.pidb
 *.log
 *.scc
+*.exe
 
 # Visual C++ cache files
 ipch/
@@ -154,4 +155,4 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
-3D.exe
+*/.DS_Store
