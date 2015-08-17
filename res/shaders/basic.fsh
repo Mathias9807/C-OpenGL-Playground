@@ -7,19 +7,25 @@ in vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
 in mat3 matNormal;
 
 uniform mat4 matProj, matView, matModel, matShadow;
-uniform sampler2D	tex0, tex1, tex2, texShadow;
-uniform samplerCube texSky;
-uniform float		time;
-uniform float		farPlane;
-uniform vec3		bgColor, camPos, lightDir;
+uniform sampler2D			tex0, tex1, tex2;
+uniform sampler2DShadow		texShadow;
+uniform samplerCube			texSky;
+uniform float				time;
+uniform float				farPlane;
+uniform vec3				bgColor, camPos, lightDir;
 
 void main() {
 	vec3 normal_i = normalize((matModel * vec4(matNormal * (texture(tex2, uv.st).xyz * 2 - 1), 0)).xyz);
 	
-	float shadow = 1;
+	float shadow = 0;
 	vec2 shadowUV = vertex_shadow.st / 2 + 0.5;
-	if (vertex_shadow.z - 0.001 > texture(texShadow, shadowUV).r) 
-		shadow = 0;
+	float offs = 0.001;
+	shadow += texture(texShadow, vec3(shadowUV+vec2(offs, 0), vertex_shadow.z + 0.002));
+	shadow += texture(texShadow, vec3(shadowUV+vec2(0, offs), vertex_shadow.z + 0.002));
+	shadow += texture(texShadow, vec3(shadowUV+vec2(-offs, 0), vertex_shadow.z + 0.002));
+	shadow += texture(texShadow, vec3(shadowUV+vec2(0, -offs), vertex_shadow.z + 0.002));
+	shadow /= 4;
+	
 	if (abs(shadowUV.s - 0.5) > 0.5 
 		|| abs(shadowUV.t - 0.5) > 0.5 
 		|| abs(vertex_shadow.z - 0.5) > 0.5) 

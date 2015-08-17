@@ -51,6 +51,7 @@ void V_Init() {
 	
 	V_BindTexture(depth.attD, texDepth);
 	V_BindTexture(shadow.attD, texShadow);
+	V_SetTexInterLinear(true);
 	V_BindCubeMap(skyMap, texSky);
 	V_BindTexture(grassTexture, texDiff);
 	V_BindTexture(roughTexture, texSpec);
