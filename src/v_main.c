@@ -41,7 +41,7 @@ void V_Init() {
 	
 	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
-	vec4 lightDir = (vec4) {1, 1, 1, 0};
+	vec4 lightDir = {1, 1, 1, 0};
 	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
 	mat4x4_look_at(matShadow, lightDir, (vec3){0, 0, 0}, (vec3){0, 1, 0});
 	mat4x4 ortho;
