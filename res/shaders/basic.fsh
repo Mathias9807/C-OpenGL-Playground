@@ -16,22 +16,28 @@ uniform vec3				bgColor, camPos, lightDir;
 
 void main() {
 	vec3 normal_i = normalize((matModel * vec4(matNormal * (texture(tex2, uv.st).xyz * 2 - 1), 0)).xyz);
+	vec3 texDiff = texture(tex0, uv.st).rgb;
+	vec3 texSpec = texture(tex1, uv.st).rgb;
 	
 	float shadow = 0;
 	vec2 shadowUV = vertex_shadow.st / 2 + 0.5;
-	float offs = 0.001;
-	shadow += texture(texShadow, vec3(shadowUV+vec2(offs, 0), vertex_shadow.z + 0.002));
-	shadow += texture(texShadow, vec3(shadowUV+vec2(0, offs), vertex_shadow.z + 0.002));
-	shadow += texture(texShadow, vec3(shadowUV+vec2(-offs, 0), vertex_shadow.z + 0.002));
-	shadow += texture(texShadow, vec3(shadowUV+vec2(0, -offs), vertex_shadow.z + 0.002));
-	shadow /= 4;
 	
 	if (abs(shadowUV.s - 0.5) > 0.5 
 		|| abs(shadowUV.t - 0.5) > 0.5 
 		|| abs(vertex_shadow.z - 0.5) > 0.5) 
 		shadow = 1;
+	else {
+		vec2 offs = 1.0 / textureSize(texShadow, 0);
+		float bias = 0.002;
+		shadow += texture(texShadow, vec3(shadowUV+vec2(offs.x, 0), vertex_shadow.z + bias));
+		shadow += texture(texShadow, vec3(shadowUV+vec2(0, offs.y), vertex_shadow.z + bias));
+		shadow += texture(texShadow, vec3(shadowUV+vec2(-offs.x, 0), vertex_shadow.z + bias));
+		shadow += texture(texShadow, vec3(shadowUV+vec2(0, -offs.y), vertex_shadow.z + bias));
+		shadow += texture(texShadow, vec3(shadowUV, vertex_shadow.z + bias));
+		shadow /= 5;
+	}
 	
-	vec3 light = vec3(0.2) * texture(tex0, uv.st).rgb;
+	vec3 light = vec3(0.2) * texDiff;
 	
 	vec3 diffuse = vec3(1) * max(dot(normal_i, lightDir), 0) * shadow;
 	
@@ -46,8 +52,8 @@ void main() {
 	specular += texture(texSky, 
 		-reflect(normalize(camPos - vertex_w.xyz), normal_i)).xyz;
 	
-	light += diffuse * texture(tex0, uv.st).rgb 
-		+ specular * texture(tex1, uv.st).rgb;
+	light += diffuse * texDiff 
+		+ specular * texSpec;
 	
 	light /= 1.5;
 	light = mix(light, texture(texSky, vertex_w.xyz - camPos).rgb, 
