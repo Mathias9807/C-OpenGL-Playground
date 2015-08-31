@@ -10,3 +10,6 @@ Compile:
 	
 Dependecies:
 	The project uses GLEW and the Open Asset Import Library (Assimp). By default it uses SDL2 for platform specific tasks such as opening a window. 
+
+Scripts:
+	The project contains two custom compilation scripts. 'wincompile.bat' requires gcc to be installed and pointed to by the PATH variable. 'compile' only works on Mac OS X machines with SDL2.framework installed currently but can easily be modified to compile for *nix in general, just modify the LIBS variable in the script to point to where the libraries are stored. I may simplify the compilation process in the future. 
