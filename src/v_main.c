@@ -11,6 +11,7 @@ GLuint shader, planeShader, depthShader, skyShader;
 struct fbo post0, post1, depth, shadow;
 GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal;
 const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9, texNormal = 10;
+light l = LIGHT_DEFAULT;
 
 void V_Init() {
 	V_InitOpenGL();

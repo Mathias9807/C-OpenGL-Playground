@@ -320,6 +320,10 @@ void V_SetParam1i(const char* var, int i) {
 	glUniform1i(id, i);
 }
 
+void V_SetParamLight(const char* var, light l) {
+	printf("Not implemented\n");
+}
+
 void V_PrintMat(mat4x4 mat) {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++)

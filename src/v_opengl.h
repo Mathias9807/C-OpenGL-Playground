@@ -12,7 +12,8 @@
 #define V_FOV 65.0/180*M_PI
 #define V_NEAR 0.1
 #define V_FAR 100
-#define V_WINDOW_FBO (struct fbo){0,V_WIDTH,V_HEIGHT}
+#define V_WINDOW_FBO ((struct fbo){0,V_WIDTH,V_HEIGHT})
+#define LIGHT_DEFAULT (light) {{0, 0, 0}, {1, 1, 1}, false};
 
 typedef struct {
 	GLuint id;
@@ -73,6 +74,11 @@ struct fbo {
 	unsigned attD;
 };
 
+typedef struct {
+	vec3 pos, col;
+	bool directional;
+} light;
+
 extern GLuint curShader;
 
 void V_LoadAssimp(char* path, model_t* m);
@@ -104,6 +110,7 @@ void V_SetParam3f(const char* var, float x, float y, float z);
 void V_SetParam4f(const char* var, float x, float y, float z, float a);
 void V_SetParam1i(const char* var, int i);
 void V_SetParam4m(const char* var, mat4x4 mat);
+void V_SetParamLight(const char* var, light l);
 void V_PrintMat(mat4x4 mat);
 
 

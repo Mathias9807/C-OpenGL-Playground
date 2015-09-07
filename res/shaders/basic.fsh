@@ -13,6 +13,10 @@ uniform samplerCube			texSky;
 uniform float				time;
 uniform float				farPlane;
 uniform vec3				bgColor, camPos, lightDir;
+uniform struct light_t {
+	vec3 pos, col;
+	bool directional;
+} lights;
 
 void main() {
 	vec3 normal_i = normalize((matModel * vec4(matNormal * (texture(tex2, uv.st).xyz * 2 - 1), 0)).xyz);
@@ -51,6 +55,8 @@ void main() {
 	60) * shadow;
 	specular += texture(texSky, 
 		-reflect(normalize(camPos - vertex_w.xyz), normal_i)).xyz;
+	
+	//diffuse += lights.col;
 	
 	light += diffuse * texDiff 
 		+ specular * texSpec;
