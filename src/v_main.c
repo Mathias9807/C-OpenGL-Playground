@@ -5,11 +5,11 @@
 #include "g_main.h"
 #include "v_opengl.h"
 
-model_t model, plane, pillar, cube, sphere, walther;
+model_t model, plane, pillar, cube, sphere, walther, scarecrow;
 mat4x4 matProj, matView, matModel, matShadow, identity;
 GLuint shader, planeShader, depthShader, skyShader;
 struct fbo post0, post1, depth, shadow;
-GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal;
+GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture;
 const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9, texNormal = 10;
 light l = LIGHT_DEFAULT;
 
@@ -30,6 +30,7 @@ void V_Init() {
 	V_LoadAssimp("Cube.obj", &cube);
 	V_LoadAssimp("Disco.obj", &sphere);
 	V_LoadAssimp("Walther.obj", &walther);
+	V_LoadAssimp("Scarecrow.dae", &scarecrow);
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
@@ -39,6 +40,7 @@ void V_Init() {
 	blackTexture = V_LoadTexture("Black.png");
 	whiteTexture = V_LoadTexture("White.png");
 	flatNormal = V_LoadTexture("FlatNormal.png");
+	scareTexture = V_LoadTexture("Scarecrow.png");
 	
 	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
@@ -117,6 +119,15 @@ void V_RenderScene() {
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&pillar);
 		}
+	
+	V_BindTexture(flatNormal, texNormal);
+	mat4x4_translate(matModel, 0, -1, 0);
+	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
+	V_SetParam4m("matModel", matModel);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(scareTexture, texDiff);
+	V_BindTexture(blackTexture, texSpec);
+	V_RenderModel(&scarecrow);
 }
 
 void V_RenderNearScene() {

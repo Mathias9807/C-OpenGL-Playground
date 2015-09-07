@@ -17,6 +17,7 @@ void V_LoadAssimp(char* path, model_t* m) {
 	
 	const struct aiScene* scene = aiImportFile(fullPath, 
 		aiProcess_Triangulate 
+		| aiProcess_GenNormals 
 		| aiProcess_JoinIdenticalVertices 
 		| aiProcess_FlipUVs 
 		| aiProcess_CalcTangentSpace);
@@ -171,6 +172,8 @@ void V_LoadAssimp(char* path, model_t* m) {
 		vao->weights.buffer = NULL;
 	
 	aiReleaseImport(scene);
+	
+	printf("Loaded model: %s\n", path);
 }
 
 void V_InitVBO(VBO_t* vbo, int index, int dim, GLenum type) {
