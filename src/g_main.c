@@ -6,6 +6,7 @@
 #include "input.h"
 #include <linmath.h>
 #include <math.h>
+#include "g_collision.h"
 
 #define PITCH_LIMIT M_PI/2
 
@@ -15,6 +16,10 @@ vec3 G_camPos, G_camRot;
 mat4x4 G_gunMat;
 vec3 lastGunPos, prefGunPos = {-0.15, -0.1, 0.4}, curGunPos;
 float curGunYRot = 0, curGunZRot = 0;
+bool actionHeld = false;
+
+AABB dummyBox = {-1, -1, -1, 2, 2, 2};
+float dummyXRot = 0;
 
 void Shoot();
 
@@ -36,6 +41,13 @@ void G_Tick() {
 	if (In_IsKeyPressed(IN_LEFT))	G_camRot[1]	-= rotSpeed;
 	if (In_IsKeyPressed(IN_PITCH_UP))	G_camRot[0]	+= rotSpeed;
 	if (In_IsKeyPressed(IN_PITCH_DOWN))	G_camRot[0]	-= rotSpeed;
+	if (In_IsKeyPressed(IN_ACTION)) {
+		if (!actionHeld) {
+			Shoot();
+			actionHeld = true;
+		}
+	}else actionHeld = false;
+	
 	
 	if (G_camRot[0] > PITCH_LIMIT) G_camRot[0] = PITCH_LIMIT;
 	else if (G_camRot[0] < -PITCH_LIMIT) G_camRot[0] = -PITCH_LIMIT;
@@ -61,10 +73,17 @@ void G_Tick() {
 	lastGunPos[0] = curGunPos[0];
 	lastGunPos[1] = curGunPos[1];
 	lastGunPos[2] = curGunPos[2];
+	
+	dummyXRot *= pow(0.0001, Sys_deltaMillis / 1000.0);
 }
 
 void Shoot() {
-	
+	vec3 rayDir = {
+		sin(G_camRot[1]) * cos(G_camRot[0]), 
+		sin(G_camRot[0]), 
+		-cos(G_camRot[0]) * cos(G_camRot[1]), 
+	};
+	if (G_RayHitsAABB(dummyBox, G_camPos, rayDir)) dummyXRot = -M_PI / 8;
 }
 
 void G_Quit() {

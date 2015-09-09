@@ -4,14 +4,18 @@
 #include "sys.h"
 #include "g_main.h"
 #include "v_opengl.h"
+#include "g_collision.h"
 
-model_t model, plane, pillar, cube, sphere, walther, scarecrow;
+model_t model, plane, pillar, cube, sphere, walther, scarecrow, collBox;
 mat4x4 matProj, matView, matModel, matShadow, identity;
 GLuint shader, planeShader, depthShader, skyShader;
 struct fbo post0, post1, depth, shadow;
 GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture;
 const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9, texNormal = 10;
 light l = LIGHT_DEFAULT;
+
+extern AABB dummyBox;
+extern float dummyXRot;
 
 void V_Init() {
 	V_InitOpenGL();
@@ -31,6 +35,7 @@ void V_Init() {
 	V_LoadAssimp("Disco.obj", &sphere);
 	V_LoadAssimp("Walther.obj", &walther);
 	V_LoadAssimp("Scarecrow.dae", &scarecrow);
+	V_LoadAssimp("CollisionBox.obj", &collBox);
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
@@ -105,7 +110,8 @@ void V_RenderScene() {
 	V_BindTexture(whiteTexture, texDiff);
 	V_BindTexture(whiteTexture, texSpec);
 	V_RenderModel(&sphere);
-	V_BindTexture(normalTexture, texNormal);
+	V_BindTexture(flatNormal, texNormal);
+	V_SetParam1f("uvScale", 1);
 	for (int x = -2; x <= 2; x++) 
 		for (int y = -2; y <= 2; y++) {
 			V_BindTexture(grassTexture, texDiff);
@@ -120,9 +126,8 @@ void V_RenderScene() {
 			V_RenderModel(&pillar);
 		}
 	
-	V_BindTexture(flatNormal, texNormal);
-	mat4x4_translate(matModel, 0, -1, 0);
-	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
+	mat4x4_translate(matModel, dummyBox.x + dummyBox.w / 2, dummyBox.y, dummyBox.z + dummyBox.d / 2);
+	mat4x4_rotate_X(matModel, matModel, -M_PI / 2 + dummyXRot);
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 1);
 	V_BindTexture(scareTexture, texDiff);
