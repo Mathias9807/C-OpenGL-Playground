@@ -13,9 +13,12 @@ struct fbo post0, post1, depth, shadow;
 GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture;
 const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9, texNormal = 10;
 light l = LIGHT_DEFAULT;
+bool V_reloadShaders = true;
 
 extern AABB dummyBox;
 extern float dummyXRot;
+
+void LoadShaders();
 
 void V_Init() {
 	V_InitOpenGL();
@@ -24,10 +27,6 @@ void V_Init() {
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 1);
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
 	V_CreateDepthFBO(&shadow, 512, 512);
-	shader = V_LoadShaders("basic");
-	planeShader = V_LoadShaders("plane");
-	depthShader = V_LoadShaders("depth");
-	skyShader = V_LoadShaders("sky");
 	V_LoadAssimp("Hills.obj", &model);
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
 	V_LoadAssimp("plane.obj", &plane);
@@ -47,16 +46,6 @@ void V_Init() {
 	flatNormal = V_LoadTexture("FlatNormal.png");
 	scareTexture = V_LoadTexture("Scarecrow.png");
 	
-	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
-	mat4x4_identity(matShadow);
-	vec4 lightDir = {1, 1, 1, 0};
-	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
-	mat4x4_look_at(matShadow, lightDir, (vec3){0, 0, 0}, (vec3){0, 1, 0});
-	mat4x4 ortho;
-	mat4x4_ortho(ortho, -20, 20, -20, 20, -40, 40);
-	mat4x4_mul(matShadow, ortho, matShadow);
-	mat4x4_identity(identity);
-	
 	V_BindTexture(depth.attD, texDepth);
 	V_BindTexture(shadow.attD, texShadow);
 	V_SetTexInterLinear(true);
@@ -65,31 +54,7 @@ void V_Init() {
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
 	
-	V_SetShader(shader);
-	V_SetParam1i("tex0", texDiff);
-	V_SetParam1i("tex1", texSpec);
-	V_SetParam1i("tex2", texNormal);
-	V_SetParam1i("texShadow", texShadow);
-	V_SetParam1i("texSky", texSky);
-	V_SetParam4m("matProj", matProj);
-	V_SetParam4m("matShadow", matShadow);
-	V_SetParam3f("bgColor", 0, 0, 0.3f);
-	V_SetParam1f("farPlane", V_FAR);
-	V_SetParam1f("uvScale", 1);
-	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
-	
-	V_SetShader(skyShader);
-	V_SetParam1i("tex", texSky);
-	V_SetParam4m("matProj", matProj);
-	
-	V_SetShader(planeShader);
-	V_SetParam1i("w", post0.w);
-	V_SetParam1i("h", post0.h);
-	V_SetParam1i("tex0", 0);
-	V_SetParam1i("shadow", texShadow);
-	V_SetParam1i("depth", 1);
-	V_SetParam1f("farPlane", V_FAR);
-	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
+	LoadShaders();
 	
 	V_SetDepthTesting(true);
 }
@@ -145,6 +110,9 @@ void V_RenderNearScene() {
 }
 
 void V_Tick() {
+	if (V_reloadShaders) 
+		LoadShaders();
+	
 	mat4x4_identity(matView);
 	mat4x4_rotate_X(matView, matView, -G_camRot[0]);
 	mat4x4_rotate_Y(matView, matView, -G_camRot[1]);
@@ -193,6 +161,52 @@ void V_Tick() {
 	V_RenderModel(&plane);
 	
 	Sys_CheckErrors();
+}
+
+void LoadShaders() {
+	V_SetShader(0);
+	V_DeleteShader(shader);				shader = V_LoadShader("basic");
+	V_DeleteShader(planeShader);		planeShader = V_LoadShader("plane");
+	V_DeleteShader(depthShader);		depthShader = V_LoadShader("depth");
+	V_DeleteShader(skyShader);			skyShader = V_LoadShader("sky");
+	
+	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
+	mat4x4_identity(matShadow);
+	vec4 lightDir = {1, 1, 1, 0};
+	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
+	mat4x4_look_at(matShadow, lightDir, (vec3){0, 0, 0}, (vec3){0, 1, 0});
+	mat4x4 ortho;
+	mat4x4_ortho(ortho, -20, 20, -20, 20, -40, 40);
+	mat4x4_mul(matShadow, ortho, matShadow);
+	mat4x4_identity(identity);
+	
+	V_SetShader(shader);
+	V_SetParam1i("tex0", texDiff);
+	V_SetParam1i("tex1", texSpec);
+	V_SetParam1i("tex2", texNormal);
+	V_SetParam1i("texShadow", texShadow);
+	V_SetParam1i("texSky", texSky);
+	V_SetParam4m("matProj", matProj);
+	V_SetParam4m("matShadow", matShadow);
+	V_SetParam3f("bgColor", 0, 0, 0.3f);
+	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam1f("uvScale", 1);
+	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
+	
+	V_SetShader(skyShader);
+	V_SetParam1i("tex", texSky);
+	V_SetParam4m("matProj", matProj);
+	
+	V_SetShader(planeShader);
+	V_SetParam1i("w", post0.w);
+	V_SetParam1i("h", post0.h);
+	V_SetParam1i("tex0", 0);
+	V_SetParam1i("shadow", texShadow);
+	V_SetParam1i("depth", 1);
+	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
+	
+	V_reloadShaders = false;
 }
 
 void V_Quit() {

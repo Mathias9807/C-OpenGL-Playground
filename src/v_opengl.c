@@ -201,7 +201,7 @@ void V_CheckProgram(GLuint id) {
 	printf("%s\n", log);
 }
 
-GLuint V_LoadShaders(char* name) {
+GLuint V_LoadShader(char* name) {
 	char fragPath[64]; Sys_GetResourcePath("shaders/", fragPath); strcat(fragPath, name); strcat(fragPath, ".fsh");
 	char vertPath[64]; Sys_GetResourcePath("shaders/", vertPath); strcat(vertPath, name); strcat(vertPath, ".vsh");
 	
@@ -239,11 +239,19 @@ GLuint V_LoadShaders(char* name) {
 	glAttachShader(programId, vertId);
 	glAttachShader(programId, fragId);
 	glLinkProgram(programId);
+	V_CheckProgram(programId);
 	
+	glDetachShader(programId, vertId);
+	glDetachShader(programId, fragId);
 	glDeleteShader(fragId);
 	glDeleteShader(vertId);
 	
 	return programId;
+}
+
+void V_DeleteShader(int programId) {
+	if (programId) 
+		glDeleteProgram(programId);
 }
 
 GLuint V_LoadTexture(char* name) {

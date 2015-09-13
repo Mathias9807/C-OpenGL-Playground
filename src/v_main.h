@@ -9,6 +9,8 @@
 #define V_WIDTH 800
 #define V_HEIGHT 600
 
+bool V_reloadShaders;
+
 void V_Init();
 void V_Tick();
 void V_Quit();

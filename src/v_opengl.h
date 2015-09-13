@@ -98,7 +98,8 @@ void V_SetTexMipmapLinear(bool b);
 void V_MakeProjection(mat4x4 m, float fov, float aspect, float near, float far);
 void V_SetFaceCullingBack(bool back);
 
-GLuint V_LoadShaders(char* name);
+GLuint V_LoadShader(char* name);
+void V_DeleteShader(int programId);
 GLuint V_LoadTexture(char* name);
 GLuint V_LoadCubeMap(char* name);
 void V_SetAnimMatrix(model_t* m, unsigned int time, mat4x4 r);

@@ -41,9 +41,9 @@ void main() {
 		shadow /= 5;
 	}
 	
-	vec3 light = vec3(0.2) * texDiff;
+	vec3 light = vec3(0.2, 0.2, 0.4) * texDiff;
 	
-	vec3 diffuse = vec3(1) * max(dot(normal_i, lightDir), 0) * shadow;
+	vec3 diffuse = vec3(2, 2, 1.5) * max(dot(normal_i, lightDir), 0) * shadow;
 	
 	vec3 specular = vec3(3) * pow(
 		max(dot(
@@ -61,7 +61,7 @@ void main() {
 	light += diffuse * texDiff 
 		+ specular * texSpec;
 	
-	light /= 1.5;
+	light /= 2;
 	light = mix(light, texture(texSky, vertex_w.xyz - camPos).rgb, 
 				clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);
 	

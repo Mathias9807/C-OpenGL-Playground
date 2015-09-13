@@ -75,6 +75,8 @@ void G_Tick() {
 	lastGunPos[2] = curGunPos[2];
 	
 	dummyXRot *= pow(0.0001, Sys_deltaMillis / 1000.0);
+	
+	if (In_IsKeyPressed(IN_RELOAD)) V_reloadShaders = true;
 }
 
 void Shoot() {
