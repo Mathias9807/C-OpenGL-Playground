@@ -8,10 +8,10 @@
 
 model_t model, plane, pillar, cube, sphere, walther, scarecrow, collBox;
 mat4x4 matProj, matView, matModel, matShadow, identity;
-GLuint shader, planeShader, depthShader, skyShader;
+GLuint shader, planeShader, depthShader, skyShader, smokeShader;
 struct fbo post0, post1, depth, shadow;
-GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture;
-const int texFBO = 0, texDepth = 1, texSky = 2, texShadow = 3, texDiff = 8, texSpec = 9, texNormal = 10;
+GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture;
+const int texFBO0 = 0, texFBO1 = 1, texDepth = 2, texSky = 3, texShadow = 4, texDiff = 8, texSpec = 9, texNormal = 10;
 light l = LIGHT_DEFAULT;
 bool V_reloadShaders = true;
 
@@ -23,10 +23,11 @@ void LoadShaders();
 void V_Init() {
 	V_InitOpenGL();
 	
-	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 1);
-	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 1);
+	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 2);
+	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 2);
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
 	V_CreateDepthFBO(&shadow, 512, 512);
+	
 	V_LoadAssimp("Hills.obj", &model);
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
 	V_LoadAssimp("plane.obj", &plane);
@@ -35,6 +36,7 @@ void V_Init() {
 	V_LoadAssimp("Walther.obj", &walther);
 	V_LoadAssimp("Scarecrow.dae", &scarecrow);
 	V_LoadAssimp("CollisionBox.obj", &collBox);
+	
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
@@ -45,6 +47,7 @@ void V_Init() {
 	whiteTexture = V_LoadTexture("White.png");
 	flatNormal = V_LoadTexture("FlatNormal.png");
 	scareTexture = V_LoadTexture("Scarecrow.png");
+	smokeTexture = V_LoadTexture("Smoke.png");
 	
 	V_BindTexture(depth.attD, texDepth);
 	V_BindTexture(shadow.attD, texShadow);
@@ -100,6 +103,18 @@ void V_RenderScene() {
 	V_RenderModel(&scarecrow);
 }
 
+void V_RenderSmoke() {
+	V_SetParam4m("matProj", matProj);
+	V_SetParam4m("matView", matView);
+	V_SetParam1f("farPlane", 1);
+	
+	mat4x4_identity(matModel);
+	mat4x4_translate(matModel, 2, 0, 2);
+	V_SetParam4m("matModel", matModel);
+	V_BindTexture(smokeTexture, texDiff);
+	V_RenderModel(&plane);
+}
+
 void V_RenderNearScene() {
 	V_SetParam4m("matModel", G_gunMat);
 	V_SetParam1f("uvScale", 1);
@@ -122,7 +137,7 @@ void V_Tick() {
 	V_SetFaceCullingBack(false);
 	V_ClearDepth();
 	V_SetShader(depthShader);
-	V_SetDepthTesting(1);
+	V_SetDepthTesting(true);
 	V_SetParam4m("matProj", matShadow);
 	V_SetParam4m("matView", identity);
 	V_SetParam1f("farPlane", 1);
@@ -132,11 +147,11 @@ void V_Tick() {
 	V_ClearDepth();
 	
 	V_SetShader(skyShader);
-	V_SetDepthTesting(0);
+	V_SetDepthTesting(false);
 	V_SetParam4m("matView", matView);
 	V_RenderModel(&cube);
 	V_SetFaceCullingBack(true);
-	V_SetDepthTesting(1);
+	V_SetDepthTesting(true);
 	
 	V_SetShader(shader);
 	
@@ -145,18 +160,28 @@ void V_Tick() {
 	
 	V_RenderScene();
 	V_RenderNearScene();
-	V_SetDepthTesting(0);
+	
+	V_SetShader(smokeShader);
+	V_SetAlphaBlending(true);
+	V_SetDepthWriting(false);
+	V_SetParam1f("farPlane", 1);
+	V_RenderSmoke();
+	V_SetAlphaBlending(false);
+	V_SetDepthWriting(true);
 	
 	V_SetFBO(post1);
+	V_SetDepthTesting(false);
 	V_SetShader(planeShader);
 	V_SetParam2f("dir", 1, 0);
-	V_BindTexture(post0.att[0], texFBO);
+	V_BindTexture(post0.att[0], texFBO0);
+	V_BindTexture(post0.att[1], texFBO1);
 	
 	V_RenderModel(&plane);
 	
 	V_SetFBO(V_WINDOW_FBO);
 	V_SetParam2f("dir", 0, 1);
-	V_BindTexture(post1.att[0], texFBO);
+	V_BindTexture(post1.att[0], texFBO0);
+	V_BindTexture(post1.att[1], texFBO1);
 	
 	V_RenderModel(&plane);
 	
@@ -169,6 +194,7 @@ void LoadShaders() {
 	V_DeleteShader(planeShader);		planeShader = V_LoadShader("plane");
 	V_DeleteShader(depthShader);		depthShader = V_LoadShader("depth");
 	V_DeleteShader(skyShader);			skyShader = V_LoadShader("sky");
+	V_DeleteShader(smokeShader);		smokeShader = V_LoadShader("smoke");
 	
 	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
@@ -200,11 +226,20 @@ void LoadShaders() {
 	V_SetShader(planeShader);
 	V_SetParam1i("w", post0.w);
 	V_SetParam1i("h", post0.h);
-	V_SetParam1i("tex0", 0);
+	V_SetParam1i("tex0", texFBO0);
+	V_SetParam1i("tex1", texFBO1);
 	V_SetParam1i("shadow", texShadow);
 	V_SetParam1i("depth", 1);
 	V_SetParam1f("farPlane", V_FAR);
 	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
+	
+	V_SetShader(smokeShader);
+	V_SetParam1i("tex0", texDiff);
+	V_SetParam1i("texSky", texSky);
+	V_SetParam4m("matProj", matProj);
+	V_SetParam3f("bgColor", 0, 0, 0.3f);
+	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
 	
 	V_reloadShaders = false;
 }

@@ -1,11 +1,12 @@
 #version 330 core
 
 layout(location = 0)out vec4 color_out;
+layout(location = 1)out vec4 depth_out;
 
 in vec3 uv;
 
 uniform int w, h;
-uniform sampler2D tex0, shadow;
+uniform sampler2D tex0, tex1, shadow;
 uniform vec2 dir;
 uniform float farPlane;
 uniform vec3 modColor;
@@ -16,7 +17,7 @@ float blurScale = 2, blurStartDist = abs(farPlane) * 3.0 / 4.0,
 	nearBlurEnd = 0.3;
 
 void main() {
-	float rawDepth = texture(tex0, uv.st).a;
+	float rawDepth = texture(tex1, uv.st).a;
 	float fragDepth = rawDepth * farPlane;
 	vec2 deltaDir = dir / vec2(w, h) * blurScale;
 	
@@ -44,5 +45,6 @@ void main() {
 	blur /= strength;
 	blur *= vec4(modColor, 1);
 	
-	color_out = vec4(blur.rgb, rawDepth);
+	color_out = vec4(blur.rgb, texture(tex0, uv.st).a);
+	depth_out = vec4(rawDepth);
 }

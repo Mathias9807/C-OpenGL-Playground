@@ -44,6 +44,19 @@ void V_SetDepthTesting(bool b) {
 	else glDisable(GL_DEPTH_TEST);
 }
 
+void V_SetDepthWriting(bool b) {
+	glDepthMask(b);
+}
+
+void V_SetAlphaBlending(bool b) {
+	if (b) {
+		glEnable(GL_BLEND);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}else {
+		glDisable(GL_BLEND);
+	}
+}
+
 void V_SetFBO(struct fbo fbo) {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo.id);
 	glViewport(0, 0, fbo.w, fbo.h);

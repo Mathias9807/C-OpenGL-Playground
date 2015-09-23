@@ -88,6 +88,8 @@ void V_RenderModel(model_t* m);
 void V_ClearColor(float r, float g, float b, float a);
 void V_ClearDepth();
 void V_SetDepthTesting(bool b);
+void V_SetDepthWriting(bool b);
+void V_SetAlphaBlending(bool b);
 void V_CreateFBO(struct fbo* fbo, int w, int h, int attachments);
 void V_CreateDepthFBO(struct fbo* fbo, int w, int h);
 void V_SetFBO(struct fbo fbo);
