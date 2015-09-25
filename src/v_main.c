@@ -7,11 +7,18 @@
 #include "g_collision.h"
 
 model_t model, plane, pillar, cube, sphere, walther, scarecrow, collBox;
+
 mat4x4 matProj, matView, matModel, matShadow, identity;
+
 GLuint shader, planeShader, depthShader, skyShader, smokeShader;
+
 struct fbo post0, post1, depth, shadow;
+
 GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture;
-const int texFBO0 = 0, texFBO1 = 1, texDepth = 2, texSky = 3, texShadow = 4, texDiff = 8, texSpec = 9, texNormal = 10;
+enum {
+	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff, texSpec, texNormal
+};
+
 light l = LIGHT_DEFAULT;
 list smokeParts;
 bool V_reloadShaders = true;

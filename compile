@@ -6,7 +6,7 @@ OUT="3D"
 LOG=$OUT.log
 
 INCLUDES="-I./include"
-LIBS="-L./libs -F/Library/Frameworks \
+LIBS="-F/Library/Frameworks \
 	-framework SDL2 -framework OpenGL \
 	-lGLEW -lassimp"
 
