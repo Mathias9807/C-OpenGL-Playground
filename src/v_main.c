@@ -13,6 +13,7 @@ struct fbo post0, post1, depth, shadow;
 GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture;
 const int texFBO0 = 0, texFBO1 = 1, texDepth = 2, texSky = 3, texShadow = 4, texDiff = 8, texSpec = 9, texNormal = 10;
 light l = LIGHT_DEFAULT;
+list smokeParts;
 bool V_reloadShaders = true;
 
 extern AABB dummyBox;
@@ -56,6 +57,10 @@ void V_Init() {
 	V_BindTexture(grassTexture, texDiff);
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
+	
+	smokeParts = (list) {NULL, 0};
+	for (int i = 0; i < 3; i++) 
+		V_AddSmoke((vec3) {i, 2, 0}, 2);
 	
 	LoadShaders();
 	
@@ -108,11 +113,23 @@ void V_RenderSmoke() {
 	V_SetParam4m("matView", matView);
 	V_SetParam1f("farPlane", 1);
 	
-	mat4x4_identity(matModel);
-	mat4x4_translate(matModel, 2, 0, 2);
-	V_SetParam4m("matModel", matModel);
-	V_BindTexture(smokeTexture, texDiff);
-	V_RenderModel(&plane);
+	listEntry* cur = smokeParts.first;
+	while (cur) {
+		mat4x4_identity(matModel);
+		vec3 pos = {
+			((smoke*) cur->value)->pos[0], 
+			((smoke*) cur->value)->pos[1], 
+			((smoke*) cur->value)->pos[2], 
+		};
+		float scale = ((smoke*) cur->value)->radius;
+		mat4x4_translate(matModel, pos[0], pos[1], pos[2]);
+		mat4x4_scale_aniso(matModel, matModel, scale, scale, scale);
+		V_SetParam4m("matModel", matModel);
+		V_BindTexture(smokeTexture, texDiff);
+		V_RenderModel(&plane);
+		
+		cur = (listEntry*) cur->next;
+	}
 }
 
 void V_RenderNearScene() {
@@ -242,6 +259,16 @@ void LoadShaders() {
 	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
 	
 	V_reloadShaders = false;
+}
+
+void V_AddSmoke(vec3 pos, float radius) {
+	smoke* s = malloc(sizeof(smoke));
+	s->pos[0] = pos[0];
+	s->pos[1] = pos[1];
+	s->pos[2] = pos[2];
+	s->radius = radius;
+	
+	ListAdd(&smokeParts, s);
 }
 
 void V_Quit() {

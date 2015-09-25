@@ -12,11 +12,27 @@
 
 #define TITLE "3D"
 
-typedef struct sprite_s {
+typedef struct listEntryStruct {
+	void* value;
+	struct listEntryStruct* next;
+	struct listEntryStruct* prev;
+} listEntry;
+
+typedef struct {
+	listEntry* first;
+	int size;
+} list;
+
+typedef struct {
 	int w;			// Dimensions of pixel array
 	int h;
 	uint32_t* pix;	// Pixel array in format ARGB
-} sprite_t;
+} sprite;
+
+void* ListGet(list* l, int index);
+int ListSize(list* l);
+void ListAdd(list* l, void* value);
+void ListRemove(list* l, int index);
 
 
 #endif //DEF_H

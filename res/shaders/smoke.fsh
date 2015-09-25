@@ -1,7 +1,6 @@
 #version 330 core
 
 layout(location = 0)out vec4 color_out;
-layout(location = 1)out vec4 depth_out;
 
 in vec3 uv, normal;
 in vec4 vertex_w, vertex_c, vertex_p; // vertex_shadow;
@@ -57,5 +56,5 @@ void main() {
 				clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);*/
 	
 	color_out = vec4(light, texture(tex0, uv.st).a);
-	depth_out = vec4(vertex_p.z / farPlane);
+	// Shader doesn't write to the depth attachment
 }

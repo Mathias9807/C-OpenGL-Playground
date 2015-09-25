@@ -22,7 +22,7 @@ void main() {
 	normal = normal_in;
 	
 	vertex_w = matModel * vec4(0, 0, 0, 1);
-	vertex_c = matView * vertex_w + vec4(vertex_in, 0);
+	vertex_c = matView * vertex_w + matModel * vec4(vertex_in, 0);
 	vertex_p = matProj * vertex_c;
 //	vertex_shadow = matShadow * vertex_w;
 	gl_Position = vertex_p;
