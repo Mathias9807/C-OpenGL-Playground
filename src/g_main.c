@@ -6,7 +6,6 @@
 #include "input.h"
 #include <linmath.h>
 #include <math.h>
-#include "g_collision.h"
 
 #define PITCH_LIMIT M_PI/2
 
@@ -17,6 +16,8 @@ mat4x4 G_gunMat;
 vec3 lastGunPos, prefGunPos = {-0.15, -0.1, 0.4}, curGunPos;
 float curGunYRot = 0, curGunZRot = 0;
 bool actionHeld = false;
+vec3 smokeAcc = {0, 1, 0};
+int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 
 AABB dummyBox = {-1, -1, -1, 2, 2, 2};
 float dummyXRot = 0;
@@ -25,6 +26,8 @@ void Shoot();
 
 void G_Init() {
 	G_camPos[2] = 2.5;
+	
+	smokeParts = (list) {NULL, 0};
 }
 
 void G_Tick() {
@@ -76,6 +79,24 @@ void G_Tick() {
 	
 	dummyXRot *= pow(0.0001, Sys_deltaMillis / 1000.0);
 	
+	if (lastSmokeSpawn - Sys_TimeMillis() > smokeSpawnInterval) {
+		G_AddSmoke((vec3) {2, 0, 0}, (vec3) {0, 0, 0}, 0.5, 5000);
+		lastSmokeSpawn += smokeSpawnInterval;
+	}
+	for (int i = 0; i < ListSize(&smokeParts); i++) {
+		smoke* s = (smoke*) ListGet(&smokeParts, i);
+		
+		s->timeLeft -= Sys_deltaMillis;
+		if (s->timeLeft <= 0) {
+			ListRemove(&smokeParts, i);
+			i--;
+			continue;
+		}
+		
+		G_TickPointPhysics(&s->p, smokeAcc);
+		s->radius *= pow(1.2, Sys_deltaMillis / 1000.0);
+	}
+	
 	if (In_IsKeyPressed(IN_RELOAD)) V_reloadShaders = true;
 }
 
@@ -86,6 +107,20 @@ void Shoot() {
 		-cos(G_camRot[0]) * cos(G_camRot[1]), 
 	};
 	if (G_RayHitsAABB(dummyBox, G_camPos, rayDir)) dummyXRot = -M_PI / 8;
+}
+
+void G_AddSmoke(vec3 pos, vec3 vel, float radius, int timeLeft) {
+	smoke* s = malloc(sizeof(smoke));
+	s->p.p[0]	= pos[0];
+	s->p.p[1]	= pos[1];
+	s->p.p[2]	= pos[2];
+	s->p.v[0]	= vel[0];
+	s->p.v[1]	= vel[1];
+	s->p.v[2]	= vel[2];
+	s->radius	= radius;
+	s->timeLeft	= timeLeft;
+	
+	ListAdd(&smokeParts, s);
 }
 
 void G_Quit() {

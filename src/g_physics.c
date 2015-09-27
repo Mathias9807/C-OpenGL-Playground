@@ -1,6 +1,7 @@
-// g_collision.h - Geometry functions and types
+// g_physics.h - Geometry and physics functions and types
 
-#include "g_collision.h"
+#include "g_physics.h"
+#include "sys.h"
 
 float vec3_dot(vec3 a, vec3 b) {
 	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -60,4 +61,12 @@ bool G_RayHitsAABB(AABB t, vec3 p, vec3 dir) {
 	}
 	
 	return false;
+}
+
+void G_TickPointPhysics(point* p, vec3 a) {
+	float t = Sys_deltaMillis / 1000.0;
+	for (int i = 0; i < 3; i++) {
+		p->p[i] += p->v[i] * t + a[i] * t * t / 2;
+		p->v[i] += a[i] * t;
+	}
 }

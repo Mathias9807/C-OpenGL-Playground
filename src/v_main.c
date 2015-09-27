@@ -4,7 +4,7 @@
 #include "sys.h"
 #include "g_main.h"
 #include "v_opengl.h"
-#include "g_collision.h"
+#include "g_physics.h"
 
 model_t model, plane, pillar, cube, sphere, walther, scarecrow, collBox;
 
@@ -20,7 +20,6 @@ enum {
 };
 
 light l = LIGHT_DEFAULT;
-list smokeParts;
 bool V_reloadShaders = true;
 
 extern AABB dummyBox;
@@ -64,10 +63,6 @@ void V_Init() {
 	V_BindTexture(grassTexture, texDiff);
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
-	
-	smokeParts = (list) {NULL, 0};
-	for (int i = 0; i < 3; i++) 
-		V_AddSmoke((vec3) {i, 2, 0}, 2);
 	
 	LoadShaders();
 	
@@ -124,9 +119,9 @@ void V_RenderSmoke() {
 	while (cur) {
 		mat4x4_identity(matModel);
 		vec3 pos = {
-			((smoke*) cur->value)->pos[0], 
-			((smoke*) cur->value)->pos[1], 
-			((smoke*) cur->value)->pos[2], 
+			((smoke*) cur->value)->p.p[0], 
+			((smoke*) cur->value)->p.p[1], 
+			((smoke*) cur->value)->p.p[2], 
 		};
 		float scale = ((smoke*) cur->value)->radius;
 		mat4x4_translate(matModel, pos[0], pos[1], pos[2]);
@@ -266,16 +261,6 @@ void LoadShaders() {
 	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
 	
 	V_reloadShaders = false;
-}
-
-void V_AddSmoke(vec3 pos, float radius) {
-	smoke* s = malloc(sizeof(smoke));
-	s->pos[0] = pos[0];
-	s->pos[1] = pos[1];
-	s->pos[2] = pos[2];
-	s->radius = radius;
-	
-	ListAdd(&smokeParts, s);
 }
 
 void V_Quit() {
