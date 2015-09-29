@@ -130,7 +130,9 @@ int main(int argc, char** argv) {
 		
 		if (secondTimer >= 1000) {
 			secondTimer -= 1000;
-			printf("FPS: %d\n", frames);
+			
+			printf("\rFPS: %d", frames);
+			fflush(stdout);
 			frames = 0;
 		}
 		
@@ -138,6 +140,7 @@ int main(int argc, char** argv) {
 		V_Tick();
 		Sys_UpdateWindow();
 	}
+	printf("\n");
 	
 	G_Quit();
 	V_Quit();
