@@ -9,8 +9,7 @@
 #include <GL/glew.h>
 #include <linmath.h>
 
-#define V_FOV 65.0/180*M_PI
-#define V_NEAR 0.1
+#define V_NEAR 0.01
 #define V_FAR 100
 #define V_WINDOW_FBO ((struct fbo){0,V_WIDTH,V_HEIGHT})
 #define LIGHT_DEFAULT (light) {{0, 0, 0}, {1, 1, 1}, false};

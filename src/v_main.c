@@ -6,7 +6,7 @@
 #include "v_opengl.h"
 #include "g_physics.h"
 
-model_t model, plane, pillar, cube, sphere, walther, scarecrow, collBox;
+model_t model, plane, pillar, cube, sphere, weapon, scarecrow, collBox;
 
 mat4x4 matProj, matView, matModel, matShadow, identity;
 
@@ -14,12 +14,13 @@ GLuint shader, planeShader, depthShader, skyShader, smokeShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassTexture, roughTexture, skyMap, waltherTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture;
+GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture;
 enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff, texSpec, texNormal
 };
 
 light l = LIGHT_DEFAULT;
+float V_vertFov = 45.0/180*M_PI;
 bool V_reloadShaders = true;
 
 extern AABB dummyBox;
@@ -40,14 +41,14 @@ void V_Init() {
 	V_LoadAssimp("plane.obj", &plane);
 	V_LoadAssimp("Cube.obj", &cube);
 	V_LoadAssimp("Disco.obj", &sphere);
-	V_LoadAssimp("Walther.obj", &walther);
+	V_LoadAssimp("SKS.dae", &weapon);
 	V_LoadAssimp("Scarecrow.dae", &scarecrow);
 	V_LoadAssimp("CollisionBox.obj", &collBox);
 	
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
-	waltherTexture = V_LoadTexture("Walther.png");
+	weaponTexture = V_LoadTexture("SKS.png");
 	specTexture = V_LoadTexture("SpecularGrain.png");
 	normalTexture = V_LoadTexture("NormalMap.png");
 	blackTexture = V_LoadTexture("Black.png");
@@ -138,9 +139,9 @@ void V_RenderNearScene() {
 	V_SetParam4m("matModel", G_gunMat);
 	V_SetParam1f("uvScale", 1);
 	V_BindTexture(flatNormal, texNormal);
-	V_BindTexture(waltherTexture, texDiff);
-	V_BindTexture(waltherTexture, texSpec);
-	V_RenderModel(&walther);
+	V_BindTexture(weaponTexture, texDiff);
+	V_BindTexture(weaponTexture, texSpec);
+	V_RenderModel(&weapon);
 }
 
 void V_Tick() {
@@ -215,7 +216,7 @@ void LoadShaders() {
 	V_DeleteShader(skyShader);			skyShader = V_LoadShader("sky");
 	V_DeleteShader(smokeShader);		smokeShader = V_LoadShader("smoke");
 	
-	V_MakeProjection(matProj, V_FOV, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
+	V_MakeProjection(matProj, V_vertFov, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
 	mat4x4_identity(matShadow);
 	vec4 lightDir = {1, 1, 1, 0};
 	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
