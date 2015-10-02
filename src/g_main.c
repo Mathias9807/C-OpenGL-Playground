@@ -10,11 +10,11 @@
 
 #define PITCH_LIMIT M_PI/2
 
-float G_moveSpeed = 8;
-float G_rotSpeed = 3;
+float G_moveSpeed = 8, G_rotSpeed = 3;
 vec3 G_camPos, G_camRot;
+float fov = 65, adsFov = 40;
 mat4x4 G_gunMat;
-vec3 defGunPos = {0, 0, 0.3}, hipGunPos = {-0.2, -0.15, 0.4};
+vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5};
 float curGunXRot = 0, curGunYRot = 0, curGunZRot = 0;
 bool ads = false;
 double lastAdsTime = -1;
@@ -74,13 +74,20 @@ void G_Tick() {
 	mat4x4_translate(G_gunMat, G_camPos[0], G_camPos[1], G_camPos[2]);
 	mat4x4_rotate_Y(G_gunMat, G_gunMat, G_camRot[1] + M_PI);
 	mat4x4_rotate_X(G_gunMat, G_gunMat, -G_camRot[0]);
-	mat4x4_translate_in_place(G_gunMat, defGunPos[0], defGunPos[1], defGunPos[2]);
-	double d = G_Value((linearf) {0, 0.15, 1 / 0.15, 0},
-		Sys_TimeMillis() / 1000.0 - lastAdsTime);
-	if (ads) d = 1 - d;
-	mat4x4_translate_in_place(G_gunMat,
-		d * hipGunPos[0], d * hipGunPos[1],	d * hipGunPos[2]);
 
+	termf terms[2] = {{2, 2}, {-1, 4}};
+	double d = G_Valuef((function) {0, 1, 2, terms},
+						(Sys_TimeMillis() / 1000.0 - lastAdsTime) * 5);
+	if (ads) d = 1 - d;
+	V_SetProj(fov * d + adsFov * (1 - d));
+	vec3 resultant = {0, 0, 0};
+	for (int i = 0; i < 3; i++) {
+		resultant[i] += defGunPos[i];
+		resultant[i] += hipGunPos[i] * d;
+	}
+	resultant[0] += d * 0.01 * cos(Sys_TimeMillis() / 2000.0);
+	resultant[1] += d * 0.005 * cos(Sys_TimeMillis() / 1500.0);
+	mat4x4_translate_in_place(G_gunMat, resultant[0], resultant[1], resultant[2]);
 	
 	dummyXRot *= pow(0.0001, Sys_deltaMillis / 1000.0);
 	

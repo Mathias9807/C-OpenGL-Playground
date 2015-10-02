@@ -20,7 +20,7 @@ enum {
 };
 
 light l = LIGHT_DEFAULT;
-float V_vertFov = 45.0/180*M_PI;
+float V_vertFov = 45;
 bool V_reloadShaders = true;
 
 extern AABB dummyBox;
@@ -215,8 +215,8 @@ void LoadShaders() {
 	V_DeleteShader(depthShader);		depthShader = V_LoadShader("depth");
 	V_DeleteShader(skyShader);			skyShader = V_LoadShader("sky");
 	V_DeleteShader(smokeShader);		smokeShader = V_LoadShader("smoke");
-	
-	V_MakeProjection(matProj, V_vertFov, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR / V_NEAR);
+
+	V_SetProj(65);
 	mat4x4_identity(matShadow);
 	vec4 lightDir = {1, 1, 1, 0};
 	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
@@ -262,6 +262,19 @@ void LoadShaders() {
 	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
 	
 	V_reloadShaders = false;
+}
+
+void V_SetProj(float fov) {
+	if (fov == V_vertFov) return;
+	V_vertFov = fov;
+	V_MakeProjection(matProj, fov / 180 * M_PI, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR);
+
+	V_SetShader(shader);
+	V_SetParam4m("matProj", matProj);
+	V_SetShader(skyShader);
+	V_SetParam4m("matProj", matProj);
+	V_SetShader(smokeShader);
+	V_SetParam4m("matProj", matProj);
 }
 
 void V_Quit() {
