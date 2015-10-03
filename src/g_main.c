@@ -15,10 +15,10 @@ vec3 G_camPos, G_camRot;
 float fov = 65, adsFov = 40;
 mat4x4 G_gunMat;
 vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5},
-fireGunPos = {-0.004, 0.0125, -0.03}, hipFireGunPos = {0, 0.1, -0.2};
+fireGunPos = {-0.004, 0.0125, -0.03}, hipFireGunPos = {0, 0.1, -0.4};
 float curGunXRot = 0, curGunYRot = 0, curGunZRot = 0;
 bool ads = false;
-double lastAdsTime = -1, lastShootTime = -1;
+double lastAdsTime = -1, lastShootTime = -1, dummyHitTime = 0;
 bool actionHeld = false, toggleHeld = false;
 vec3 smokeAcc = {0, 1, 0};
 int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
@@ -100,7 +100,9 @@ void G_Tick() {
 	resultant[1] += d * 0.005 * cos(Sys_TimeMillis() / 1500.0);
 	mat4x4_translate_in_place(G_gunMat, resultant[0], resultant[1], resultant[2]);
 	
-	dummyXRot *= pow(0.0001, Sys_deltaMillis / 1000.0);
+	if (dummyHitTime)
+		dummyXRot = M_PI / -2 * G_Valuef((function) {0, 1, 1, &((termf) {1, 3})},
+			Sys_TimeMillis() / 1000.0 - dummyHitTime);
 	
 	if (lastSmokeSpawn - Sys_TimeMillis() > smokeSpawnInterval) {
 		G_AddSmoke((vec3) {2, 0, 0}, (vec3) {0, 0, 0}, 0.5, 5000);
@@ -129,7 +131,10 @@ void Shoot() {
 		sin(G_camRot[0]), 
 		-cos(G_camRot[0]) * cos(G_camRot[1]), 
 	};
-	if (G_RayHitsAABB(dummyBox, G_camPos, rayDir)) dummyXRot = -M_PI / 8;
+	if (!dummyHitTime && G_RayHitsAABB(dummyBox, G_camPos, rayDir)) {
+		dummyXRot = -M_PI / 8;
+		dummyHitTime = Sys_TimeMillis() / 1000.0;
+	}
 	lastShootTime = Sys_TimeMillis() / 1000.0;
 	fireGunPos[0] = cos(Sys_TimeMillis() / 10.0) * 0.002;
 }
