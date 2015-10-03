@@ -4,15 +4,15 @@
 #include <math.h>
 
 float G_Valuel(linearf f, float x) {
-	if (x < f.start)	return x = f.start;
-	if (x > f.stop)		return x = f.stop;
+	if (x < f.start)	x = f.start;
+	if (x > f.stop)		x = f.stop;
 
 	return f.k * x + f.m;
 }
 
 float G_Valuef(function f, float x) {
-	if (x < f.start)	return x = f.start;
-	if (x > f.stop)		return x = f.stop;
+	if (x < f.start)	x = f.start;
+	if (x > f.stop)		x = f.stop;
 
 	float sum = 0;
 	for (int i = 0; i < f.numTerms; i++) {
