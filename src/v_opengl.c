@@ -314,6 +314,26 @@ GLuint V_LoadCubeMap(char* name) {
 	return cubeTex;
 }
 
+void V_LoadSprite(char* name, sprite* s) {
+	char path[64]; Sys_GetResourcePath(name, path);
+	unsigned char* data;
+	int w, h, n;
+	data = stbi_load(path, &w, &h, &n, 4);
+
+	s->w = w;
+	s->h = h;
+	s->pix = malloc(w * h * sizeof(uint32_t));
+	for (int i = 0; i < w * h; i++) {
+		s->pix[i] = 0;
+		s->pix[i] |= data[i * 4 + 0] << 24;
+		s->pix[i] |= data[i * 4 + 1] << 16;
+		s->pix[i] |= data[i * 4 + 2] << 8;
+		s->pix[i] |= data[i * 4 + 3] << 0;
+	}
+
+	stbi_image_free(data);
+}
+
 void V_SetParam1f(const char* var, float f) {
 	GLuint id = glGetUniformLocation(curShader, var);
 	glUniform1f(id, f);

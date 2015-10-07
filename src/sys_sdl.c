@@ -42,6 +42,12 @@ void Sys_CheckErrors() {
 	}
 }
 
+void Sys_Error(char* s) {
+	printf("%s\n", s);
+
+	Sys_CloseWindow();
+}
+
 void Sys_OpenWindow() {
 	SDL_Init(SDL_INIT_VIDEO);
 	

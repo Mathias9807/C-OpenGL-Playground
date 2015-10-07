@@ -6,7 +6,7 @@
 #include "v_opengl.h"
 #include "g_physics.h"
 
-model_t model, plane, pillar, cube, sphere, weapon, scarecrow, collBox;
+model_t model, plane, heightMap, pillar, cube, sphere, weapon, scarecrow, collBox;
 
 mat4x4 matProj, matView, matModel, matShadow, identity;
 
@@ -35,7 +35,7 @@ void V_Init() {
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 2);
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
 	V_CreateDepthFBO(&shadow, 512, 512);
-	
+
 	V_LoadAssimp("Hills.obj", &model);
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
 	V_LoadAssimp("plane.obj", &plane);
@@ -44,6 +44,9 @@ void V_Init() {
 	V_LoadAssimp("SKS.dae", &weapon);
 	V_LoadAssimp("Scarecrow.dae", &scarecrow);
 	V_LoadAssimp("CollisionBox.obj", &collBox);
+	sprite heightSprite;
+	V_LoadSprite("Terrain.png", &heightSprite);
+	V_CreateHeightMap(&heightMap, &heightSprite);
 	
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	roughTexture = V_LoadTexture("Fabric.png");
@@ -71,7 +74,7 @@ void V_Init() {
 }
 
 void V_RenderScene() {
-	V_BindTexture(normalTexture, texNormal);
+	/*V_BindTexture(normalTexture, texNormal);
 	mat4x4_translate(matModel, 0, -1, 0);
 	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
 	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
@@ -100,15 +103,23 @@ void V_RenderScene() {
 			mat4x4_translate_in_place(matModel, 0, -4, 0);
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&pillar);
-		}
-	
+		}*/
+
 	mat4x4_translate(matModel, dummyBox.x + dummyBox.w / 2, dummyBox.y, dummyBox.z + dummyBox.d / 2);
 	mat4x4_rotate_X(matModel, matModel, -M_PI / 2 + dummyXRot);
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 1);
 	V_BindTexture(scareTexture, texDiff);
 	V_BindTexture(blackTexture, texSpec);
+	V_BindTexture(flatNormal, texNormal);
 	V_RenderModel(&scarecrow);
+
+	mat4x4_translate(matModel, 0, -2, 0);
+	V_SetParam4m("matModel", matModel);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(blackTexture, texDiff);
+	V_BindTexture(blackTexture, texSpec);
+	V_RenderModel(&heightMap);
 }
 
 void V_RenderSmoke() {

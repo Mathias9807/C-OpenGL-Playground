@@ -13,6 +13,7 @@ uint32_t Sys_deltaMillis;
 
 void Sys_GetResourcePath(char* name, char* dest);
 void Sys_CheckErrors();
+void Sys_Error();
 
 // Video
 void Sys_OpenWindow();

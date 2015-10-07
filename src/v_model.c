@@ -176,6 +176,79 @@ void V_LoadAssimp(char* path, model_t* m) {
 	printf("Loaded model: %s\n", path);
 }
 
+void V_CreateHeightMap(model_t* m, sprite* s) {
+	int w = s->w, h = s->h;
+	if (w < 1 || h < 1)
+		Sys_Error("Heightmap has an invalid width or height. ");
+
+	int vertCount = (w + 1) * (h + 1);
+	int indexCount = w * h * 6;
+
+	m->keyCount = 0;
+	m->boneCount = 0;
+	m->bones = NULL;
+
+	for (int i = 0; i < m->boneCount; i++) m->bones[i].keyCount = 0;
+
+	VAO_t* vao = &m->vao;
+	glGenVertexArrays(1, &vao->id);
+	glBindVertexArray(vao->id);
+	vao->vertCount = vertCount;
+	vao->indexCount = indexCount;
+
+	vao->vert.bufferSize = 3 * vertCount * sizeof(float);
+	vao->vert.buffer = malloc(vao->vert.bufferSize);
+	for (int y = 0; y < h + 1; y++) {
+		for (int x = 0; x < w + 1; x++) {
+			int xx = x % w, yy = y % h;
+			double height = ((s->pix[yy * w + xx] & 0xFF000000) >> 24) / 256.0;
+			((float*)vao->vert.buffer)[y * (w + 1) * 3 + x * 3 + 0] = x;
+			((float*)vao->vert.buffer)[y * (w + 1) * 3 + x * 3 + 1] = height;
+			((float*)vao->vert.buffer)[y * (w + 1) * 3 + x * 3 + 2] = y;
+		}
+	}
+	V_InitVBO(&vao->vert, 0, 3, GL_FLOAT);
+
+	vao->uv.buffer = NULL;
+
+	vao->normal.bufferSize = 3 * vertCount * sizeof(float);
+	vao->normal.buffer = malloc(vao->normal.bufferSize);
+	for (int i = 0; i < vertCount; i++) {
+		((float*)vao->normal.buffer)[i * 3 + 0] = 0;
+		((float*)vao->normal.buffer)[i * 3 + 1] = 1;
+		((float*)vao->normal.buffer)[i * 3 + 2] = 0;
+	}
+	V_InitVBO(&vao->normal, 2, 3, GL_FLOAT);
+
+	vao->tangents.bufferSize = 3 * vertCount * sizeof(float);
+	vao->tangents.buffer = malloc(vao->tangents.bufferSize);
+	for (int i = 0; i < vertCount; i++) {
+		((float*)vao->tangents.buffer)[i * 3 + 0] = 1;
+		((float*)vao->tangents.buffer)[i * 3 + 1] = 0;
+		((float*)vao->tangents.buffer)[i * 3 + 2] = 0;
+	}
+	V_InitVBO(&vao->tangents, 4, 3, GL_FLOAT);
+
+	glGenBuffers(1, &vao->index.id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vao->index.id);
+	vao->index.type = GL_UNSIGNED_INT;
+	vao->index.dim = 1;
+	vao->index.buffer = malloc(indexCount * sizeof(int));
+	for (int x = 0; x < w; x++) {
+		for (int y = 0; y < h; y++) {
+			((int*)vao->index.buffer)[y * w * 6 + x * 6 + 0] = y * (w + 1) + x;
+			((int*)vao->index.buffer)[y * w * 6 + x * 6 + 1] = (y + 1) * (w + 1) + x;
+			((int*)vao->index.buffer)[y * w * 6 + x * 6 + 2] = y * (w + 1) + x + 1;
+			((int*)vao->index.buffer)[y * w * 6 + x * 6 + 3] = (y + 1) * (w + 1) + x;
+			((int*)vao->index.buffer)[y * w * 6 + x * 6 + 4] = (y + 1) * (w + 1) + x + 1;
+			((int*)vao->index.buffer)[y * w * 6 + x * 6 + 5] = y * (w + 1) + x + 1;
+		}
+	}
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(int), vao->index.buffer, GL_STATIC_DRAW);
+
+	vao->weights.buffer = NULL;
+}
+
 void V_InitVBO(VBO_t* vbo, int index, int dim, GLenum type) {
 	glGenBuffers(1, &vbo->id);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo->id);
@@ -192,7 +265,7 @@ void V_RenderModel(model_t* m) {
 	glEnableVertexAttribArray(2);
 	if (m->vao.weights.buffer) glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->vao.index.id);
+	if (!m->vao.index.buffer) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->vao.index.id);
 	
 	glDrawElements(GL_TRIANGLES, m->vao.indexCount, m->vao.index.type, (void*) 0);
 	

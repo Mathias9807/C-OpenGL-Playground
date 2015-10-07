@@ -35,4 +35,4 @@ void ListAdd(list* l, void* value);
 void ListRemove(list* l, int index);
 
 
-#endif //DEF_H
+#endif // DEF_H
