@@ -7,23 +7,25 @@ in vec3 uv, normal;
 in vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
 in mat3 matNormal;
 
-uniform mat4 matProj, matView, matModel, matShadow;
-uniform sampler2D			tex0, tex1, tex2;
+uniform mat4				matProj, matView, matModel, matShadow;
+uniform sampler2D			tex0, tex1, tex2, tex3;
 uniform sampler2DShadow		texShadow;
 uniform samplerCube			texSky;
 uniform float				time;
 uniform float				farPlane;
 uniform vec3				bgColor, camPos, lightDir;
+uniform int					terrain;
 uniform struct light_t {
 	vec3 pos, col;
 	bool directional;
 } lights;
 
 void main() {
-	vec3 normal_i = normalize((matModel * vec4(matNormal * (texture(tex2, uv.st).xyz * 2 - 1), 0)).xyz);
-	vec3 texDiff = texture(tex0, uv.st).rgb;
+	vec3 normal_i = normalize(normal);
+	float slope = 1 - normal_i.y;
+	vec3 texDiff = mix(texture(tex0, uv.st).rgb, texture(tex3, uv.st).rgb, terrain * pow(slope * 2, 1.5));
 	vec3 texSpec = texture(tex1, uv.st).rgb;
-	
+
 	float shadow = 0;
 	vec2 shadowUV = vertex_shadow.st / 2 + 0.5;
 	
@@ -64,7 +66,7 @@ void main() {
 	
 	light /= 2;
 	light = mix(light, texture(texSky, vertex_w.xyz - camPos).rgb, 
-				clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);
+				clamp(-vertex_c.z / farPlane - 0.8, 0, 0.8) * 5);
 	
 	color_out = vec4(light, texture(tex0, uv.st).a);
 	depth_out = vec4(vertex_p.z / farPlane);

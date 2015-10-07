@@ -9,8 +9,8 @@
 #include <GL/glew.h>
 #include <linmath.h>
 
-#define V_NEAR 0.01
-#define V_FAR 100
+#define V_NEAR 0.02
+#define V_FAR 200
 #define V_WINDOW_FBO ((struct fbo){0,V_WIDTH,V_HEIGHT})
 #define LIGHT_DEFAULT (light) {{0, 0, 0}, {1, 1, 1}, false};
 
@@ -85,7 +85,7 @@ void V_LoadAssimp(char* path, model_t* m);
 void V_InitOpenGL();
 void V_QuitOpenGL();
 void V_RenderModel(model_t* m);
-void V_CreateHeightMap(model_t* m, sprite* s);
+void V_CreateHeightMap(model_t* m, sprite* s, int height);
 void V_ClearColor(float r, float g, float b, float a);
 void V_ClearDepth();
 void V_SetDepthTesting(bool b);

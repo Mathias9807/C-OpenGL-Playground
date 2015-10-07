@@ -17,11 +17,12 @@ uniform float uvScale;
 
 void main() {
 	uv = uv_in * uvScale;
-	
+
+	vec3 xNormal = normalize(tangent_in), zNormal = normalize(normal_in);
 	matNormal = mat3(
-		tangent_in, 
-		cross(normal_in, tangent_in), 
-		normal_in
+		xNormal,
+		cross(zNormal, xNormal),
+		zNormal
 	);
 	normal = (matModel * vec4(matNormal * vec3(0, 0, 1), 0)).xyz;
 	

@@ -104,10 +104,10 @@ void G_Tick() {
 		dummyXRot = M_PI / -2 * G_Valuef((function) {0, 1, 1, &((termf) {1, 3})},
 			Sys_TimeMillis() / 1000.0 - dummyHitTime);
 	
-	if (lastSmokeSpawn - Sys_TimeMillis() > smokeSpawnInterval) {
+	/*if (lastSmokeSpawn - Sys_TimeMillis() > smokeSpawnInterval) {
 		G_AddSmoke((vec3) {2, 0, 0}, (vec3) {0, 0, 0}, 0.5, 5000);
 		lastSmokeSpawn += smokeSpawnInterval;
-	}
+	}*/
 	for (int i = 0; i < ListSize(&smokeParts); i++) {
 		smoke* s = (smoke*) ListGet(&smokeParts, i);
 		

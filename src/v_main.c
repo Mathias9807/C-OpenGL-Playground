@@ -14,9 +14,9 @@ GLuint shader, planeShader, depthShader, skyShader, smokeShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture;
+GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, cliffTexture, heightTexture;
 enum {
-	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff, texSpec, texNormal
+	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal
 };
 
 light l = LIGHT_DEFAULT;
@@ -46,9 +46,11 @@ void V_Init() {
 	V_LoadAssimp("CollisionBox.obj", &collBox);
 	sprite heightSprite;
 	V_LoadSprite("Terrain.png", &heightSprite);
-	V_CreateHeightMap(&heightMap, &heightSprite);
-	
+	V_CreateHeightMap(&heightMap, &heightSprite, 5);
+
 	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
+	cliffTexture = V_LoadTexture("Cliffside.png");
+	heightTexture = V_LoadTexture("Terrain.png");
 	roughTexture = V_LoadTexture("Fabric.png");
 	skyMap = V_LoadCubeMap("Sunny sky");
 	weaponTexture = V_LoadTexture("SKS.png");
@@ -64,9 +66,10 @@ void V_Init() {
 	V_BindTexture(shadow.attD, texShadow);
 	V_SetTexInterLinear(true);
 	V_BindCubeMap(skyMap, texSky);
-	V_BindTexture(grassTexture, texDiff);
+	V_BindTexture(grassTexture, texDiff0);
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
+	V_BindTexture(cliffTexture, texDiff1);
 	
 	LoadShaders();
 	
@@ -80,46 +83,50 @@ void V_RenderScene() {
 	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 10);
-	V_BindTexture(whiteTexture, texDiff);
+	V_BindTexture(whiteTexture, texDiff0);
 	V_BindTexture(specTexture, texSpec);
 	V_RenderModel(&plane);
 	
 	mat4x4_translate(matModel, 0, 5, -5);
 	V_SetParam4m("matModel", matModel);
-	V_BindTexture(whiteTexture, texDiff);
+	V_BindTexture(whiteTexture, texDiff0);
 	V_BindTexture(whiteTexture, texSpec);
 	V_RenderModel(&sphere);
 	V_BindTexture(flatNormal, texNormal);
 	V_SetParam1f("uvScale", 1);
 	for (int x = -2; x <= 2; x++) 
 		for (int y = -2; y <= 2; y++) {
-			V_BindTexture(grassTexture, texDiff);
+			V_BindTexture(grassTexture, texDiff0);
 			V_BindTexture(blackTexture, texSpec);
 			mat4x4_translate(matModel, x * 128, 0, y * 128);
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&model);
-			V_BindTexture(whiteTexture, texDiff);
+			V_BindTexture(whiteTexture, texDiff0);
 			V_BindTexture(specTexture, texSpec);
 			mat4x4_translate_in_place(matModel, 0, -4, 0);
 			V_SetParam4m("matModel", matModel);
 			V_RenderModel(&pillar);
-		}*/
+		}
 
 	mat4x4_translate(matModel, dummyBox.x + dummyBox.w / 2, dummyBox.y, dummyBox.z + dummyBox.d / 2);
 	mat4x4_rotate_X(matModel, matModel, -M_PI / 2 + dummyXRot);
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 1);
-	V_BindTexture(scareTexture, texDiff);
+	V_BindTexture(scareTexture, texDiff0);
 	V_BindTexture(blackTexture, texSpec);
 	V_BindTexture(flatNormal, texNormal);
-	V_RenderModel(&scarecrow);
+	V_RenderModel(&scarecrow);*/
 
-	mat4x4_translate(matModel, 0, -2, 0);
+	mat4x4_translate(matModel, -120, -1, -120);
+	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 1);
-	V_BindTexture(blackTexture, texDiff);
+	V_SetParam1i("terrain", 1);
+	V_BindTexture(grassTexture, texDiff0);
 	V_BindTexture(blackTexture, texSpec);
+	V_BindTexture(flatNormal, texNormal);
 	V_RenderModel(&heightMap);
+	V_SetParam1i("terrain", 0);
 }
 
 void V_RenderSmoke() {
@@ -139,7 +146,7 @@ void V_RenderSmoke() {
 		mat4x4_translate(matModel, pos[0], pos[1], pos[2]);
 		mat4x4_scale_aniso(matModel, matModel, scale, scale, scale);
 		V_SetParam4m("matModel", matModel);
-		V_BindTexture(smokeTexture, texDiff);
+		V_BindTexture(smokeTexture, texDiff0);
 		V_RenderModel(&plane);
 		
 		cur = (listEntry*) cur->next;
@@ -150,9 +157,9 @@ void V_RenderNearScene() {
 	V_SetParam4m("matModel", G_gunMat);
 	V_SetParam1f("uvScale", 1);
 	V_BindTexture(flatNormal, texNormal);
-	V_BindTexture(weaponTexture, texDiff);
+	V_BindTexture(weaponTexture, texDiff0);
 	V_BindTexture(weaponTexture, texSpec);
-	V_RenderModel(&weapon);
+	//V_RenderModel(&weapon);
 }
 
 void V_Tick() {
@@ -238,7 +245,8 @@ void LoadShaders() {
 	mat4x4_identity(identity);
 	
 	V_SetShader(shader);
-	V_SetParam1i("tex0", texDiff);
+	V_SetParam1i("tex0", texDiff0);
+	V_SetParam1i("tex3", texDiff1);
 	V_SetParam1i("tex1", texSpec);
 	V_SetParam1i("tex2", texNormal);
 	V_SetParam1i("texShadow", texShadow);
@@ -249,6 +257,7 @@ void LoadShaders() {
 	V_SetParam1f("farPlane", V_FAR);
 	V_SetParam1f("uvScale", 1);
 	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
+	V_SetParam1i("terrain", 0);
 	
 	V_SetShader(skyShader);
 	V_SetParam1i("tex", texSky);
@@ -265,7 +274,7 @@ void LoadShaders() {
 	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
 	
 	V_SetShader(smokeShader);
-	V_SetParam1i("tex0", texDiff);
+	V_SetParam1i("tex0", texDiff0);
 	V_SetParam1i("texSky", texSky);
 	V_SetParam4m("matProj", matProj);
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
