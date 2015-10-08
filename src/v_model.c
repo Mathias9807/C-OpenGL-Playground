@@ -22,7 +22,7 @@ void V_LoadAssimp(char* path, model_t* m) {
 		| aiProcess_FlipUVs 
 		| aiProcess_CalcTangentSpace);
 	if (scene == NULL) {
-		printf("Failed to load model: %s\n", path);
+		Sys_Error("Failed to load model");
 		return;
 	}
 	

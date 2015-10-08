@@ -223,6 +223,8 @@ GLuint V_LoadShader(char* name) {
 	
 	FILE* fragFile = fopen(fragPath, "r");
 	FILE* vertFile = fopen(vertPath, "r");
+
+	if (!fragFile || !vertFile) Sys_Error("Failed to load shader. ");
 	
 	int fragLength = 0;
 	while (fgetc(fragFile) != EOF) fragLength++;

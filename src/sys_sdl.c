@@ -43,24 +43,34 @@ void Sys_CheckErrors() {
 }
 
 void Sys_Error(char* s) {
-	printf("%s\n", s);
+	printf("Runtime error: %s\n", s);
 
 	Sys_CloseWindow();
 }
 
-void Sys_OpenWindow() {
-	SDL_Init(SDL_INIT_VIDEO);
-	
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetSwapInterval(0);
+void Sys_Warning(char* s) {
+	printf("Runtime warning: %s", s);
+}
+
+int Sys_OpenWindow() {
+	if (SDL_Init(SDL_INIT_VIDEO)) return false;
+
+	int attrResult = 0;
+	attrResult += SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	attrResult += SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	attrResult += SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	if (attrResult < 0) return false;
 	
 	Sys_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, V_WIDTH, V_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	if (!Sys_window) return false;
 	
 	Sys_glContext = SDL_GL_CreateContext(Sys_window);
+	if (!Sys_glContext) return false;
+
+	SDL_GL_SetSwapInterval(1);
 	
 	Sys_CheckErrors();
+	return true;
 }
 
 void Sys_UpdateWindow() {
@@ -121,7 +131,8 @@ int main(int argc, char** argv) {
 	Sys_argc = argc;
 	Sys_argv = argv;
 	
-	Sys_OpenWindow();
+	if (!Sys_OpenWindow()) Sys_Error("Failed to open a window with OpenGL Core 3.3");
+
 	G_Init();
 	V_Init();
 	

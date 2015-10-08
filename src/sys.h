@@ -13,10 +13,11 @@ uint32_t Sys_deltaMillis;
 
 void Sys_GetResourcePath(char* name, char* dest);
 void Sys_CheckErrors();
-void Sys_Error();
+void Sys_Error(char* s);
+void Sys_Warning(char* s);
 
 // Video
-void Sys_OpenWindow();
+int Sys_OpenWindow();
 void Sys_UpdateWindow();
 bool Sys_WindowClosed();
 void Sys_CloseWindow();
