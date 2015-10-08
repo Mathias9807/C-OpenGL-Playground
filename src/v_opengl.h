@@ -12,7 +12,7 @@
 #define V_NEAR 0.02
 #define V_FAR 200
 #define V_WINDOW_FBO ((struct fbo){0,V_WIDTH,V_HEIGHT})
-#define LIGHT_DEFAULT (light) {{0, 0, 0}, {1, 1, 1}, false};
+#define LIGHT_DEFAULT {{0, 0, 0}, {1, 1, 1}, false}
 
 typedef struct {
 	GLuint id;

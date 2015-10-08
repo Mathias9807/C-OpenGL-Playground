@@ -1,7 +1,7 @@
-gcc -o 3D.exe src/v_*.c src/g_*.c src/sys_sdl.c ^
-	-I./include ^
+gcc -o 3D.exe -static-libgcc -static-libstdc++ ^
+	src/sys_sdl.c src/v_*.c src/g_*.c src/def.c ^
+	winlibs/glew.c -Iinclude/ -Lwinlibs/ -L. -lopengl32 -lSDL2 -lassimp ^
 	-DM_PI=3.1415926535 -DGLEW_STATIC -DSDL_MAIN_HANDLED ^
-	-Wall -std=c99 ^
-	-L./winlibs -L. -lSDL2 -lglew32 -lOpenGL32 -lassimp
+	-std=c99 -Wall
 
 pause
