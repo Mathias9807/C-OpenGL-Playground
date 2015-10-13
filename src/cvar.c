@@ -4,8 +4,9 @@
 
 list C_cvars = {NULL, 0};
 
-void C_Add(cvar v) {
-	if (C_Get(v.name)) return;
+cvar* C_Add(cvar v) {
+	cvar* existing = C_Get(v.name);
+	if (existing) return existing;
 	
 	cvar* newVar = malloc(sizeof(cvar));
 	
@@ -19,6 +20,7 @@ void C_Add(cvar v) {
 	newVar->value = v.value; // Copy float value
 	
 	ListAdd(&C_cvars, newVar);
+	return newVar;
 }
 
 void C_Set(char* name, float value) {

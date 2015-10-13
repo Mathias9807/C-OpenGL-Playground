@@ -66,7 +66,7 @@ void main() {
 	
 	light /= 2;
 	light = mix(light, texture(texSky, vertex_w.xyz - camPos).rgb, 
-				clamp(-vertex_c.z / farPlane - 0.8, 0, 0.8) * 5);
+				clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);
 	
 	color_out = vec4(light, texture(tex0, uv.st).a);
 	depth_out = vec4(vertex_p.z / farPlane);

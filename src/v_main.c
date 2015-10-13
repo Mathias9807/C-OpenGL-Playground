@@ -5,6 +5,7 @@
 #include "g_main.h"
 #include "v_opengl.h"
 #include "g_physics.h"
+#include "cvar.h"
 
 model_t model, plane, heightMap, pillar, cube, sphere, weapon, scarecrow, collBox;
 
@@ -31,10 +32,12 @@ void LoadShaders();
 void V_Init() {
 	V_InitOpenGL();
 	
+	cvar* shadowSize = C_Add((cvar){"VideoShadowSize", 512});
+	
 	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 2);
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 2);
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
-	V_CreateDepthFBO(&shadow, 512, 512);
+	V_CreateDepthFBO(&shadow, (int)shadowSize->value, (int)shadowSize->value);
 
 	V_LoadAssimp("Hills.obj", &model);
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
@@ -158,8 +161,8 @@ void V_RenderNearScene() {
 	V_SetParam1f("uvScale", 1);
 	V_BindTexture(flatNormal, texNormal);
 	V_BindTexture(weaponTexture, texDiff0);
-	V_BindTexture(weaponTexture, texSpec);
-	//V_RenderModel(&weapon);
+	V_BindTexture(blackTexture, texSpec);
+	V_RenderModel(&weapon);
 }
 
 void V_Tick() {
