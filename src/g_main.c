@@ -26,7 +26,7 @@ int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 AABB dummyBox = {-1, -1, -1, 2, 2, 2};
 float dummyXRot = 0;
 
-char* G_consoleString;
+console G_console;
 
 void Shoot();
 
@@ -35,13 +35,11 @@ void G_Init() {
 	
 	smokeParts = (list) {NULL, 0};
 	
-	G_consoleString = malloc(16);
-	G_consoleString[0] = 0;
 	IN_StartTextInput();
 }
 
 void G_Tick() {
-	IN_ReadTextInput(G_consoleString, 16);
+	IN_ReadTextInput(G_console.text[0], G_CONSOLE_LENGTH);
 	
 	vec3 dir = {0, 0, 0};
 	float moveSpeed = G_moveSpeed * (SYS_deltaMillis / 1000.0);
