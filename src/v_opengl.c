@@ -24,7 +24,7 @@ void V_InitOpenGL() {
 	glEnable(GL_CULL_FACE);
 	V_SetFaceCullingBack(true);
 	
-	animStartTime = Sys_TimeMillis();
+	animStartTime = SYS_TimeMillis();
 }
 
 void V_QuitOpenGL() {
@@ -109,7 +109,7 @@ void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, fbo->attD, 0);
-	Sys_CheckErrors();
+	SYS_CheckErrors();
 	glDrawBuffer(GL_NONE);
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -225,8 +225,8 @@ void V_CheckProgram(GLuint id) {
 }
 
 GLuint V_LoadShader(char* name) {
-	char fragPath[64]; Sys_GetResourcePath("shaders/", fragPath); strcat(fragPath, name); strcat(fragPath, ".fsh");
-	char vertPath[64]; Sys_GetResourcePath("shaders/", vertPath); strcat(vertPath, name); strcat(vertPath, ".vsh");
+	char fragPath[64]; SYS_GetResourcePath("shaders/", fragPath); strcat(fragPath, name); strcat(fragPath, ".fsh");
+	char vertPath[64]; SYS_GetResourcePath("shaders/", vertPath); strcat(vertPath, name); strcat(vertPath, ".vsh");
 	
 	GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
@@ -234,7 +234,7 @@ GLuint V_LoadShader(char* name) {
 	FILE* fragFile = fopen(fragPath, "r");
 	FILE* vertFile = fopen(vertPath, "r");
 
-	if (!fragFile || !vertFile) Sys_Error("Failed to load shader. ");
+	if (!fragFile || !vertFile) SYS_Error("Failed to load shader. ");
 	
 	int fragLength = 0;
 	while (fgetc(fragFile) != EOF) fragLength++;
@@ -280,7 +280,7 @@ void V_DeleteShader(int programId) {
 }
 
 GLuint V_LoadTexture(char* name) {
-	char path[64]; Sys_GetResourcePath(name, path);
+	char path[64]; SYS_GetResourcePath(name, path);
 	unsigned char* data;
 	int w, h, n;
 	data = stbi_load(path, &w, &h, &n, 4);
@@ -309,7 +309,7 @@ GLuint V_LoadCubeMap(char* name) {
 	glGenTextures(1, &cubeTex);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
 	for (int i = 0; i < 6; i++) {
-		char path[64]; Sys_GetResourcePath(name, path); strcat(path, faces[i]);
+		char path[64]; SYS_GetResourcePath(name, path); strcat(path, faces[i]);
 		unsigned char* data;
 		int w, h, n;
 		data = stbi_load(path, &w, &h, &n, 4);
@@ -327,7 +327,7 @@ GLuint V_LoadCubeMap(char* name) {
 }
 
 void V_LoadSprite(char* name, sprite* s) {
-	char path[64]; Sys_GetResourcePath(name, path);
+	char path[64]; SYS_GetResourcePath(name, path);
 	unsigned char* data;
 	int w, h, n;
 	data = stbi_load(path, &w, &h, &n, 4);

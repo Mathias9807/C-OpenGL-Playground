@@ -11,22 +11,22 @@
 
 #define RES_DIR "./res/"
 
-int	Sys_argc = 0;
-char** Sys_argv = NULL;
+int	SYS_argc = 0;
+char** SYS_argv = NULL;
 
-uint32_t Sys_deltaMillis;
+uint32_t SYS_deltaMillis;
 
-SDL_Window* Sys_window;
-SDL_GLContext Sys_glContext;
+SDL_Window* SYS_window;
+SDL_GLContext SYS_glContext;
 
-bool In_readingText = false;
+bool IN_readingText = false;
 
-void Sys_GetResourcePath(char* name, char* dest) {
+void SYS_GetResourcePath(char* name, char* dest) {
 	strcpy(dest, RES_DIR);
 	strcat(dest, name);
 }
 
-void Sys_CheckErrors() {
+void SYS_CheckErrors() {
 //	const char* error = SDL_GetError();
 //	if (*error) printf("SDL Error: %s\n", SDL_GetError());
 	
@@ -44,17 +44,17 @@ void Sys_CheckErrors() {
 	}
 }
 
-void Sys_Error(char* s) {
+void SYS_Error(char* s) {
 	printf("Runtime error: %s\n", s);
 
-	Sys_CloseWindow();
+	SYS_CloseWindow();
 }
 
-void Sys_Warning(char* s) {
+void SYS_Warning(char* s) {
 	printf("Runtime warning: %s", s);
 }
 
-int Sys_OpenWindow() {
+int SYS_OpenWindow() {
 	if (SDL_Init(SDL_INIT_VIDEO)) return false;
 
 	int attrResult = 0;
@@ -63,40 +63,40 @@ int Sys_OpenWindow() {
 	attrResult += SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	if (attrResult < 0) return false;
 	
-	Sys_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, V_WIDTH, V_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	if (!Sys_window) return false;
+	SYS_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, V_WIDTH, V_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	if (!SYS_window) return false;
 	
-	Sys_glContext = SDL_GL_CreateContext(Sys_window);
-	if (!Sys_glContext) return false;
+	SYS_glContext = SDL_GL_CreateContext(SYS_window);
+	if (!SYS_glContext) return false;
 
 	SDL_GL_SetSwapInterval(1);
 	
-	Sys_CheckErrors();
+	SYS_CheckErrors();
 	return true;
 }
 
-void Sys_UpdateWindow() {
-	SDL_GL_SwapWindow(Sys_window);
+void SYS_UpdateWindow() {
+	SDL_GL_SwapWindow(SYS_window);
 }
 
-bool Sys_WindowClosed() {
+bool SYS_WindowClosed() {
 	return SDL_QuitRequested();
 }
 
-void Sys_CloseWindow() {
+void SYS_CloseWindow() {
 	SDL_Quit();
 }
 
-uint32_t Sys_TimeMillis() {
+uint32_t SYS_TimeMillis() {
 	return SDL_GetTicks();
 }
 
-void Sys_Sleep(uint32_t millis) {
+void SYS_Sleep(uint32_t millis) {
 	SDL_Delay(millis);
 }
 
-bool In_IsKeyPressed(int key) {
-	if (In_readingText) return false;
+bool IN_IsKeyPressed(int key) {
+	if (IN_readingText) return false;
 	
 	const Uint8* state = SDL_GetKeyboardState(NULL);
 	switch (key) {
@@ -118,21 +118,21 @@ bool In_IsKeyPressed(int key) {
 }
 
 
-void In_StartTextInput() {
-	if (In_readingText) return;
+void IN_StartTextInput() {
+	if (IN_readingText) return;
 	
 	SDL_StartTextInput();
-	In_readingText = true;
+	IN_readingText = true;
 }
 
-void In_StopTextInput() {
-	if (!In_readingText) return;
+void IN_StopTextInput() {
+	if (!IN_readingText) return;
 	
 	SDL_StopTextInput();
-	In_readingText = false;
+	IN_readingText = false;
 }
 
-void In_ReadTextInput(char* text, int length) {
+void IN_ReadTextInput(char* text, int length) {
 	int curLength = 0;
 	for (int i = 0; text[i];) 
 		curLength = ++i;
@@ -157,12 +157,12 @@ void In_ReadTextInput(char* text, int length) {
 	}
 }
 
-bool Sys_HasParam(char* p) {
-	for (int i = 0; i < Sys_argc; i++) {
+bool SYS_HasParam(char* p) {
+	for (int i = 0; i < SYS_argc; i++) {
 		int j = 0;
 		bool areEqual = true;
-		while (p[j] && Sys_argv[i][j] && areEqual) {
-			if (p[j] != Sys_argv[i][j])
+		while (p[j] && SYS_argv[i][j] && areEqual) {
+			if (p[j] != SYS_argv[i][j])
 				areEqual = false;
 			j++;
 		}
@@ -172,22 +172,22 @@ bool Sys_HasParam(char* p) {
 }
 
 int main(int argc, char** argv) {
-	Sys_argc = argc;
-	Sys_argv = argv;
+	SYS_argc = argc;
+	SYS_argv = argv;
 	
-	if (!Sys_OpenWindow()) Sys_Error("Failed to open a window with OpenGL Core 3.3");
+	if (!SYS_OpenWindow()) SYS_Error("Failed to open a window with OpenGL Core 3.3");
 
 	G_Init();
 	V_Init();
 	
-	uint32_t current = Sys_TimeMillis();
+	uint32_t current = SYS_TimeMillis();
 	uint32_t last = current;
 	uint32_t secondTimer = 0, frames = 0;
-	while (!Sys_WindowClosed()) {
+	while (!SYS_WindowClosed()) {
 		last = current;
-		current = Sys_TimeMillis();
-		Sys_deltaMillis = current - last;
-		secondTimer += Sys_deltaMillis;
+		current = SYS_TimeMillis();
+		SYS_deltaMillis = current - last;
+		secondTimer += SYS_deltaMillis;
 		frames++;
 		
 		if (secondTimer >= 1000) {
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
 		
 		G_Tick();
 		V_Tick();
-		Sys_UpdateWindow();
+		SYS_UpdateWindow();
 	}
 	printf("\n");
 	

@@ -6,26 +6,26 @@
 
 #include "def.h"
 
-int		Sys_argc;
-char**	Sys_argv;
+int		SYS_argc;
+char**	SYS_argv;
 
-uint32_t Sys_deltaMillis;
+uint32_t SYS_deltaMillis;
 
-void Sys_GetResourcePath(char* name, char* dest);
-void Sys_CheckErrors();
-void Sys_Error(char* s);
-void Sys_Warning(char* s);
+void SYS_GetResourcePath(char* name, char* dest);
+void SYS_CheckErrors();
+void SYS_Error(char* s);
+void SYS_Warning(char* s);
 
 // Video
-int Sys_OpenWindow();
-void Sys_UpdateWindow();
-bool Sys_WindowClosed();
-void Sys_CloseWindow();
+int SYS_OpenWindow();
+void SYS_UpdateWindow();
+bool SYS_WindowClosed();
+void SYS_CloseWindow();
 
-uint32_t Sys_TimeMillis();
-void Sys_Sleep(uint32_t millis);
+uint32_t SYS_TimeMillis();
+void SYS_Sleep(uint32_t millis);
 
-bool Sys_HasParam(char* p);
+bool SYS_HasParam(char* p);
 
 
 #endif // SYS_H

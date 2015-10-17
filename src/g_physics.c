@@ -64,7 +64,7 @@ bool G_RayHitsAABB(AABB t, vec3 p, vec3 dir) {
 }
 
 void G_TickPointPhysics(point* p, vec3 a) {
-	float t = Sys_deltaMillis / 1000.0;
+	float t = SYS_deltaMillis / 1000.0;
 	for (int i = 0; i < 3; i++) {
 		p->p[i] += p->v[i] * t + a[i] * t * t / 2;
 		p->v[i] += a[i] * t;

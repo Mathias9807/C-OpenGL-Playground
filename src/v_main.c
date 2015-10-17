@@ -244,7 +244,7 @@ void V_Tick() {
 	
 	V_SetAlphaBlending(false);
 	
-	Sys_CheckErrors();
+	SYS_CheckErrors();
 }
 
 void LoadShaders() {
@@ -325,5 +325,5 @@ void V_SetProj(float fov) {
 
 void V_Quit() {
 	V_QuitOpenGL();
-	Sys_CloseWindow();
+	SYS_CloseWindow();
 }

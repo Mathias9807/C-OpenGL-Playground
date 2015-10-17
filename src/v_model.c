@@ -13,7 +13,7 @@ void V_AiToLinMat(struct aiMatrix4x4* ai, mat4x4 lin);
 
 void V_LoadAssimp(char* path, model_t* m) {
 	char fullPath[16];
-	Sys_GetResourcePath(path, fullPath);
+	SYS_GetResourcePath(path, fullPath);
 	
 	const struct aiScene* scene = aiImportFile(fullPath, 
 		aiProcess_Triangulate 
@@ -22,7 +22,7 @@ void V_LoadAssimp(char* path, model_t* m) {
 		| aiProcess_FlipUVs 
 		| aiProcess_CalcTangentSpace);
 	if (scene == NULL) {
-		Sys_Error("Failed to load model");
+		SYS_Error("Failed to load model");
 		return;
 	}
 	
@@ -179,7 +179,7 @@ void V_LoadAssimp(char* path, model_t* m) {
 void V_CreateHeightMap(model_t* m, sprite* s, int height) {
 	int w = s->w, h = s->h;
 	if (w < 1 || h < 1)
-		Sys_Error("Heightmap has an invalid width or height. ");
+		SYS_Error("Heightmap has an invalid width or height. ");
 
 	int vertCount = w * h;
 	int indexCount = (w - 1) * (h - 1) * 6;

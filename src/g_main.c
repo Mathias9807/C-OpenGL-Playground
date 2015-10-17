@@ -37,35 +37,35 @@ void G_Init() {
 	
 	G_consoleString = malloc(16);
 	G_consoleString[0] = 0;
-	In_StartTextInput();
+	IN_StartTextInput();
 }
 
 void G_Tick() {
-	In_ReadTextInput(G_consoleString, 16);
+	IN_ReadTextInput(G_consoleString, 16);
 	
 	vec3 dir = {0, 0, 0};
-	float moveSpeed = G_moveSpeed * (Sys_deltaMillis / 1000.0);
-	float rotSpeed = G_rotSpeed * (Sys_deltaMillis / 1000.0);
-	if (In_IsKeyPressed(IN_W))		dir[2]		-= moveSpeed;
-	if (In_IsKeyPressed(IN_A))		dir[0]		-= moveSpeed;
-	if (In_IsKeyPressed(IN_S))		dir[2]		+= moveSpeed;
-	if (In_IsKeyPressed(IN_D))		dir[0]		+= moveSpeed;
-	if (In_IsKeyPressed(IN_UP))		dir[1]		+= moveSpeed;
-	if (In_IsKeyPressed(IN_DOWN))	dir[1]		-= moveSpeed;
-	if (In_IsKeyPressed(IN_RIGHT))	G_camRot[1]	+= rotSpeed;
-	if (In_IsKeyPressed(IN_LEFT))	G_camRot[1]	-= rotSpeed;
-	if (In_IsKeyPressed(IN_PITCH_UP))	G_camRot[0]	+= rotSpeed;
-	if (In_IsKeyPressed(IN_PITCH_DOWN))	G_camRot[0]	-= rotSpeed;
-	if (In_IsKeyPressed(IN_ACTION)) {
+	float moveSpeed = G_moveSpeed * (SYS_deltaMillis / 1000.0);
+	float rotSpeed = G_rotSpeed * (SYS_deltaMillis / 1000.0);
+	if (IN_IsKeyPressed(IN_W))		dir[2]		-= moveSpeed;
+	if (IN_IsKeyPressed(IN_A))		dir[0]		-= moveSpeed;
+	if (IN_IsKeyPressed(IN_S))		dir[2]		+= moveSpeed;
+	if (IN_IsKeyPressed(IN_D))		dir[0]		+= moveSpeed;
+	if (IN_IsKeyPressed(IN_UP))		dir[1]		+= moveSpeed;
+	if (IN_IsKeyPressed(IN_DOWN))	dir[1]		-= moveSpeed;
+	if (IN_IsKeyPressed(IN_RIGHT))	G_camRot[1]	+= rotSpeed;
+	if (IN_IsKeyPressed(IN_LEFT))	G_camRot[1]	-= rotSpeed;
+	if (IN_IsKeyPressed(IN_PITCH_UP))	G_camRot[0]	+= rotSpeed;
+	if (IN_IsKeyPressed(IN_PITCH_DOWN))	G_camRot[0]	-= rotSpeed;
+	if (IN_IsKeyPressed(IN_ACTION)) {
 		if (!actionHeld) {
 			Shoot();
 			actionHeld = true;
 		}
 	}else actionHeld = false;
-	if (In_IsKeyPressed(IN_TOGGLE)) {
+	if (IN_IsKeyPressed(IN_TOGGLE)) {
 		if (!toggleHeld) {
 			ads = ads ? false : true;
-			lastAdsTime = Sys_TimeMillis() / 1000.0;
+			lastAdsTime = SYS_TimeMillis() / 1000.0;
 			toggleHeld = true;
 		}
 	}else toggleHeld = false;
@@ -88,13 +88,13 @@ void G_Tick() {
 	{
 		termf terms[2] = {{2, 2}, {-1, 4}};
 		d = G_Valuef((function) {0, 1, 2, terms},
-							(Sys_TimeMillis() / 1000.0 - lastAdsTime) * 5);
+							(SYS_TimeMillis() / 1000.0 - lastAdsTime) * 5);
 		if (ads) d = 1 - d;
 	}
 	{
 		termf terms[2] = {{1, 0.3}, {-1, 1}};
 		f = G_Valuef((function) {0, 1, 2, terms},
-							(Sys_TimeMillis() / 1000.0 - lastShootTime) * 5);
+							(SYS_TimeMillis() / 1000.0 - lastShootTime) * 5);
 	}
 	V_SetProj(fov * d + adsFov * (1 - d));
 	vec3 resultant = {0, 0, 0};
@@ -104,22 +104,22 @@ void G_Tick() {
 		resultant[i] += fireGunPos[i] * f;
 		resultant[i] += hipFireGunPos[i] * d * f;
 	}
-	resultant[0] += d * 0.01 * cos(Sys_TimeMillis() / 2000.0);
-	resultant[1] += d * 0.005 * cos(Sys_TimeMillis() / 1500.0);
+	resultant[0] += d * 0.01 * cos(SYS_TimeMillis() / 2000.0);
+	resultant[1] += d * 0.005 * cos(SYS_TimeMillis() / 1500.0);
 	mat4x4_translate_in_place(G_gunMat, resultant[0], resultant[1], resultant[2]);
 	
 	if (dummyHitTime)
 		dummyXRot = M_PI / -2 * G_Valuef((function) {0, 1, 1, &((termf) {1, 3})},
-			Sys_TimeMillis() / 1000.0 - dummyHitTime);
+			SYS_TimeMillis() / 1000.0 - dummyHitTime);
 	
-	/*if (lastSmokeSpawn - Sys_TimeMillis() > smokeSpawnInterval) {
+	/*if (lastSmokeSpawn - SYS_TimeMillis() > smokeSpawnInterval) {
 		G_AddSmoke((vec3) {2, 0, 0}, (vec3) {0, 0, 0}, 0.5, 5000);
 		lastSmokeSpawn += smokeSpawnInterval;
 	}*/
 	for (int i = 0; i < ListSize(&smokeParts); i++) {
 		smoke* s = (smoke*) ListGet(&smokeParts, i);
 		
-		s->timeLeft -= Sys_deltaMillis;
+		s->timeLeft -= SYS_deltaMillis;
 		if (s->timeLeft <= 0) {
 			ListRemove(&smokeParts, i);
 			i--;
@@ -127,10 +127,10 @@ void G_Tick() {
 		}
 		
 		G_TickPointPhysics(&s->p, smokeAcc);
-		s->radius *= pow(1.2, Sys_deltaMillis / 1000.0);
+		s->radius *= pow(1.2, SYS_deltaMillis / 1000.0);
 	}
 	
-	if (In_IsKeyPressed(IN_RELOAD)) V_reloadShaders = true;
+	if (IN_IsKeyPressed(IN_RELOAD)) V_reloadShaders = true;
 }
 
 void Shoot() {
@@ -141,10 +141,10 @@ void Shoot() {
 	};
 	if (!dummyHitTime && G_RayHitsAABB(dummyBox, G_camPos, rayDir)) {
 		dummyXRot = -M_PI / 8;
-		dummyHitTime = Sys_TimeMillis() / 1000.0;
+		dummyHitTime = SYS_TimeMillis() / 1000.0;
 	}
-	lastShootTime = Sys_TimeMillis() / 1000.0;
-	fireGunPos[0] = cos(Sys_TimeMillis() / 10.0) * 0.002;
+	lastShootTime = SYS_TimeMillis() / 1000.0;
+	fireGunPos[0] = cos(SYS_TimeMillis() / 10.0) * 0.002;
 }
 
 void G_AddSmoke(vec3 pos, vec3 vel, float radius, int timeLeft) {

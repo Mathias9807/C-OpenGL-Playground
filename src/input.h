@@ -9,13 +9,13 @@ enum {
 	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, 
 	IN_TOGGLE
 };
-bool In_readingText;
+bool IN_readingText;
 
-bool In_IsKeyPressed(int key);
+bool IN_IsKeyPressed(int key);
 
-void In_StartTextInput();
-void In_StopTextInput();
-void In_ReadTextInput(char* text, int length);
+void IN_StartTextInput();
+void IN_StopTextInput();
+void IN_ReadTextInput(char* text, int length);
 
 
 #endif // INPUT_H
