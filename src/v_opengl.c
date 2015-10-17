@@ -14,7 +14,10 @@ int animStartTime;
 
 void V_InitOpenGL() {
 	glewExperimental = GL_TRUE;
-	glewInit();
+	GLenum error = glewInit();
+	if (error != GLEW_OK) 
+		SYS_Error("GLEW failed to initialize");
+	
 	glGetError(); // glewInit() may throw a GL_INVALID_ENUM error
 	
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
@@ -89,7 +92,7 @@ void V_CreateFBO(struct fbo* fbo, int w, int h, int attachments) {
 	glDrawBuffers(attachments, drawBuffers);
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		printf("Failed to create framebuffer\n");
+		SYS_Error("Failed to create framebuffer");
 }
 
 void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {
@@ -113,7 +116,7 @@ void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {
 	glDrawBuffer(GL_NONE);
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		printf("Failed to create framebuffer\n");
+		SYS_Error("Failed to create framebuffer\n");
 }
 
 void V_BindTexture(unsigned id, int pos) {
@@ -284,6 +287,8 @@ GLuint V_LoadTexture(char* name) {
 	unsigned char* data;
 	int w, h, n;
 	data = stbi_load(path, &w, &h, &n, 4);
+	if (data == NULL) 
+		SYS_Error("Couldn't load texture");
 	
 	GLuint tex;
 	glGenTextures(1, &tex);
@@ -313,6 +318,8 @@ GLuint V_LoadCubeMap(char* name) {
 		unsigned char* data;
 		int w, h, n;
 		data = stbi_load(path, &w, &h, &n, 4);
+		if (data == NULL) 
+			SYS_Error("Couldn't load cubemap texture");
 		
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -331,7 +338,9 @@ void V_LoadSprite(char* name, sprite* s) {
 	unsigned char* data;
 	int w, h, n;
 	data = stbi_load(path, &w, &h, &n, 4);
-
+	if (data == NULL) 
+		SYS_Error("Couldn't load sprite");
+	
 	s->w = w;
 	s->h = h;
 	s->pix = malloc(w * h * sizeof(uint32_t));
