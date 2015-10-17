@@ -11,13 +11,13 @@ model_t model, plane, heightMap, pillar, cube, sphere, weapon, scarecrow, collBo
 
 mat4x4 matProj, matView, matModel, matShadow, identity;
 
-GLuint shader, planeShader, depthShader, skyShader, smokeShader;
+GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, cliffTexture, heightTexture;
+GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cliffTexture, heightTexture;
 enum {
-	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal
+	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
 
 light l = LIGHT_DEFAULT;
@@ -64,6 +64,7 @@ void V_Init() {
 	flatNormal = V_LoadTexture("FlatNormal.png");
 	scareTexture = V_LoadTexture("Scarecrow.png");
 	smokeTexture = V_LoadTexture("Smoke.png");
+	fontTexture = V_LoadTexture("font.png");
 	
 	V_BindTexture(depth.attD, texDepth);
 	V_BindTexture(shadow.attD, texShadow);
@@ -73,6 +74,8 @@ void V_Init() {
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
 	V_BindTexture(cliffTexture, texDiff1);
+	V_BindTexture(fontTexture, texGUI);
+	V_SetTexRepeating(false);
 	
 	LoadShaders();
 	
@@ -226,6 +229,21 @@ void V_Tick() {
 	
 	V_RenderModel(&plane);
 	
+	V_SetShader(guiShader);
+	V_BindTexture(fontTexture, texGUI);
+	V_SetAlphaBlending(true);
+	
+	char* text = G_consoleString;
+	for (int i = 0; text[i]; i++) {
+		V_SetParam2f("subSize", 8, 16);
+		V_SetParam2f("pos", 16 + 8 * i, 8);
+		V_SetParam2f("subPos", ((int) text[i] % 16) / 16.0, 
+					 ((int) text[i] / 16) / 16.0);
+		V_RenderModel(&plane);
+	}
+	
+	V_SetAlphaBlending(false);
+	
 	Sys_CheckErrors();
 }
 
@@ -236,6 +254,7 @@ void LoadShaders() {
 	V_DeleteShader(depthShader);		depthShader = V_LoadShader("depth");
 	V_DeleteShader(skyShader);			skyShader = V_LoadShader("sky");
 	V_DeleteShader(smokeShader);		smokeShader = V_LoadShader("smoke");
+	V_DeleteShader(guiShader);			guiShader = V_LoadShader("gui");
 
 	V_SetProj(65);
 	mat4x4_identity(matShadow);
@@ -283,6 +302,10 @@ void LoadShaders() {
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
 	V_SetParam1f("farPlane", V_FAR);
 	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
+	
+	V_SetShader(guiShader);
+	V_SetParam2f("screenSize", V_WIDTH, V_HEIGHT);
+	V_SetParam1i("tex0", texGUI);
 	
 	V_reloadShaders = false;
 }

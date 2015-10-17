@@ -126,6 +126,16 @@ void V_BindCubeMap(unsigned id, int pos) {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 }
 
+void V_SetTexRepeating(bool b) {
+	if (b) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
+}
+
 void V_SetTexInterLinear(bool b) {
 	GLuint inter = b ? GL_LINEAR : GL_NEAREST;
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, inter);

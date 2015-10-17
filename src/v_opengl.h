@@ -9,7 +9,7 @@
 #include <GL/glew.h>
 #include <linmath.h>
 
-#define V_NEAR 0.05
+#define V_NEAR 0.02
 #define V_FAR 800
 #define V_WINDOW_FBO ((struct fbo){0,V_WIDTH,V_HEIGHT})
 #define LIGHT_DEFAULT {{0, 0, 0}, {1, 1, 1}, false}
@@ -96,6 +96,7 @@ void V_CreateDepthFBO(struct fbo* fbo, int w, int h);
 void V_SetFBO(struct fbo fbo);
 void V_BindTexture(unsigned id, int pos);
 void V_BindCubeMap(unsigned id, int pos);
+void V_SetTexRepeating(bool b);
 void V_SetTexInterLinear(bool b);
 void V_SetTexMipmapLinear(bool b);
 void V_MakeProjection(mat4x4 m, float fov, float aspect, float near, float far);

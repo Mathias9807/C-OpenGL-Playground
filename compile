@@ -14,6 +14,6 @@ SRC_FILES="src/def.c src/cvar.c src/g_*.c src/v_*.c src/sys_sdl.c"
 
 ADD_PARAMS="-Wall -std=c99"
 
-`gcc -o $OUT \
+echo `gcc -o $OUT \
 	$INCLUDES $LIBS \
 	$SRC_FILES $ADD_PARAMS` > $LOG

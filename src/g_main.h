@@ -12,6 +12,7 @@ float G_moveSpeed;
 float G_rotSpeed;
 vec3 G_camPos;
 vec3 G_camRot;
+char* G_consoleString;
 
 typedef struct {
 	point p;

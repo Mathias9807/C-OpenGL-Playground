@@ -19,6 +19,8 @@ uint32_t Sys_deltaMillis;
 SDL_Window* Sys_window;
 SDL_GLContext Sys_glContext;
 
+bool In_readingText = false;
+
 void Sys_GetResourcePath(char* name, char* dest) {
 	strcpy(dest, RES_DIR);
 	strcat(dest, name);
@@ -94,6 +96,8 @@ void Sys_Sleep(uint32_t millis) {
 }
 
 bool In_IsKeyPressed(int key) {
+	if (In_readingText) return false;
+	
 	const Uint8* state = SDL_GetKeyboardState(NULL);
 	switch (key) {
 		case IN_W: return state[SDL_SCANCODE_W];
@@ -111,6 +115,46 @@ bool In_IsKeyPressed(int key) {
 		case IN_TOGGLE: return state[SDL_SCANCODE_Q];
 	}
 	return false;
+}
+
+
+void In_StartTextInput() {
+	if (In_readingText) return;
+	
+	SDL_StartTextInput();
+	In_readingText = true;
+}
+
+void In_StopTextInput() {
+	if (!In_readingText) return;
+	
+	SDL_StopTextInput();
+	In_readingText = false;
+}
+
+void In_ReadTextInput(char* text, int length) {
+	int curLength = 0;
+	for (int i = 0; text[i];) 
+		curLength = ++i;
+	
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			case SDL_TEXTINPUT: {
+				char* input = event.text.text;
+				for (int i = 0; input[i]; i++) {
+					text[curLength + i] = input[i];
+					text[curLength + i + 1] = 0;
+				}
+				
+				break;
+			}
+			case SDL_KEYDOWN: 
+				if (event.key.keysym.sym == SDLK_BACKSPACE && curLength >= 0) 
+					text[--curLength] = 0;
+				break;
+		}
+	}
 }
 
 bool Sys_HasParam(char* p) {

@@ -26,15 +26,23 @@ int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 AABB dummyBox = {-1, -1, -1, 2, 2, 2};
 float dummyXRot = 0;
 
+char* G_consoleString;
+
 void Shoot();
 
 void G_Init() {
 	G_camPos[2] = 2.5;
 	
 	smokeParts = (list) {NULL, 0};
+	
+	G_consoleString = malloc(16);
+	G_consoleString[0] = 0;
+	In_StartTextInput();
 }
 
 void G_Tick() {
+	In_ReadTextInput(G_consoleString, 16);
+	
 	vec3 dir = {0, 0, 0};
 	float moveSpeed = G_moveSpeed * (Sys_deltaMillis / 1000.0);
 	float rotSpeed = G_rotSpeed * (Sys_deltaMillis / 1000.0);
