@@ -3,6 +3,7 @@ C-OpenGL-Playground
 Compile:
 	The source files that need to be compiled are: 
 		· def.c
+		· cvar.c
 		· Every file that starts with g_
 		· Every file that starts with v_
 		· One file that starts with sys_
