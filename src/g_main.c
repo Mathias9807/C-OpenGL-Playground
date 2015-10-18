@@ -19,7 +19,7 @@ fireGunPos = {-0.004, 0.0125, -0.03}, hipFireGunPos = {0, 0.1, -0.4};
 float curGunXRot = 0, curGunYRot = 0, curGunZRot = 0;
 bool ads = false;
 double lastAdsTime = -1, lastShootTime = -1, dummyHitTime = 0;
-bool actionHeld = false, toggleHeld = false;
+bool actionHeld = false, toggleHeld = false, chatHeld = false;
 vec3 smokeAcc = {0, 1, 0};
 int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 
@@ -34,8 +34,6 @@ void G_Init() {
 	G_camPos[2] = 2.5;
 	
 	smokeParts = (list) {NULL, 0};
-	
-	IN_StartTextInput();
 }
 
 void G_Tick() {
@@ -67,6 +65,12 @@ void G_Tick() {
 			toggleHeld = true;
 		}
 	}else toggleHeld = false;
+	if (IN_IsKeyPressed(IN_CHAT)) {
+		if (!chatHeld) {
+			IN_StartTextInput();
+			chatHeld = true;
+		}
+	}else chatHeld = false;
 	
 	
 	if (G_camRot[0] > PITCH_LIMIT) G_camRot[0] = PITCH_LIMIT;

@@ -113,6 +113,7 @@ bool IN_IsKeyPressed(int key) {
 		case IN_ACTION: return state[SDL_SCANCODE_RETURN];
 		case IN_RELOAD: return state[SDL_SCANCODE_R];
 		case IN_TOGGLE: return state[SDL_SCANCODE_Q];
+		case IN_CHAT: return state[SDL_SCANCODE_T];
 	}
 	return false;
 }
@@ -133,11 +134,16 @@ void IN_StopTextInput() {
 }
 
 void IN_ReadTextInput(char* text, int length) {
+	SDL_Event event;
+	if (!IN_readingText) {
+		while (SDL_PollEvent(&event));
+		return;
+	}
+
 	int curLength = 0;
 	for (int i = 0; text[i];) 
 		curLength = ++i;
 	
-	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_TEXTINPUT: {
@@ -152,6 +158,8 @@ void IN_ReadTextInput(char* text, int length) {
 			case SDL_KEYDOWN: 
 				if (event.key.keysym.sym == SDLK_BACKSPACE && curLength >= 0) 
 					text[--curLength] = 0;
+				if (event.key.keysym.sym == SDLK_RETURN && curLength < length) 
+					text[curLength++] = '\n';
 				break;
 		}
 	}
