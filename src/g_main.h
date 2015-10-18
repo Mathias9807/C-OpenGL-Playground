@@ -8,11 +8,18 @@
 #include <linmath.h>
 #include "g_physics.h"
 
+#define G_CONSOLE_LENGTH 48
+#define G_CONSOLE_ROWS 8
+
 float G_moveSpeed;
 float G_rotSpeed;
 vec3 G_camPos;
 vec3 G_camRot;
-char* G_consoleString;
+
+typedef struct {
+	char text[G_CONSOLE_LENGTH][G_CONSOLE_ROWS];
+} console;
+console G_console;
 
 typedef struct {
 	point p;

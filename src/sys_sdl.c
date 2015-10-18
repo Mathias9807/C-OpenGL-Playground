@@ -51,7 +51,7 @@ void SYS_Error(char* s) {
 }
 
 void SYS_Warning(char* s) {
-	printf("Runtime warning: %s", s);
+	printf("Runtime warning: %s\n", s);
 }
 
 int SYS_OpenWindow() {
@@ -142,9 +142,9 @@ void IN_ReadTextInput(char* text, int length) {
 		switch (event.type) {
 			case SDL_TEXTINPUT: {
 				char* input = event.text.text;
-				for (int i = 0; input[i]; i++) {
-					text[curLength + i] = input[i];
-					text[curLength + i + 1] = 0;
+				for (int i = 0; input[i] && curLength + i < length; i++) {
+					text[curLength++ + i] = input[i];
+					text[curLength + i] = 0;
 				}
 				
 				break;

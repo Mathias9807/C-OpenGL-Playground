@@ -233,7 +233,7 @@ void V_Tick() {
 	V_BindTexture(fontTexture, texGUI);
 	V_SetAlphaBlending(true);
 	
-	char* text = G_consoleString;
+	char* text = G_console.text[0];
 	for (int i = 0; text[i]; i++) {
 		V_SetParam2f("subSize", 8, 16);
 		V_SetParam2f("pos", 16 + 8 * i, 8);
