@@ -1,8 +1,23 @@
-// cvar.c - Program wide variables
+// cvar.c - Console and program wide variables
 
 #include "cvar.h"
+#include "sys.h"
 
 list C_cvars = {NULL, 0};
+
+void C_Print(char* s) {
+	int strLength = 1;
+	while (s[strLength - 1]) strLength++;
+	if (strLength == 0) return;
+	
+	char* copiedStr = malloc(strLength);
+	for (int i = 0; i < strLength; i++) 
+		copiedStr[i] = s[i];
+	copiedStr[strLength - 1] = 0;
+	
+	ListAdd(&C_console.history, copiedStr);
+	C_console.lastActive = SYS_TimeMillis();
+}
 
 cvar* C_Add(cvar v) {
 	cvar* existing = C_Get(v.name);

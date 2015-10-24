@@ -15,7 +15,7 @@ bool IN_IsKeyPressed(int key);
 
 void IN_StartTextInput();
 void IN_StopTextInput();
-void IN_ReadTextInput(char* text, int length);
+int IN_ReadTextInput(char* text, int length);
 
 
 #endif // INPUT_H

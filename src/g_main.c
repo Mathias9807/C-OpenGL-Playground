@@ -37,7 +37,28 @@ void G_Init() {
 }
 
 void G_Tick() {
-	IN_ReadTextInput(G_console.text[0], G_CONSOLE_LENGTH);
+	int stopReading = IN_ReadTextInput(C_console.text, C_CONSOLE_LENGTH);
+	if (stopReading) {
+		IN_StopTextInput();
+		C_console.inputActive = false;
+	}
+	for (int i = 0; C_console.text[i]; i++) {
+		if (C_console.text[i] == '\n') {
+			C_console.text[i] = 0;
+			C_Print(C_console.text);
+			for (int j = 0; j < C_CONSOLE_LENGTH; j++)
+				C_console.text[j] = 0;
+			IN_StopTextInput();
+			C_console.inputActive = false;
+			actionHeld = true;
+			
+			break;
+		}
+		if (C_console.text[i] == '\t') {
+			C_console.text[i] = 0;
+			break;
+		}
+	}
 	
 	vec3 dir = {0, 0, 0};
 	float moveSpeed = G_moveSpeed * (SYS_deltaMillis / 1000.0);
@@ -68,10 +89,10 @@ void G_Tick() {
 	if (IN_IsKeyPressed(IN_CHAT)) {
 		if (!chatHeld) {
 			IN_StartTextInput();
+			C_console.inputActive = true;
 			chatHeld = true;
 		}
 	}else chatHeld = false;
-	
 	
 	if (G_camRot[0] > PITCH_LIMIT) G_camRot[0] = PITCH_LIMIT;
 	else if (G_camRot[0] < -PITCH_LIMIT) G_camRot[0] = -PITCH_LIMIT;

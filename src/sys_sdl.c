@@ -133,11 +133,11 @@ void IN_StopTextInput() {
 	IN_readingText = false;
 }
 
-void IN_ReadTextInput(char* text, int length) {
+int IN_ReadTextInput(char* text, int length) {
 	SDL_Event event;
 	if (!IN_readingText) {
 		while (SDL_PollEvent(&event));
-		return;
+		return 0;
 	}
 
 	int curLength = 0;
@@ -148,7 +148,7 @@ void IN_ReadTextInput(char* text, int length) {
 		switch (event.type) {
 			case SDL_TEXTINPUT: {
 				char* input = event.text.text;
-				for (int i = 0; input[i] && curLength + i < length; i++) {
+				for (int i = 0; input[i] && curLength + i < length - 1; i++) {
 					text[curLength++ + i] = input[i];
 					text[curLength + i] = 0;
 				}
@@ -160,9 +160,15 @@ void IN_ReadTextInput(char* text, int length) {
 					text[--curLength] = 0;
 				if (event.key.keysym.sym == SDLK_RETURN && curLength < length) 
 					text[curLength++] = '\n';
+				if (event.key.keysym.sym == SDLK_TAB && curLength < length) 
+					text[curLength++] = '\t';
+				if (event.key.keysym.sym == SDLK_ESCAPE && curLength < length) 
+					return -1;
 				break;
 		}
 	}
+	
+	return 0;
 }
 
 bool SYS_HasParam(char* p) {

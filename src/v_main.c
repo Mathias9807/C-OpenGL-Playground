@@ -3,6 +3,7 @@
 #include "v_main.h"
 #include "sys.h"
 #include "g_main.h"
+#include "g_animation.h"
 #include "v_opengl.h"
 #include "g_physics.h"
 #include "cvar.h"
@@ -233,12 +234,39 @@ void V_Tick() {
 	V_BindTexture(fontTexture, texGUI);
 	V_SetAlphaBlending(true);
 	
-	char* text = G_console.text[0];
-	for (int i = 0; text[i]; i++) {
+	float alpha = 1;
+	if (C_console.lastActive + C_CONSOLE_FADEMS < SYS_TimeMillis()
+		&& !C_console.inputActive) {
+		termf terms[2] = { (termf) {1, 0}, (termf) {-1, 2} };
+		alpha = G_Valuef((function) {0, 1, 2, terms}, 
+			(SYS_TimeMillis() - C_console.lastActive - C_CONSOLE_FADEMS) / 1000.0);
+	}
+	V_SetParam1f("alpha", alpha);
+	
+	int lines = ListSize(&C_console.history);
+	for (int i = 0; i < (lines > C_CONSOLE_DISP ? C_CONSOLE_DISP : lines); i++) {
+		int line = i + (lines - C_CONSOLE_DISP > 0 ? lines - C_CONSOLE_DISP : 0);
+		char* text = (char*) ListGet(&C_console.history, line);
+		
+		for (int j = 0; text[j]; j++) {
+			V_SetParam2f("subSize", 8, 16);
+			V_SetParam2f("pos", 16 + 8 * j, 8 + i * 16);
+			V_SetParam2f("subPos", ((int) text[j] % 16) / 16.0, 
+						 ((int) text[j] / 16) / 16.0);
+			V_RenderModel(&plane);
+		}
+	}
+	
+	char* text = C_console.text;
+	for (int i = 0; i < C_CONSOLE_LENGTH && C_console.inputActive; i++) {
+		int character = (int) text[i];
+		if (!character) character = (int) ' ';
+		
 		V_SetParam2f("subSize", 8, 16);
-		V_SetParam2f("pos", 16 + 8 * i, 8);
-		V_SetParam2f("subPos", ((int) text[i] % 16) / 16.0, 
-					 ((int) text[i] / 16) / 16.0);
+		V_SetParam2f("pos", 16 + 8 * i, 16 + 
+					 16 * (C_CONSOLE_DISP > lines ? lines : C_CONSOLE_DISP));
+		V_SetParam2f("subPos", (character % 16) / 16.0, 
+					 (character / 16) / 16.0);
 		V_RenderModel(&plane);
 	}
 	
