@@ -12,28 +12,33 @@
 #define C_CONSOLE_FADEMS 4000
 
 typedef struct {
-	char text[C_CONSOLE_LENGTH];
-	list history;
+	char 	text[C_CONSOLE_LENGTH];
+	list 	history;
 	
-	int lastActive;
+	int 	lastActive;
 	
-	bool inputActive;
+	bool 	inputActive;
 } console;
 console C_console;
 
 typedef struct {
 	char*	name;
 	float	value;
+	
+	bool 	modified;
 } cvar;
 
 // Prints a string to the console
 void C_Print(char* s);
 
+// Executes a command and prints the result to the console
+void C_Execute(char* s);
+
 // Global list holding all cvars
 list C_cvars;
 
 // Adds cvar v to C_cvars, does nothing if v already exists
-cvar* C_Add(cvar v);
+cvar* C_Add(char* name, float value);
 
 // Sets the value of a cvar in C_cvars
 void C_Set(char* name, float value);

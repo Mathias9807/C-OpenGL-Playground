@@ -28,12 +28,13 @@ bool V_reloadShaders = true;
 extern AABB dummyBox;
 extern float dummyXRot;
 
+void BindTextures();
 void LoadShaders();
 
 void V_Init() {
 	V_InitOpenGL();
 	
-	cvar* shadowSize = C_Add((cvar){"VideoShadowSize", 512});
+	cvar* shadowSize = C_Add("ShadowSize", 512);
 	
 	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 2);
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 2);
@@ -67,16 +68,7 @@ void V_Init() {
 	smokeTexture = V_LoadTexture("Smoke.png");
 	fontTexture = V_LoadTexture("font.png");
 	
-	V_BindTexture(depth.attD, texDepth);
-	V_BindTexture(shadow.attD, texShadow);
-	V_SetTexInterLinear(true);
-	V_BindCubeMap(skyMap, texSky);
-	V_BindTexture(grassTexture, texDiff0);
-	V_BindTexture(roughTexture, texSpec);
-	V_BindTexture(normalTexture, texNormal);
-	V_BindTexture(cliffTexture, texDiff1);
-	V_BindTexture(fontTexture, texGUI);
-	V_SetTexRepeating(false);
+	BindTextures();
 	
 	LoadShaders();
 	
@@ -124,6 +116,15 @@ void V_RenderScene() {
 	V_BindTexture(flatNormal, texNormal);
 	V_RenderModel(&scarecrow);*/
 
+	mat4x4_translate(matModel, 0, 5, 0);
+	mat4x4_rotate_Z(matModel, matModel, 45);
+	V_SetParam4m("matModel", matModel);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(whiteTexture, texDiff0);
+	V_BindTexture(blackTexture, texSpec);
+	V_BindTexture(flatNormal, texNormal);
+	V_RenderModel(&cube);
+
 	mat4x4_translate(matModel, -120, -1, -120);
 	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
 	V_SetParam4m("matModel", matModel);
@@ -170,6 +171,15 @@ void V_RenderNearScene() {
 }
 
 void V_Tick() {
+	cvar* shadowSize = C_Get("ShadowSize");
+	if (shadowSize->modified) {
+		V_DeleteFBO(&shadow);
+		V_CreateDepthFBO(&shadow, (int)shadowSize->value, (int)shadowSize->value);
+		shadowSize->modified = false;
+		BindTextures();
+		V_reloadShaders = true;
+	}
+	
 	if (V_reloadShaders) 
 		LoadShaders();
 	
@@ -273,6 +283,19 @@ void V_Tick() {
 	V_SetAlphaBlending(false);
 	
 	SYS_CheckErrors();
+}
+
+void BindTextures() {
+	V_BindTexture(depth.attD, texDepth);
+	V_BindTexture(shadow.attD, texShadow);
+	V_SetTexInterLinear(true);
+	V_BindCubeMap(skyMap, texSky);
+	V_BindTexture(grassTexture, texDiff0);
+	V_BindTexture(roughTexture, texSpec);
+	V_BindTexture(normalTexture, texNormal);
+	V_BindTexture(cliffTexture, texDiff1);
+	V_BindTexture(fontTexture, texGUI);
+	V_SetTexRepeating(false);
 }
 
 void LoadShaders() {

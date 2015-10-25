@@ -93,6 +93,7 @@ void V_SetDepthWriting(bool b);
 void V_SetAlphaBlending(bool b);
 void V_CreateFBO(struct fbo* fbo, int w, int h, int attachments);
 void V_CreateDepthFBO(struct fbo* fbo, int w, int h);
+void V_DeleteFBO(struct fbo* fbo);
 void V_SetFBO(struct fbo fbo);
 void V_BindTexture(unsigned id, int pos);
 void V_BindCubeMap(unsigned id, int pos);

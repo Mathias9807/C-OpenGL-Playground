@@ -46,6 +46,7 @@ void G_Tick() {
 		if (C_console.text[i] == '\n') {
 			C_console.text[i] = 0;
 			C_Print(C_console.text);
+			C_Execute(C_console.text);
 			for (int j = 0; j < C_CONSOLE_LENGTH; j++)
 				C_console.text[j] = 0;
 			IN_StopTextInput();

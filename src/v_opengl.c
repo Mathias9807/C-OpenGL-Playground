@@ -119,6 +119,10 @@ void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {
 		SYS_Error("Failed to create framebuffer\n");
 }
 
+void V_DeleteFBO(struct fbo* fbo) {
+	glDeleteFramebuffers(1, (GLuint*) &fbo->id);
+}
+
 void V_BindTexture(unsigned id, int pos) {
 	glActiveTexture(GL_TEXTURE0 + pos);
 	glBindTexture(GL_TEXTURE_2D, id);
