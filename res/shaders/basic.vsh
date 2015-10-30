@@ -13,6 +13,8 @@ out mat3 matNormal;
 uniform mat4 matProj, matView, matModel, matShadow;
 uniform mat4 bindPose[2];
 uniform mat4 bones[2];
+uniform vec3 shadowOffs;
+uniform float shadowDim;
 uniform float uvScale;
 
 void main() {
@@ -33,5 +35,7 @@ void main() {
 	vertex_c = matView * vertex_w;
 	vertex_p = matProj * vertex_c;
 	vertex_shadow = matShadow * vertex_w;
+	vec4 vertex_offs = matShadow * vec4(shadowOffs, 0);
+	vertex_shadow.xyz += floor(vertex_offs.xyz * shadowDim / 2) / shadowDim * 2;
 	gl_Position = vertex_p;
 }

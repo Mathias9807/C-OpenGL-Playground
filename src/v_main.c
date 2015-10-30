@@ -31,15 +31,18 @@ extern float dummyXRot;
 void BindTextures();
 void LoadShaders();
 
+cvar* shadowDim, * shadowSize;
+
 void V_Init() {
 	V_InitOpenGL();
 	
-	cvar* shadowSize = C_Add("ShadowSize", 512);
+	shadowDim = C_Add("ShadowDim", 512);
+	shadowSize = C_Add("ShadowSize", 40);
 	
 	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 2);
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 2);
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
-	V_CreateDepthFBO(&shadow, (int)shadowSize->value, (int)shadowSize->value);
+	V_CreateDepthFBO(&shadow, (int)shadowDim->value, (int)shadowDim->value);
 
 	V_LoadAssimp("Hills.obj", &model);
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
@@ -116,14 +119,16 @@ void V_RenderScene() {
 	V_BindTexture(flatNormal, texNormal);
 	V_RenderModel(&scarecrow);*/
 
-	mat4x4_translate(matModel, 0, 5, 0);
-	mat4x4_rotate_Z(matModel, matModel, 45);
-	V_SetParam4m("matModel", matModel);
-	V_SetParam1f("uvScale", 1);
-	V_BindTexture(whiteTexture, texDiff0);
-	V_BindTexture(blackTexture, texSpec);
-	V_BindTexture(flatNormal, texNormal);
-	V_RenderModel(&cube);
+	for (int i = -16; i < 16; i++) {
+		mat4x4_translate(matModel, i * 2, 5, i * 2);
+		mat4x4_rotate_Z(matModel, matModel, 45);
+		V_SetParam4m("matModel", matModel);
+		V_SetParam1f("uvScale", 1);
+		V_BindTexture(whiteTexture, texDiff0);
+		V_BindTexture(blackTexture, texSpec);
+		V_BindTexture(flatNormal, texNormal);
+		V_RenderModel(&cube);
+	}
 
 	mat4x4_translate(matModel, -120, -1, -120);
 	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
@@ -171,10 +176,10 @@ void V_RenderNearScene() {
 }
 
 void V_Tick() {
-	cvar* shadowSize = C_Get("ShadowSize");
-	if (shadowSize->modified) {
+	if (shadowDim->modified || shadowSize->modified) {
 		V_DeleteFBO(&shadow);
-		V_CreateDepthFBO(&shadow, (int)shadowSize->value, (int)shadowSize->value);
+		V_CreateDepthFBO(&shadow, (int)shadowDim->value, (int)shadowDim->value);
+		shadowDim->modified = false;
 		shadowSize->modified = false;
 		BindTextures();
 		V_reloadShaders = true;
@@ -193,9 +198,7 @@ void V_Tick() {
 	V_ClearDepth();
 	V_SetShader(depthShader);
 	V_SetDepthTesting(true);
-	V_SetParam4m("matProj", matShadow);
-	V_SetParam4m("matView", identity);
-	V_SetParam1f("farPlane", 1);
+	V_SetParam3f("shadowOffs", -G_camPos[0], -G_camPos[1], -G_camPos[2]);
 	V_RenderScene();
 	
 	V_SetFBO(post0);
@@ -210,8 +213,10 @@ void V_Tick() {
 	
 	V_SetShader(shader);
 	
+	// V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("camPos", G_camPos[0], G_camPos[1], G_camPos[2]);
 	V_SetParam4m("matView", matView);
+	V_SetParam3f("shadowOffs", -G_camPos[0], -G_camPos[1], -G_camPos[2]);
 	
 	V_RenderScene();
 	V_RenderNearScene();
@@ -309,12 +314,15 @@ void LoadShaders() {
 
 	V_SetProj(65);
 	mat4x4_identity(matShadow);
-	vec4 lightDir = {1, 1, 1, 0};
+	vec3 lightDir = {-1, -1, -1};
 	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
-	mat4x4_look_at(matShadow, lightDir, (vec3){0, 0, 0}, (vec3){0, 1, 0});
-	mat4x4 ortho;
-	mat4x4_ortho(ortho, -20, 20, -20, 20, -40, 40);
-	mat4x4_mul(matShadow, ortho, matShadow);
+	mat4x4_ortho(matShadow, (int) -shadowSize->value, (int) shadowSize->value, 
+		(int) -shadowSize->value, (int) shadowSize->value, 
+		(int) -shadowSize->value * 3, (int) shadowSize->value);
+	mat4x4 matShadowView;
+	mat4x4_identity(matShadowView);
+	mat4x4_look_at(matShadowView, (vec3){0, 0, 0}, lightDir, (vec3){0, 1, 0});
+	mat4x4_mul(matShadow, matShadow, matShadowView);
 	mat4x4_identity(identity);
 	
 	V_SetShader(shader);
@@ -328,8 +336,9 @@ void LoadShaders() {
 	V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
 	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam1f("shadowDim", shadowDim->value);
 	V_SetParam1f("uvScale", 1);
-	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
+	V_SetParam3f("lightDir", -lightDir[0], -lightDir[1], -lightDir[2]);
 	V_SetParam1i("terrain", 0);
 	
 	V_SetShader(skyShader);
@@ -345,6 +354,11 @@ void LoadShaders() {
 	V_SetParam1i("depth", 1);
 	V_SetParam1f("farPlane", V_FAR);
 	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
+	
+	V_SetShader(depthShader);
+	V_SetParam4m("matProj", matShadow);
+	V_SetParam1f("farPlane", 1);
+	V_SetParam1f("shadowDim", C_Get("ShadowDim")->value);
 	
 	V_SetShader(smokeShader);
 	V_SetParam1i("tex0", texDiff0);
