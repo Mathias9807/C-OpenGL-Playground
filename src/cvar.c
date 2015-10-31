@@ -3,7 +3,10 @@
 #include "cvar.h"
 #include "sys.h"
 
+int C_cursorBlinkTimer = 0;
 list C_cvars = {NULL, 0};
+
+console C_console;
 
 void C_Print(char* s) {
 	int strLength = 1;
@@ -15,6 +18,21 @@ void C_Print(char* s) {
 		copiedStr[i] = s[i];
 	copiedStr[strLength - 1] = 0;
 	
+	ListAdd(&C_console.history, copiedStr);
+	C_console.lastActive = SYS_TimeMillis();
+}
+
+void C_PrintCommand(char* s) {
+	int strLength = 1;
+	while (s[strLength - 1]) strLength++;
+	if (strLength == 0) return;
+	
+	char* copiedStr = malloc(strLength);
+	for (int i = 0; i < strLength; i++) 
+		copiedStr[i] = s[i];
+	copiedStr[strLength - 1] = 0;
+	
+	ListAdd(&C_console.commandHistory, copiedStr);
 	ListAdd(&C_console.history, copiedStr);
 	C_console.lastActive = SYS_TimeMillis();
 }

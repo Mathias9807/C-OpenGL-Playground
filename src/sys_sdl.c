@@ -153,6 +153,9 @@ int IN_ReadTextInput(char* text, int length) {
 					text[curLength + i] = 0;
 				}
 				
+				// Make cursor blinking stop when typing
+				C_cursorBlinkTimer = SYS_TimeMillis() + C_CONSOLE_BLINKMS;
+				
 				break;
 			}
 			case SDL_KEYDOWN: 
@@ -164,6 +167,41 @@ int IN_ReadTextInput(char* text, int length) {
 					text[curLength++] = '\t';
 				if (event.key.keysym.sym == SDLK_ESCAPE && curLength < length) 
 					return -1;
+				if (event.key.keysym.sym == SDLK_UP) {
+					int listSize = ListSize(&C_console.commandHistory);
+					if (C_console.selectedRow < listSize - 1) {
+						C_console.selectedRow++;
+						
+						char* line = ListGet(&C_console.commandHistory, 
+							listSize - C_console.selectedRow - 1);
+						
+						C_console.text[0] = 0;
+						for (int i = 0; line[i]; i++) {
+							C_console.text[i] = line[i];
+							C_console.text[i + 1] = 0;
+						}
+					}
+				}
+				if (event.key.keysym.sym == SDLK_DOWN) {
+					int listSize = ListSize(&C_console.commandHistory);
+					if (C_console.selectedRow > -1) {
+						C_console.selectedRow--;
+						
+						C_console.text[0] = 0;
+						if (C_console.selectedRow > -1) {
+							char* line = ListGet(&C_console.commandHistory, 
+								listSize - C_console.selectedRow - 1);
+							
+							for (int i = 0; line[i]; i++) {
+								C_console.text[i] = line[i];
+								C_console.text[i + 1] = 0;
+							}
+						}
+					}
+				}
+				
+				C_cursorBlinkTimer = SYS_TimeMillis() + C_CONSOLE_BLINKMS;
+				
 				break;
 		}
 	}

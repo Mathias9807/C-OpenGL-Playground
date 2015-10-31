@@ -26,12 +26,12 @@ int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 AABB dummyBox = {-1, -1, -1, 2, 2, 2};
 float dummyXRot = 0;
 
-console G_console;
-
 void Shoot();
 
 void G_Init() {
 	G_camPos[2] = 2.5;
+	
+	C_console.selectedRow = -1;
 	
 	smokeParts = (list) {NULL, 0};
 }
@@ -45,13 +45,14 @@ void G_Tick() {
 	for (int i = 0; C_console.text[i]; i++) {
 		if (C_console.text[i] == '\n') {
 			C_console.text[i] = 0;
-			C_Print(C_console.text);
+			C_PrintCommand(C_console.text);
 			C_Execute(C_console.text);
 			for (int j = 0; j < C_CONSOLE_LENGTH; j++)
 				C_console.text[j] = 0;
 			IN_StopTextInput();
 			C_console.inputActive = false;
 			actionHeld = true;
+			C_console.selectedRow = -1;
 			
 			break;
 		}

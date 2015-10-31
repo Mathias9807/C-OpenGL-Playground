@@ -16,7 +16,7 @@ GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cliffTexture, heightTexture;
+GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
 enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
@@ -70,6 +70,7 @@ void V_Init() {
 	scareTexture = V_LoadTexture("Scarecrow.png");
 	smokeTexture = V_LoadTexture("Smoke.png");
 	fontTexture = V_LoadTexture("font.png");
+	cursorTexture = V_LoadTexture("cursor.png");
 	
 	BindTextures();
 	
@@ -272,17 +273,34 @@ void V_Tick() {
 		}
 	}
 	
-	char* text = C_console.text;
-	for (int i = 0; i < C_CONSOLE_LENGTH && C_console.inputActive; i++) {
-		int character = (int) text[i];
-		if (!character) character = (int) ' ';
-		
-		V_SetParam2f("subSize", 8, 16);
-		V_SetParam2f("pos", 16 + 8 * i, 16 + 
-					 16 * (C_CONSOLE_DISP > lines ? lines : C_CONSOLE_DISP));
-		V_SetParam2f("subPos", (character % 16) / 16.0, 
-					 (character / 16) / 16.0);
-		V_RenderModel(&plane);
+	if (C_console.inputActive) {
+		char* text = C_console.text;
+		for (int i = 0; i < C_CONSOLE_LENGTH; i++) {
+			int character = (int) text[i];
+			if (!character) {
+				V_BindTexture(cursorTexture, texGUI);
+				V_SetParam2f("subSize", 8, 16);
+				V_SetParam2f("pos", 16 + 8 * i, 16 + 
+						 16 * (C_CONSOLE_DISP > lines ? lines : C_CONSOLE_DISP));
+				
+				if (SYS_TimeMillis() - C_CONSOLE_BLINKMS > C_cursorBlinkTimer) 
+					C_cursorBlinkTimer = SYS_TimeMillis() + C_CONSOLE_BLINKMS;
+				if (SYS_TimeMillis() < C_cursorBlinkTimer) 
+					V_SetParam2f("subPos", 0, 0);
+				else 
+					V_SetParam2f("subPos", 1, 0);
+				V_RenderModel(&plane);
+				
+				break;
+			}
+			
+			V_SetParam2f("subSize", 8, 16);
+			V_SetParam2f("pos", 16 + 8 * i, 16 + 
+						 16 * (C_CONSOLE_DISP > lines ? lines : C_CONSOLE_DISP));
+			V_SetParam2f("subPos", (character % 16) / 16.0, 
+						 (character / 16) / 16.0);
+			V_RenderModel(&plane);
+		}
 	}
 	
 	V_SetAlphaBlending(false);
@@ -299,6 +317,8 @@ void BindTextures() {
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
 	V_BindTexture(cliffTexture, texDiff1);
+	V_BindTexture(cursorTexture, texGUI);
+	V_SetTexRepeating(false);
 	V_BindTexture(fontTexture, texGUI);
 	V_SetTexRepeating(false);
 }
