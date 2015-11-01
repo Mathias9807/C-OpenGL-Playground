@@ -16,7 +16,7 @@ GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
+GLuint grassDTexture, grassSTexture, grassNTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
 enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
@@ -56,7 +56,9 @@ void V_Init() {
 	V_LoadSprite("Terrain.png", &heightSprite);
 	V_CreateHeightMap(&heightMap, &heightSprite, 5);
 
-	grassTexture = V_LoadTexture("Grass0138_35_S.jpg");
+	grassDTexture = V_LoadTexture("Grass0138_35_S.jpg");
+	grassSTexture = V_LoadTexture("Grass0138_35_S_spec.jpg");
+	grassNTexture = V_LoadTexture("Grass0138_35_S_normal.jpg");
 	cliffTexture = V_LoadTexture("Cliffside.png");
 	heightTexture = V_LoadTexture("Terrain.png");
 	roughTexture = V_LoadTexture("Fabric.png");
@@ -149,11 +151,11 @@ void V_RenderScene() {
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 1);
 	V_SetParam1i("terrain", 1);
-	V_SetParam1f("materialWeight", 0.9);	
-	V_SetParam1f("materialGloss", 1000);
-	V_BindTexture(grassTexture, texDiff0);
-	V_BindTexture(blackTexture, texSpec);
-	V_BindTexture(flatNormal, texNormal);
+	V_SetParam1f("materialWeight", 0.7);	
+	V_SetParam1f("materialGloss", 10);
+	V_BindTexture(grassDTexture, texDiff0);
+	V_BindTexture(grassSTexture, texSpec);
+	V_BindTexture(grassNTexture, texNormal);
 	V_RenderModel(&heightMap);
 	V_SetParam1i("terrain", 0);
 }
@@ -330,7 +332,9 @@ void BindTextures() {
 	V_BindTexture(shadow.attD, texShadow);
 	V_SetTexInterLinear(true);
 	V_BindCubeMap(skyMap, texSky);
-	V_BindTexture(grassTexture, texDiff0);
+	V_BindTexture(grassDTexture, texDiff0);
+	V_BindTexture(grassSTexture, texSpec);
+	V_BindTexture(grassNTexture, texNormal);
 	V_BindTexture(roughTexture, texSpec);
 	V_BindTexture(normalTexture, texNormal);
 	V_BindTexture(cliffTexture, texDiff1);
