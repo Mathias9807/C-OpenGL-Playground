@@ -11,17 +11,18 @@ uniform mat4				matProj, matView, matModel, matShadow;
 uniform sampler2D			tex0, tex1, tex2, tex3;
 uniform sampler2DShadow		texShadow;
 uniform samplerCube			texSky;
+uniform float				materialWeight, materialGloss;
 uniform float				time;
 uniform float				farPlane;
 uniform vec3				bgColor, camPos, lightDir;
 uniform int					terrain;
 uniform struct light_t {
 	vec3 pos, col;
-	bool directional;
 } lights;
 
 void main() {
 	vec3 normal_i = normalize(normal);
+	vec3 reflectDir = -reflect(normalize(camPos - vertex_w.xyz), normal_i);
 	float slope = 1 - normal_i.y;
 	vec3 texDiff = mix(texture(tex0, uv.st).rgb, texture(tex3, uv.st).rgb, terrain * pow(slope * 2, 1.5));
 	vec3 texSpec = texture(tex1, uv.st).rgb;
@@ -44,30 +45,26 @@ void main() {
 		shadow /= 5;
 	}
 	
-	vec3 light = vec3(0.2, 0.2, 0.4) * texDiff;
+	vec3 intensity = vec3(1, 1, 0.75);
+	vec3 light = 0.1 * intensity;
 	
-	vec3 diffuse = vec3(2, 2, 1.5) * max(dot(normal_i, lightDir), 0) * shadow;
+	float diffuse = clamp(dot(normal_i, lightDir), 0, 1);
+	float indirectSpec = 0.25;
+	float specular = (1 - indirectSpec) * pow(
+		clamp(dot(reflectDir, lightDir), 0, 1), materialGloss
+	);
 	
-	vec3 specular = vec3(3) * pow(
-		max(dot(
-			reflect(
-				normalize(camPos - vertex_w.xyz), 
-				normal_i), 
-			-lightDir), 
-		0), 
-	60) * shadow;
-	specular += texture(texSky, 
-		-reflect(normalize(camPos - vertex_w.xyz), normal_i)).xyz;
+	float weight = materialWeight;
 	
-	//diffuse += lights.col;
+	light += weight * (diffuse * texDiff * intensity * shadow);
+	light += (1 - weight) * (specular * texSpec * intensity * shadow);
+	light += (1 - weight) * (indirectSpec * texture(texSky, 
+		reflectDir).rgb * texSpec * intensity * shadow);
 	
-	light += diffuse * texDiff 
-		+ specular * texSpec;
-	
-	light /= 2;
 	light = mix(light, texture(texSky, vertex_w.xyz - camPos).rgb, 
-				clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);
+		clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);
 	
 	color_out = vec4(light, texture(tex0, uv.st).a);
 	depth_out = vec4(vertex_p.z / farPlane);
 }
+

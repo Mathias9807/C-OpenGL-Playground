@@ -120,22 +120,37 @@ void V_RenderScene() {
 	V_BindTexture(flatNormal, texNormal);
 	V_RenderModel(&scarecrow);*/
 
+	V_SetParam1f("materialWeight", 0.5);
+	V_SetParam1f("materialGloss", 20);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(whiteTexture, texDiff0);
+	V_BindTexture(whiteTexture, texSpec);
+	V_BindTexture(flatNormal, texNormal);
 	for (int i = -16; i < 16; i++) {
 		mat4x4_translate(matModel, i * 2, 5, i * 2);
 		mat4x4_rotate_Z(matModel, matModel, 45);
 		V_SetParam4m("matModel", matModel);
-		V_SetParam1f("uvScale", 1);
-		V_BindTexture(whiteTexture, texDiff0);
-		V_BindTexture(blackTexture, texSpec);
-		V_BindTexture(flatNormal, texNormal);
 		V_RenderModel(&cube);
 	}
+
+	V_SetParam1f("materialWeight", 0.9);
+	V_SetParam1f("materialGloss", 1);
+	V_SetParam1f("uvScale", 1);
+	V_BindTexture(whiteTexture, texDiff0);
+	V_BindTexture(blackTexture, texSpec);
+	V_BindTexture(flatNormal, texNormal);
+	mat4x4_translate(matModel, -10, 3, 5);
+	mat4x4_rotate_Z(matModel, matModel, 45);
+	V_SetParam4m("matModel", matModel);
+	V_RenderModel(&cube);
 
 	mat4x4_translate(matModel, -120, -1, -120);
 	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
 	V_SetParam4m("matModel", matModel);
 	V_SetParam1f("uvScale", 1);
 	V_SetParam1i("terrain", 1);
+	V_SetParam1f("materialWeight", 0.9);	
+	V_SetParam1f("materialGloss", 1000);
 	V_BindTexture(grassTexture, texDiff0);
 	V_BindTexture(blackTexture, texSpec);
 	V_BindTexture(flatNormal, texNormal);
@@ -170,9 +185,11 @@ void V_RenderSmoke() {
 void V_RenderNearScene() {
 	V_SetParam4m("matModel", G_gunMat);
 	V_SetParam1f("uvScale", 1);
+	V_SetParam1f("materialWeight", 0.5);
+	V_SetParam1f("materialGloss", 40);
 	V_BindTexture(flatNormal, texNormal);
 	V_BindTexture(weaponTexture, texDiff0);
-	V_BindTexture(blackTexture, texSpec);
+	V_BindTexture(whiteTexture, texSpec);
 	V_RenderModel(&weapon);
 }
 
@@ -352,6 +369,8 @@ void LoadShaders() {
 	V_SetParam1i("tex2", texNormal);
 	V_SetParam1i("texShadow", texShadow);
 	V_SetParam1i("texSky", texSky);
+	V_SetParam1f("materialWeight", 0.9);
+	V_SetParam1f("materialGloss", 80);
 	V_SetParam4m("matProj", matProj);
 	V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
