@@ -62,7 +62,7 @@ void V_Init() {
 	cliffTexture = V_LoadTexture("Cliffside.png");
 	heightTexture = V_LoadTexture("Terrain.png");
 	roughTexture = V_LoadTexture("Fabric.png");
-	skyMap = V_LoadCubeMap("Sunny sky");
+	skyMap = V_LoadCubeMap("Dark night");
 	weaponTexture = V_LoadTexture("SKS.png");
 	specTexture = V_LoadTexture("SpecularGrain.png");
 	normalTexture = V_LoadTexture("NormalMap.png");
@@ -383,6 +383,9 @@ void LoadShaders() {
 	V_SetParam1f("uvScale", 1);
 	V_SetParam3f("lightDir", -lightDir[0], -lightDir[1], -lightDir[2]);
 	V_SetParam1i("terrain", 0);
+	V_SetParam1i("lightNum", 1);
+	V_SetParam3f("lights[0].pos", 0, 1, 0);
+	V_SetParam3f("lights[0].col", 8, 7, 6);
 	
 	V_SetShader(skyShader);
 	V_SetParam1i("tex", texSky);

@@ -16,9 +16,10 @@ uniform float				time;
 uniform float				farPlane;
 uniform vec3				bgColor, camPos, lightDir;
 uniform int					terrain;
+uniform int					lightNum;
 uniform struct light_t {
 	vec3 pos, col;
-} lights;
+} lights[1];
 
 void main() {
 	vec3 normal_i = normalize(normal);
@@ -45,7 +46,7 @@ void main() {
 		shadow /= 5;
 	}
 	
-	vec3 intensity = vec3(1, 1, 0.75);
+	vec3 intensity = vec3(0.1, 0.1, 0.15) * 3;
 	vec3 light = 0.1 * intensity;
 	
 	float diffuse = clamp(dot(normal_i, lightDir), 0, 1);
@@ -61,10 +62,22 @@ void main() {
 	light += (1 - weight) * (indirectSpec * texture(texSky, 
 		reflectDir).rgb * texSpec * intensity * shadow);
 	
+	for (int i = 0; i < 1; i++) {
+		float falloff = 1 / (1 + pow(length(lights[i].pos - vertex_w.xyz), 2));
+		vec3 lDir = normalize(lights[i].pos - vertex_w.xyz);
+		
+		light += weight * falloff * lights[i].col * texDiff * clamp(
+			dot(normal_i, lDir), 0, 1);
+		
+		light += (1 - weight) * falloff * texSpec * lights[i].col * pow(
+			clamp(dot(lDir, reflectDir), 0, 1), materialGloss);
+	}
+	
 	light = mix(light, texture(texSky, vertex_w.xyz - camPos).rgb, 
 		clamp(-vertex_c.z / farPlane - 0.5, 0, 0.5) * 2);
+	
+	light /= light + 1;
 	
 	color_out = vec4(light, texture(tex0, uv.st).a);
 	depth_out = vec4(vertex_p.z / farPlane);
 }
-
