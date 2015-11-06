@@ -34,6 +34,7 @@ void G_Init() {
 	C_console.selectedRow = -1;
 	
 	smokeParts = (list) {NULL, 0};
+	lights = (list) {NULL, 0};
 }
 
 void G_Tick() {

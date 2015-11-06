@@ -15,6 +15,12 @@ vec3 G_camPos;
 vec3 G_camRot;
 
 typedef struct {
+	vec3 pos, col;
+	bool directional;
+} light;
+list lights;
+
+typedef struct {
 	point p;
 	float radius;
 	int timeLeft;

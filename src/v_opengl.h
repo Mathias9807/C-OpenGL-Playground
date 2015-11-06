@@ -6,6 +6,7 @@
 
 #include "def.h"
 #include "v_main.h"
+#include "g_main.h"
 #include <GL/glew.h>
 #include <linmath.h>
 
@@ -72,11 +73,6 @@ struct fbo {
 	unsigned* att;
 	unsigned attD;
 };
-
-typedef struct {
-	vec3 pos, col;
-	bool directional;
-} light;
 
 extern GLuint curShader;
 float V_vertFov;

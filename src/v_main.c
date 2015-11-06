@@ -21,7 +21,6 @@ enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
 
-light l = LIGHT_DEFAULT;
 float V_vertFov = 45;
 bool V_reloadShaders = true;
 
