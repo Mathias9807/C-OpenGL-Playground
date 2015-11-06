@@ -47,7 +47,7 @@ void SYS_CheckErrors() {
 void SYS_Error(char* s) {
 	printf("Runtime error: %s\n", s);
 
-	SYS_CloseWindow();
+	exit(0);
 }
 
 void SYS_Warning(char* s) {

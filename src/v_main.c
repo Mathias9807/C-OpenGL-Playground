@@ -16,7 +16,7 @@ GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassDTexture, grassSTexture, grassNTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
+GLuint grassDTexture, grassSTexture, grassNTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
 enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
@@ -68,6 +68,7 @@ void V_Init() {
 	normalTexture = V_LoadTexture("NormalMap.png");
 	blackTexture = V_LoadTexture("Black.png");
 	whiteTexture = V_LoadTexture("White.png");
+	grayTexture = V_LoadTexture("Gray.png");
 	flatNormal = V_LoadTexture("FlatNormal.png");
 	scareTexture = V_LoadTexture("Scarecrow.png");
 	smokeTexture = V_LoadTexture("Smoke.png");
@@ -191,7 +192,7 @@ void V_RenderNearScene() {
 	V_SetParam1f("materialGloss", 40);
 	V_BindTexture(flatNormal, texNormal);
 	V_BindTexture(weaponTexture, texDiff0);
-	V_BindTexture(whiteTexture, texSpec);
+	V_BindTexture(grayTexture, texSpec);
 	V_RenderModel(&weapon);
 }
 
