@@ -8,7 +8,7 @@ in vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
 in mat3 matNormal;
 
 uniform mat4				matProj, matView, matModel, matShadow;
-uniform sampler2D			tex0, tex1, tex2, tex3;
+uniform sampler2D			tex0, tex1, tex2, tex3, texShadowD;
 uniform sampler2DShadow		texShadow;
 uniform samplerCube			texSky;
 uniform float				materialWeight, materialGloss;
@@ -27,6 +27,7 @@ void main() {
 	float slope = 1 - normal_i.y;
 	vec3 texDiff = mix(texture(tex0, uv.st).rgb, texture(tex3, uv.st).rgb, terrain * pow(slope * 2, 1.5));
 	vec3 texSpec = texture(tex1, uv.st).rgb;
+	float lightDot = dot(normal_i, lightDir);
 
 	float shadow = 0;
 	vec2 shadowUV = vertex_shadow.st / 2 + 0.5;
@@ -37,7 +38,7 @@ void main() {
 		shadow = 1;
 	else {
 		vec2 offs = 1.0 / textureSize(texShadow, 0);
-		float bias = 0.002;
+		float bias = -0.005 * (1 - lightDot);
 		shadow += texture(texShadow, vec3(shadowUV+vec2(offs.x, 0), vertex_shadow.z + bias));
 		shadow += texture(texShadow, vec3(shadowUV+vec2(0, offs.y), vertex_shadow.z + bias));
 		shadow += texture(texShadow, vec3(shadowUV+vec2(-offs.x, 0), vertex_shadow.z + bias));
@@ -46,10 +47,10 @@ void main() {
 		shadow /= 5;
 	}
 	
-	vec3 intensity = vec3(0.1, 0.1, 0.15) * 3;
+	vec3 intensity = vec3(0.1, 0.1, 0.15) * 5;
 	vec3 light = 0.1 * intensity;
 	
-	float diffuse = clamp(dot(normal_i, lightDir), 0, 1);
+	float diffuse = clamp(lightDot, 0, 1);
 	float indirectSpec = 0.25;
 	float specular = (1 - indirectSpec) * pow(
 		clamp(dot(reflectDir, lightDir), 0, 1), materialGloss
@@ -78,6 +79,6 @@ void main() {
 	
 	light /= light + 1;
 	
-	color_out = vec4(light, texture(tex0, uv.st).a);
+	color_out = vec4(vec3(shadow * diffuse), texture(tex0, uv.st).a);
 	depth_out = vec4(vertex_p.z / farPlane);
 }

@@ -129,7 +129,7 @@ void V_RenderScene() {
 	V_BindTexture(whiteTexture, texSpec);
 	V_BindTexture(flatNormal, texNormal);
 	for (int i = -16; i < 16; i++) {
-		mat4x4_translate(matModel, i * 2, 5, i * 2);
+		mat4x4_translate(matModel, i * 3, 5, i * 3);
 		mat4x4_rotate_Z(matModel, matModel, 45);
 		V_SetParam4m("matModel", matModel);
 		V_RenderModel(&cube);
@@ -372,6 +372,7 @@ void LoadShaders() {
 	V_SetParam1i("tex1", texSpec);
 	V_SetParam1i("tex2", texNormal);
 	V_SetParam1i("texShadow", texShadow);
+	V_SetParam1i("texShadowD", texShadow);
 	V_SetParam1i("texSky", texSky);
 	V_SetParam1f("materialWeight", 0.9);
 	V_SetParam1f("materialGloss", 80);
