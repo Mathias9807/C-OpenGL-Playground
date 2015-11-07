@@ -9,7 +9,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <string.h>
 
-#define RES_DIR "res/"
+#define RES_DIR "./res/"
 
 int	SYS_argc = 0;
 char** SYS_argv = NULL;
@@ -25,12 +25,12 @@ void SYS_GetResourcePath(char* name, char* dest) {
 	// Set string to be empty
 	dest[0] = 0;
 	
-	// Add executable path to string, gotten from argv[0]
-	strcat(dest, SYS_argv[0]);
-	
 	// Check if argv[0] might contain the path
-	// If so, find last '/' and remove everything after it
 	if (SYS_argv[0][0] == '/' || SYS_argv[0][0] == '.') {
+		// Add executable path to string, gotten from argv[0]
+		strcat(dest, SYS_argv[0]);
+		
+		// Cut off string after last '/'
 		int lastSlash = 0;
 		for (int i = 0; dest[i]; i++) 
 			if (dest[i] == '/') lastSlash = i;
