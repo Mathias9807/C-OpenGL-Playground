@@ -21,7 +21,7 @@ enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
 
-float V_vertFov = 45;
+float V_vertFov;
 bool V_reloadShaders = true;
 
 extern AABB dummyBox;
@@ -35,8 +35,8 @@ cvar* shadowDim, * shadowSize;
 void V_Init() {
 	V_InitOpenGL();
 	
-	shadowDim = C_Add("ShadowDim", 512);
-	shadowSize = C_Add("ShadowSize", 40);
+	shadowDim = C_Get("shadowDim");
+	shadowSize = C_Get("shadowSize");
 	
 	V_CreateFBO(&post0, V_WIDTH, V_HEIGHT, 2);
 	V_CreateFBO(&post1, V_WIDTH, V_HEIGHT, 2);
@@ -404,7 +404,7 @@ void LoadShaders() {
 	V_SetShader(depthShader);
 	V_SetParam4m("matProj", matShadow);
 	V_SetParam1f("farPlane", 1);
-	V_SetParam1f("shadowDim", C_Get("ShadowDim")->value);
+	V_SetParam1f("shadowDim", C_Get("shadowDim")->value);
 	
 	V_SetShader(smokeShader);
 	V_SetParam1i("tex0", texDiff0);

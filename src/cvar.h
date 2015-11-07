@@ -34,6 +34,9 @@ typedef struct {
 	bool 	modified;
 } cvar;
 
+// Initializes cvar list
+void C_Init();
+
 // Prints a string to the console
 void C_Print(char* s);
 

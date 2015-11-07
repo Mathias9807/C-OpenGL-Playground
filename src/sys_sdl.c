@@ -9,7 +9,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <string.h>
 
-#define RES_DIR "./res/"
+#define RES_DIR "res/"
 
 int	SYS_argc = 0;
 char** SYS_argv = NULL;
@@ -22,7 +22,22 @@ SDL_GLContext SYS_glContext;
 bool IN_readingText = false;
 
 void SYS_GetResourcePath(char* name, char* dest) {
-	strcpy(dest, RES_DIR);
+	// Set string to be empty
+	dest[0] = 0;
+	
+	// Add executable path to string, gotten from argv[0]
+	strcat(dest, SYS_argv[0]);
+	
+	// Check if argv[0] might contain the path
+	// If so, find last '/' and remove everything after it
+	if (SYS_argv[0][0] == '/' || SYS_argv[0][0] == '.') {
+		int lastSlash = 0;
+		for (int i = 0; dest[i]; i++) 
+			if (dest[i] == '/') lastSlash = i;
+		dest[lastSlash + 1] = 0;
+	}
+	
+	strcat(dest, RES_DIR);
 	strcat(dest, name);
 }
 
@@ -47,7 +62,8 @@ void SYS_CheckErrors() {
 void SYS_Error(char* s) {
 	printf("Runtime error: %s\n", s);
 
-	exit(0);
+	if (SYS_CLOSE_ON_ERROR) 
+		exit(0);
 }
 
 void SYS_Warning(char* s) {
@@ -227,11 +243,19 @@ int main(int argc, char** argv) {
 	SYS_argc = argc;
 	SYS_argv = argv;
 	
+	// Initialize console variables
+	C_Init();
+	
+	// Try to open a window with rendering capabilities
 	if (!SYS_OpenWindow()) SYS_Error("Failed to open a window with OpenGL Core 3.3");
 
+	// Initialize main engine
 	G_Init();
+	
+	// Initialize rendering system
 	V_Init();
 	
+	// Main game loop
 	uint32_t current = SYS_TimeMillis();
 	uint32_t last = current;
 	uint32_t secondTimer = 0, frames = 0;
@@ -250,6 +274,7 @@ int main(int argc, char** argv) {
 			frames = 0;
 		}
 		
+		// Update game, then render to screen
 		G_Tick();
 		V_Tick();
 		SYS_UpdateWindow();

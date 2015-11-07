@@ -6,6 +6,8 @@
 
 #include "def.h"
 
+#define SYS_CLOSE_ON_ERROR 1
+
 int		SYS_argc;
 char**	SYS_argv;
 

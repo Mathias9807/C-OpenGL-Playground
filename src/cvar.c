@@ -8,6 +8,16 @@ list C_cvars = {NULL, 0};
 
 console C_console;
 
+void C_Init() {
+	// Initialize to default values
+	C_Add("shadowDim",		512);
+	C_Add("shadowSize",		40);
+	C_Add("fov",			65);
+	C_Add("adsFov",			40);
+	
+	// Apply values from program arguments
+}
+
 void C_Print(char* s) {
 	int strLength = 1;
 	while (s[strLength - 1]) strLength++;

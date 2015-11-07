@@ -12,7 +12,7 @@
 
 float G_moveSpeed = 8, G_rotSpeed = 3;
 vec3 G_camPos, G_camRot;
-float fov = 65, adsFov = 40;
+cvar* fov, * adsFov;
 mat4x4 G_gunMat;
 vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5},
 fireGunPos = {-0.004, 0.0125, -0.03}, hipFireGunPos = {0, 0.1, -0.4};
@@ -32,6 +32,9 @@ void G_Init() {
 	G_camPos[2] = 2.5;
 	
 	C_console.selectedRow = -1;
+	
+	fov = C_Get("fov");
+	adsFov = C_Get("adsFov");
 	
 	smokeParts = (list) {NULL, 0};
 	lights = (list) {NULL, 0};
@@ -122,7 +125,7 @@ void G_Tick() {
 		f = G_Valuef((function) {0, 1, 2, terms},
 							(SYS_TimeMillis() / 1000.0 - lastShootTime) * 5);
 	}
-	V_SetProj(fov * d + adsFov * (1 - d));
+	V_SetProj(fov->value * d + adsFov->value * (1 - d));
 	vec3 resultant = {0, 0, 0};
 	for (int i = 0; i < 3; i++) {
 		resultant[i] += defGunPos[i];
