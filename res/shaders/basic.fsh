@@ -14,12 +14,13 @@ uniform samplerCube			texSky;
 uniform float				materialWeight, materialGloss;
 uniform float				time;
 uniform float				farPlane;
-uniform vec3				bgColor, camPos, lightDir;
+uniform vec3				ambient, camPos, lightDir;
 uniform int					terrain;
 uniform int					lightNum;
 uniform struct light_t {
 	vec3 pos, col;
-} lights[1];
+	bool directional;
+} lights[8];
 
 void main() {
 	vec3 normal_i = normalize(normal);
@@ -47,8 +48,7 @@ void main() {
 		shadow /= 5;
 	}
 	
-	vec3 intensity = vec3(0.1, 0.1, 0.15) * 5;
-	vec3 light = 0.1 * intensity;
+	vec3 light = ambient;
 	
 	float diffuse = clamp(lightDot, 0, 1);
 	float indirectSpec = 0.25;
@@ -58,14 +58,20 @@ void main() {
 	
 	float weight = materialWeight;
 	
-	light += weight * (diffuse * texDiff * intensity * shadow);
-	light += (1 - weight) * (specular * texSpec * intensity * shadow);
+	/*light += weight * (diffuse * texDiff * intensity * shadow);
+	light += (1 - weight) * (specular * texSpec * intensity * shadow);*/
 	light += (1 - weight) * (indirectSpec * texture(texSky, 
-		reflectDir).rgb * texSpec * intensity * shadow);
+		reflectDir).rgb * texSpec * shadow);
 	
-	for (int i = 0; i < 1; i++) {
-		float falloff = 1 / (1 + pow(length(lights[i].pos - vertex_w.xyz), 2));
-		vec3 lDir = normalize(lights[i].pos - vertex_w.xyz);
+	for (int i = 0; i < lightNum; i++) {
+		float falloff = 1;
+		vec3 lDir;
+		if (!lights[i].directional) {
+			falloff /= pow(length(lights[i].pos - vertex_w.xyz), 2) + 1;
+			lDir = normalize(lights[i].pos - vertex_w.xyz);
+		}else {
+			lDir = normalize(lights[i].pos);
+		}
 		
 		light += weight * falloff * lights[i].col * texDiff * clamp(
 			dot(normal_i, lDir), 0, 1);
@@ -79,6 +85,6 @@ void main() {
 	
 	light /= light + 1;
 	
-	color_out = vec4(vec3(shadow * diffuse), texture(tex0, uv.st).a);
+	color_out = vec4(light, texture(tex0, uv.st).a);
 	depth_out = vec4(vertex_p.z / farPlane);
 }

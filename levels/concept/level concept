@@ -1,0 +1,29 @@
+The 'level' file contains the position and rotation of all props in the level. 
+
+The format is as follows:
+
+2 bytes		'LV' in ASCII
+4 bytes		Size of the file in bytes
+
+4 bytes		Number of resources
+4 bytes		Number of objects
+
+Resources, numbered from 0 {
+	32 bytes	Name of the prop
+}
+
+Object index table
+9 bytes {
+	1 byte		Type of object
+	4 bytes		Start index of object data
+	4 bytes		Length of object data
+}
+Defined object types are:
+	0	Prop
+
+Props
+28 bytes per prop {
+	4 bytes		Index of resource
+	12 bytes	Position, XYZ stored in floats
+	12 bytes	Rotation, XYZ stored in floats
+}

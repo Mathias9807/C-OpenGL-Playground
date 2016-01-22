@@ -9,7 +9,14 @@
 #include <SDL2/SDL_opengl.h>
 #include <string.h>
 
+#ifdef _WIN32
+#error "Not implemented yet"
+#else
+#include <sys/stat.h>
+#endif
+
 #define RES_DIR "./res/"
+#define LVL_DIR "./levels/"
 
 int	SYS_argc = 0;
 char** SYS_argv = NULL;
@@ -41,6 +48,26 @@ void SYS_GetResourcePath(char* name, char* dest) {
 	strcat(dest, name);
 }
 
+void SYS_GetLevelPath(char* name, char* dest) {
+	// Set string to be empty
+	dest[0] = 0;
+	
+	// Check if argv[0] might contain the path
+	if (SYS_argv[0][0] == '/' || SYS_argv[0][0] == '.') {
+		// Add executable path to string, gotten from argv[0]
+		strcat(dest, SYS_argv[0]);
+		
+		// Cut off string after last '/'
+		int lastSlash = 0;
+		for (int i = 0; dest[i]; i++) 
+			if (dest[i] == '/') lastSlash = i;
+		dest[lastSlash + 1] = 0;
+	}
+	
+	strcat(dest, LVL_DIR);
+	strcat(dest, name);
+}
+
 void SYS_CheckErrors() {
 //	const char* error = SDL_GetError();
 //	if (*error) printf("SDL Error: %s\n", SDL_GetError());
@@ -68,6 +95,14 @@ void SYS_Error(char* s) {
 
 void SYS_Warning(char* s) {
 	printf("Runtime warning: %s\n", s);
+}
+
+void SYS_Mkdir(char* s) {
+#ifdef _WIN32
+#error "Mkdir not implemented yet"
+#else
+	mkdir(s, 0711);
+#endif
 }
 
 int SYS_OpenWindow() {

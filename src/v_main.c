@@ -7,6 +7,7 @@
 #include "v_opengl.h"
 #include "g_physics.h"
 #include "cvar.h"
+#include "level.h"
 
 model_t model, plane, heightMap, pillar, cube, sphere, weapon, scarecrow, collBox;
 
@@ -43,7 +44,7 @@ void V_Init() {
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
 	V_CreateDepthFBO(&shadow, (int)shadowDim->value, (int)shadowDim->value);
 
-	V_LoadAssimp("Hills.obj", &model);
+	V_LoadAssimp("suzanne.dae", &model);
 	V_LoadAssimp("SmoothPillars.obj", &pillar);
 	V_LoadAssimp("plane.obj", &plane);
 	V_LoadAssimp("Cube.obj", &cube);
@@ -82,6 +83,21 @@ void V_Init() {
 }
 
 void V_RenderScene() {
+	for (int i = 0; i < ListSize(&L_current.props); i++) {
+		prop* p = ListGet(&L_current.props, i);
+		
+		V_BindTexture(whiteTexture, texDiff0);
+		V_BindTexture(whiteTexture, texDiff1);
+		V_BindTexture(whiteTexture, texSpec);
+		V_BindTexture(flatNormal, texNormal);
+		mat4x4_translate(matModel, p->pos[0], p->pos[1], p->pos[2]);
+		mat4x4_rotate_Y(matModel, matModel, p->rot[1]);
+		mat4x4_rotate_Z(matModel, matModel, p->rot[2]);
+		mat4x4_rotate_X(matModel, matModel, p->rot[0]);
+		V_SetParam4m("matModel", matModel);
+		V_RenderModel(&model);
+	}
+	
 	/*V_BindTexture(normalTexture, texNormal);
 	mat4x4_translate(matModel, 0, -1, 0);
 	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
@@ -120,7 +136,7 @@ void V_RenderScene() {
 	V_BindTexture(scareTexture, texDiff0);
 	V_BindTexture(blackTexture, texSpec);
 	V_BindTexture(flatNormal, texNormal);
-	V_RenderModel(&scarecrow);*/
+	V_RenderModel(&scarecrow);
 
 	V_SetParam1f("materialWeight", 0.5);
 	V_SetParam1f("materialGloss", 20);
@@ -157,7 +173,7 @@ void V_RenderScene() {
 	V_BindTexture(grassSTexture, texSpec);
 	V_BindTexture(grassNTexture, texNormal);
 	V_RenderModel(&heightMap);
-	V_SetParam1i("terrain", 0);
+	V_SetParam1i("terrain", 0);*/
 }
 
 void V_RenderSmoke() {
@@ -378,15 +394,19 @@ void LoadShaders() {
 	V_SetParam1f("materialGloss", 80);
 	V_SetParam4m("matProj", matProj);
 	V_SetParam4m("matShadow", matShadow);
-	V_SetParam3f("bgColor", 0, 0, 0.3f);
+	V_SetParam3f("ambient", 0, 0, 0.1f);
 	V_SetParam1f("farPlane", V_FAR);
 	V_SetParam1f("shadowDim", shadowDim->value);
 	V_SetParam1f("uvScale", 1);
 	V_SetParam3f("lightDir", -lightDir[0], -lightDir[1], -lightDir[2]);
 	V_SetParam1i("terrain", 0);
-	V_SetParam1i("lightNum", 1);
-	V_SetParam3f("lights[0].pos", 0, 1, 0);
-	V_SetParam3f("lights[0].col", 8, 7, 6);
+	V_SetParam1i("lightNum", 2);
+	V_SetParam3f("lights[0].pos", 1, 1, 1);
+	V_SetParam3f("lights[0].col", 0.5, 0.5, 0.75);
+	V_SetParam1i("lights[0].directional", 1);
+	V_SetParam3f("lights[1].pos", 0, 5, 0);
+	V_SetParam3f("lights[1].col", 50, 50, 75);
+	V_SetParam1i("lights[1].directional", 0);
 	
 	V_SetShader(skyShader);
 	V_SetParam1i("tex", texSky);

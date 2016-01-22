@@ -5,6 +5,7 @@
 #include "sys.h"
 #include "input.h"
 #include "g_animation.h"
+#include "level.h"
 #include <linmath.h>
 #include <math.h>
 
@@ -29,6 +30,9 @@ float dummyXRot = 0;
 void Shoot();
 
 void G_Init() {
+	L_LoadLevel("test");
+	L_WriteLevel();
+	
 	G_camPos[2] = 2.5;
 	
 	C_console.selectedRow = -1;

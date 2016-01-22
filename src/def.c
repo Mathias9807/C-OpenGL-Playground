@@ -27,6 +27,8 @@ int ListSize(list* l) {
 		i++;
 	}
 	
+	l->size = i;
+	
 	return i;
 }
 
@@ -44,6 +46,8 @@ void ListAdd(list* l, void* value) {
 		l->first->value = value;
 		l->first->prev = l->first->next = NULL;
 	}
+	
+	l->size++;
 }
 
 void ListRemove(list* l, int index) {
@@ -63,4 +67,6 @@ void ListRemove(list* l, int index) {
 	if (cur->prev)	cur->prev->next = cur->next;
 	if (cur->next)	cur->next->prev = cur->prev;
 	free(cur);
+	
+	l->size--;
 }
