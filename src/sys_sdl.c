@@ -4,6 +4,7 @@
 #include "g_main.h"
 #include "v_main.h"
 #include "input.h"
+#include "level.h"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -260,6 +261,10 @@ int IN_ReadTextInput(char* text, int length) {
 	return 0;
 }
 
+void PrintUsage() {
+	printf("Usage: program [-l <level>]\n\nFlags: \n  -l <level>\tPrint level data\n");
+}
+
 bool SYS_HasParam(char* p) {
 	for (int i = 0; i < SYS_argc; i++) {
 		int j = 0;
@@ -277,6 +282,22 @@ bool SYS_HasParam(char* p) {
 int main(int argc, char** argv) {
 	SYS_argc = argc;
 	SYS_argv = argv;
+
+	// Check command line options
+	if (SYS_HasParam("-l")) {
+		if (argc != 3) {
+			PrintUsage();
+			return 0;
+		}
+
+		// Load the level and print its data
+		L_LoadLevel(argv[argc - 1]);
+		printf("Name: %s\n", L_current.name);
+		printf("Contains %d resources and %d props\n", 
+			L_current.res.size, L_current.props.size);
+
+		return 0;
+	}
 	
 	// Initialize console variables
 	C_Init();

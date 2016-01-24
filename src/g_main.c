@@ -8,6 +8,7 @@
 #include "level.h"
 #include <linmath.h>
 #include <math.h>
+#include <string.h>
 
 #define PITCH_LIMIT M_PI/2
 
@@ -30,7 +31,11 @@ float dummyXRot = 0;
 void Shoot();
 
 void G_Init() {
-	L_LoadLevel("test");
+	memcpy(L_current.name, "Default", 8);
+	resource* r = malloc(sizeof(resource));
+	memcpy(r->name, "suzanne", 8);
+	ListAdd(&L_current.res, r);
+
 	L_WriteLevel();
 	
 	G_camPos[2] = 2.5;

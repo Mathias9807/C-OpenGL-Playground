@@ -20,7 +20,18 @@ float ReadFloat32(FILE* file);
 void WriteUInt32(FILE* file, unsigned value);
 void WriteFloat32(FILE* file, float value);
 
+// Loads the level 'name' in the levels folder into L_current
+// Throws a fatal error if 'name' can't be found
 void L_LoadLevel(char* name) {
+	// Start reading the file
+	char* path = malloc(32);
+	SYS_GetLevelPath(name, path);
+	strcat(path, "/level");
+	
+	FILE* file = fopen(path, "rb");
+
+	if (file == NULL) SYS_Error("Couldn't load level");
+
 	{
 		// Set every char to NULL
 		int i = 0;
@@ -36,13 +47,6 @@ void L_LoadLevel(char* name) {
 	// Reset lists
 	L_current.res = (list) {NULL, 0};
 	L_current.props = (list) {NULL, 0};
-	
-	// Start reading the file
-	char* path = malloc(32);
-	SYS_GetLevelPath(L_current.name, path);
-	strcat(path, "/level");
-	
-	FILE* file = fopen(path, "rb");
 	
 	// Skip header
 	fgetc(file);
@@ -98,6 +102,7 @@ void L_LoadLevel(char* name) {
 	}
 }
 
+// Writes L_current to the file 'L_current.name' in the levels folder
 void L_WriteLevel() {
 	char* path = malloc(32);
 	SYS_GetLevelPath(L_current.name, path);
