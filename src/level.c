@@ -6,8 +6,8 @@
 
 level L_current = {
 	"Default", 
-	(list) {NULL, 0}, 
-	(list) {NULL, 0}
+	{NULL, 0}, 
+	{NULL, 0}
 };
 
 char* buffer;

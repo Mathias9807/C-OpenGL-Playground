@@ -13,6 +13,7 @@
 bool V_reloadShaders;
 
 void V_SetProj(float fov);
+void V_SetVSync(bool vsync);
 
 void V_Init();
 void V_Tick();
