@@ -11,6 +11,7 @@
 #define V_HEIGHT 600
 
 bool V_reloadShaders;
+bool V_rendererUp;
 
 void V_SetProj(float fov);
 void V_SetVSync(bool vsync);

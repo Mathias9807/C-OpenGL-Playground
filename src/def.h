@@ -12,6 +12,8 @@
 
 #define TITLE "3D"
 
+#define PATH_LENGTH 256
+
 typedef struct listEntryStruct {
 	void* value;
 	struct listEntryStruct* next;

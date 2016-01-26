@@ -77,7 +77,7 @@ struct fbo {
 extern GLuint curShader;
 float V_vertFov;
 
-void V_LoadAssimp(char* path, model_t* m);
+int V_LoadAssimp(char* path, model_t* m);
 void V_InitOpenGL();
 void V_QuitOpenGL();
 void V_RenderModel(model_t* m);

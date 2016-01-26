@@ -4,6 +4,8 @@
 #define LEVEL_H
 
 #include "def.h"
+#include "v_main.h"
+#include "v_opengl.h"
 
 #define L_NAME_LENGTH 32
 #define L_RES_LENGTH 32
@@ -14,6 +16,8 @@
 
 typedef struct {
 	char name[L_NAME_LENGTH];
+	
+	model_t model;
 } resource;
 
 typedef struct {

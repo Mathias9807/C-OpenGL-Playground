@@ -9,7 +9,7 @@
 #include "cvar.h"
 #include "level.h"
 
-model_t model, plane, heightMap, pillar, cube, sphere, weapon, scarecrow, collBox;
+model_t plane, heightMap, cube, weapon, collBox;
 
 mat4x4 matProj, matView, matModel, matShadow, identity;
 
@@ -34,8 +34,6 @@ void LoadShaders();
 cvar* shadowDim, * shadowSize;
 
 void V_Init() {
-	V_InitOpenGL();
-	
 	shadowDim = C_Get("shadowDim");
 	shadowSize = C_Get("shadowSize");
 	
@@ -44,17 +42,15 @@ void V_Init() {
 	V_CreateDepthFBO(&depth, V_WIDTH, V_HEIGHT);
 	V_CreateDepthFBO(&shadow, (int)shadowDim->value, (int)shadowDim->value);
 
-	V_LoadAssimp("suzanne.dae", &model);
-	V_LoadAssimp("SmoothPillars.obj", &pillar);
-	V_LoadAssimp("plane.obj", &plane);
-	V_LoadAssimp("Cube.obj", &cube);
-	V_LoadAssimp("Disco.obj", &sphere);
-	V_LoadAssimp("SKS.dae", &weapon);
-	V_LoadAssimp("Scarecrow.dae", &scarecrow);
-	V_LoadAssimp("CollisionBox.obj", &collBox);
+	int fails = 0;
+	fails += V_LoadAssimp("plane.obj", &plane);
+	fails += V_LoadAssimp("SKS.dae", &weapon);
+	fails += V_LoadAssimp("Cube.obj", &cube);
+	fails += V_LoadAssimp("CollisionBox.obj", &collBox);
 	sprite heightSprite;
 	V_LoadSprite("Terrain.png", &heightSprite);
 	V_CreateHeightMap(&heightMap, &heightSprite, 5);
+	if (fails < 0) SYS_Error("Failed to load a model");
 
 	grassDTexture = V_LoadTexture("Grass0138_35_S.jpg");
 	grassSTexture = V_LoadTexture("Grass0138_35_S_spec.jpg");
@@ -95,7 +91,7 @@ void V_RenderScene() {
 		mat4x4_rotate_Z(matModel, matModel, p->rot[2]);
 		mat4x4_rotate_X(matModel, matModel, p->rot[0]);
 		V_SetParam4m("matModel", matModel);
-		V_RenderModel(&model);
+		V_RenderModel(&p->res->model);
 	}
 	
 	/*V_BindTexture(normalTexture, texNormal);

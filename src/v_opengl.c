@@ -11,6 +11,7 @@
 
 GLuint curShader;
 int animStartTime;
+bool V_rendererUp = false;
 
 void V_InitOpenGL() {
 	glewExperimental = GL_TRUE;
@@ -19,6 +20,8 @@ void V_InitOpenGL() {
 		SYS_Error("GLEW failed to initialize");
 	
 	glGetError(); // glewInit() may throw a GL_INVALID_ENUM error
+	
+	V_rendererUp = true;
 	
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
 	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));

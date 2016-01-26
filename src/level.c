@@ -24,11 +24,13 @@ void WriteFloat32(FILE* file, float value);
 // Throws a fatal error if 'name' can't be found
 void L_LoadLevel(char* name) {
 	// Start reading the file
-	char* path = malloc(32);
+	char* path = malloc(PATH_LENGTH);
 	SYS_GetLevelPath(name, path);
-	strcat(path, "/level");
+	char levelPath[PATH_LENGTH];
+	memcpy(levelPath, path, PATH_LENGTH);
+	strcat(levelPath, "/level");
 	
-	FILE* file = fopen(path, "rb");
+	FILE* file = fopen(levelPath, "rb");
 
 	if (file == NULL) SYS_Error("Couldn't load level");
 
@@ -55,7 +57,7 @@ void L_LoadLevel(char* name) {
 	int fileSize = ReadUInt32(file); // Read size of file
 	
 	// Allocate file buffer
-	buffer = malloc(fileSize + 6);
+	buffer = malloc(0xFFFFFFFF);
 	index = 6;
 	
 	// Read file into memory
@@ -66,11 +68,23 @@ void L_LoadLevel(char* name) {
 	int numObjects = ReadUInt32B();
 	
 	// Load resources
+	char modelPath[PATH_LENGTH];
 	for (int i = 0; i < numRes; i++) {
 		resource* r = malloc(sizeof(resource));
+		memset(r, 0, sizeof(resource));
 		
 		for (int j = 0; j < 32; j++) 
 			r->name[j] = buffer[index++];
+		
+		// Load the model if it exists and OpenGL is working
+		if (V_rendererUp) {
+			memcpy(modelPath, "../levels/", 11);
+			strcat(modelPath, L_current.name);
+			strcat(modelPath, "/resources/");
+			strcat(modelPath, r->name);
+			strcat(modelPath, "/model.dae");
+			V_LoadAssimp(modelPath, &r->model);
+		}
 		
 		ListAdd(&L_current.res, (void*) r);
 	}
@@ -100,6 +114,9 @@ void L_LoadLevel(char* name) {
 		
 		index = lastIndex;
 	}
+	
+	free(buffer);
+	index = 0;
 }
 
 // Writes L_current to the file 'L_current.name' in the levels folder
@@ -115,7 +132,7 @@ void L_WriteLevel() {
 	fputs("LV", file);
 	
 	// Print size of file
-	WriteUInt32(file, 14 + L_current.res.size * 32 + L_current.props.size * 9 + ListSize(&L_current.props) * 28);
+	WriteUInt32(file, 14 + L_current.res.size * 32 + L_current.props.size * 9 + L_current.props.size * 28);
 	
 	// Number of resources
 	WriteUInt32(file, L_current.res.size);
@@ -124,16 +141,16 @@ void L_WriteLevel() {
 	WriteUInt32(file, L_current.props.size);
 	
 	// Print the name of the resource
-	char* resName = "suzanne";
-	int i;
-	for (i = 0; resName[i]; i++) fputc(resName[i], file);
-	while (i++ < L_RES_LENGTH) 
-		fputc(0, file);
+	for (int i = 0; i < L_current.res.size; i++) {
+		resource* r = ListGet(&L_current.res, i);
+		for (int j = 0; j < L_NAME_LENGTH; j++) 
+			fputc(r->name[j], file);
+	}
 	
 	// Print object index table
 	
 	int objectIndex = L_HEADER_SIZE + L_RES_LENGTH * L_current.res.size + L_INDEX_SIZE * L_current.props.size;
-	for (i = 0; i < L_current.props.size; i++) {
+	for (int i = 0; i < L_current.props.size; i++) {
 		// Type of object
 		fputc(0, file);
 		
@@ -147,7 +164,7 @@ void L_WriteLevel() {
 	
 	// Print prop data
 	
-	for (i = 0; i < L_current.props.size; i++) {
+	for (int i = 0; i < L_current.props.size; i++) {
 		// Index of resource
 		WriteUInt32(file, 0);
 		

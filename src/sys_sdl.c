@@ -337,6 +337,9 @@ int main(int argc, char** argv) {
 	// Try to open a window with rendering capabilities
 	if (!SYS_OpenWindow()) SYS_Error("Failed to open a window with OpenGL Core 3.3");
 
+	// Initialize OpenGL
+	V_InitOpenGL();
+
 	// Initialize main engine
 	G_Init();
 	

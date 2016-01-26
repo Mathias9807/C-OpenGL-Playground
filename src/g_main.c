@@ -31,12 +31,20 @@ float dummyXRot = 0;
 void Shoot();
 
 void G_Init() {
-	memcpy(L_current.name, "Default", 8);
+	memcpy(L_current.name, "Exper", 6);
+
 	resource* r = malloc(sizeof(resource));
-	memcpy(r->name, "suzanne", 8);
+	memcpy(r->name, "cube", 5);
 	ListAdd(&L_current.res, r);
+	
+	prop* p = malloc(sizeof(prop));
+	memset(p, 0, sizeof(prop));
+	p->res = r;
+	p->pos[2] = -5;
+	ListAdd(&L_current.props, p);
 
 	L_WriteLevel();
+	L_LoadLevel("exper");
 	
 	G_camPos[2] = 2.5;
 	
