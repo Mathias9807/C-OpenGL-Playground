@@ -11,7 +11,7 @@ level L_current = {
 };
 
 char* buffer;
-int index = 0;
+int bufferIndex = 0;
 
 unsigned ReadUInt32B();
 float ReadFloat32B();
@@ -58,10 +58,10 @@ void L_LoadLevel(char* name) {
 	
 	// Allocate file buffer
 	buffer = malloc(0xFFFFFFFF);
-	index = 6;
+	bufferIndex = 6;
 	
 	// Read file into memory
-	for (int i = index; i < fileSize; i++) 
+	for (int i = bufferIndex; i < fileSize; i++) 
 		buffer[i] = fgetc(file);
 	
 	int numRes = ReadUInt32B();
@@ -74,7 +74,7 @@ void L_LoadLevel(char* name) {
 		memset(r, 0, sizeof(resource));
 		
 		for (int j = 0; j < 32; j++) 
-			r->name[j] = buffer[index++];
+			r->name[j] = buffer[bufferIndex++];
 		
 		// Load the model if it exists and OpenGL is working
 		if (V_rendererUp) {
@@ -91,17 +91,17 @@ void L_LoadLevel(char* name) {
 	
 	// Load props
 	for (int i = 0; i < numObjects; i++) {
-		int type = buffer[index++];
+		int type = buffer[bufferIndex++];
 		int start = ReadUInt32B();
 		/*int length = */ ReadUInt32B();
 		
-		int lastIndex = index;
+		int lastIndex = bufferIndex;
 		
 		switch (type) {
 		case 0: {
 				prop* p = malloc(sizeof(prop));
 				
-				index = start;
+				bufferIndex = start;
 				p->res = ListGet(&L_current.res, ReadUInt32B());
 				for (int i = 0; i < 3; i++) p->pos[i] = ReadFloat32B();
 				for (int i = 0; i < 3; i++) p->rot[i] = ReadFloat32B();
@@ -112,11 +112,11 @@ void L_LoadLevel(char* name) {
 			}
 		}
 		
-		index = lastIndex;
+		bufferIndex = lastIndex;
 	}
 	
 	free(buffer);
-	index = 0;
+	bufferIndex = 0;
 }
 
 // Writes L_current to the file 'L_current.name' in the levels folder
@@ -192,7 +192,7 @@ unsigned ReadUInt32(FILE* file) {
 unsigned ReadUInt32B() {
 	char array[4];
 	for (int i = 3; i >= 0; i--) 
-		array[i] = buffer[index++];
+		array[i] = buffer[bufferIndex++];
 	
 	return *((unsigned*) array);
 }
@@ -201,7 +201,7 @@ float ReadFloat32B() {
 	char bytes[4];
 	
 	for (int i = 3; i >= 0; i--) 
-		bytes[i] = buffer[index++];
+		bytes[i] = buffer[bufferIndex++];
 	
 	return *((float*) bytes);
 }

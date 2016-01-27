@@ -10,7 +10,7 @@ LIBS="-F/Library/Frameworks \
 	-framework SDL2 -framework OpenGL \
 	-lGLEW -lassimp"
 
-SRC_FILES="src/def.c src/cvar.c src/g_*.c src/v_*.c src/sys_sdl.c"
+SRC_FILES="src/def.c src/cvar.c src/g_*.c src/v_*.c src/level.c src/sys_sdl.c"
 
 ADD_PARAMS="-Wall -std=c99"
 
