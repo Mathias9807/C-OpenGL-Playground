@@ -326,7 +326,23 @@ int main(int argc, char** argv) {
 		L_LoadLevel(argv[argc - 1]);
 		printf("Name: %s\n", L_current.name);
 		printf("Contains %d resources and %d props\n", 
-			L_current.res.size, L_current.props.size);
+		L_current.res.size, L_current.props.size);
+		
+		// Print name of every resource
+		printf("\nResources\n");
+		for (int i = 0; i < L_current.res.size; i++) 
+			printf("\t%d:\t%s\n", i, ((resource*)ListGet(&L_current.res, i))->name);
+		
+		// Print data of every prop
+		printf("\nProps\n");
+		for (int i = 0; i < L_current.props.size; i++) {
+			prop* p = ListGet(&L_current.props, i);
+			printf(
+				"\t%d:\tResource: %s\n\t\tPos: %f, %f, %f\n\t\tRot: %f, %f, %f\n", 
+				i, p->res->name, p->pos[0], p->pos[1], p->pos[2], 
+				p->rot[0], p->rot[1], p->rot[2]
+			);
+		}
 
 		return 0;
 	}
