@@ -56,6 +56,9 @@ void L_LoadLevel(char* name) {
 	
 	int fileSize = ReadUInt32(file); // Read size of file
 	
+	// Check if file actually exists
+	if (fileSize == EOF) SYS_Error("Level doesn't exist!"); // A bit hacky
+	
 	// Allocate file buffer
 	buffer = malloc(0xFFFFFFFF);
 	bufferIndex = 6;

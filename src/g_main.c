@@ -44,7 +44,7 @@ void G_Init() {
 	ListAdd(&L_current.props, p);
 
 	L_WriteLevel();
-	L_LoadLevel("exper");
+	L_LoadLevel("Exper");
 	
 	G_camPos[2] = 2.5;
 	
