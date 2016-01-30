@@ -36,8 +36,11 @@ typedef struct {
 level L_current;
 
 
+void L_InitLevel(char* name);
 void L_LoadLevel(char* name);
 void L_WriteLevel();
+resource* L_AddResource(char* name);
+prop* L_AddProp(resource* r, float* pos, float* rot);
 
 
 #endif // LEVEL_H

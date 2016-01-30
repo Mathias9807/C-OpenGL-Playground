@@ -20,6 +20,19 @@ float ReadFloat32(FILE* file);
 void WriteUInt32(FILE* file, unsigned value);
 void WriteFloat32(FILE* file, float value);
 
+// Creates an empty level
+void L_InitLevel(char* name) {
+	// Overwrite current level with zeroes
+	memset(&L_current, 0, sizeof(level));
+	
+	// Figure out the length of the name
+	int length = 0;
+	while (name[length]) length++;
+	
+	// Write the name
+	memcpy(L_current.name, name, length);
+}
+
 // Loads the level 'name' in the levels folder into L_current
 // Throws a fatal error if 'name' can't be found
 void L_LoadLevel(char* name) {
@@ -34,38 +47,28 @@ void L_LoadLevel(char* name) {
 
 	if (file == NULL) SYS_Error("Couldn't load level");
 
-	{
-		// Set every char to NULL
-		int i = 0;
-		for (; i < L_NAME_LENGTH; i++) 
-			L_current.name[i] = 0;
-		
-		// Write 'name' to L_current.name
-		i = -1;
-		while (name[++i] != 0)
-			L_current.name[i] = name[i];
-	}
-	
-	// Reset lists
-	L_current.res = (list) {NULL, 0};
-	L_current.props = (list) {NULL, 0};
+	// Clear the current level
+	L_InitLevel(name);
 	
 	// Skip header
 	fgetc(file);
 	fgetc(file);
 	
-	int fileSize = ReadUInt32(file); // Read size of file
+	int fileSize;
+	fileSize = ReadUInt32(file); // Read size of file
 	
 	// Check if file actually exists
 	if (fileSize == EOF) SYS_Error("Level doesn't exist!"); // A bit hacky
 	
 	// Allocate file buffer
-	buffer = malloc(0xFFFFFFFF);
+	buffer = malloc(fileSize);
 	bufferIndex = 6;
 	
 	// Read file into memory
 	for (int i = bufferIndex; i < fileSize; i++) 
 		buffer[i] = fgetc(file);
+
+	fclose(file);
 	
 	int numRes = ReadUInt32B();
 	int numObjects = ReadUInt32B();
@@ -131,6 +134,8 @@ void L_WriteLevel() {
 	
 	FILE* file = fopen(path, "wb");
 	
+	if (file == NULL) SYS_Error("Couldn't write level");
+	
 	// Print header
 	fputs("LV", file);
 	
@@ -182,6 +187,48 @@ void L_WriteLevel() {
 		WriteFloat32(file, p->rot[1]);
 		WriteFloat32(file, p->rot[2]);
 	}
+
+	fclose(file);
+}
+
+// Add a resource to the level, not written until next L_WriteLevel call
+resource* L_AddResource(char* name) {
+	// Allocate space for the resource and set every byte to 0
+	resource* r = malloc(sizeof(resource));
+	memset(r, 0, sizeof(resource));
+	
+	// Figure out the length of the name
+	int length = 0;
+	while (name[length]) length++;
+	
+	// Copy name to the resource
+	memcpy(r->name, name, length);
+	
+	// Add resource to the level
+	ListAdd(&L_current.res, r);
+	
+	// Return the new resource
+	return r;
+}
+
+// Add a prop to the level, not written until next L_WriteLevel call
+prop* L_AddProp(resource* r, float* pos, float* rot) {
+	// Allocate space for a prop
+	prop* p = malloc(sizeof(prop));
+	
+	// Fill prop struct with zeroes
+	memset(p, 0, sizeof(prop));
+	
+	// Add data to prop
+	p->res = r;
+	memcpy(p->pos, pos, 3 * sizeof(float));
+	memcpy(p->rot, rot, 3 * sizeof(float));
+	
+	// Add prop to list
+	ListAdd(&L_current.props, p);
+	
+	// Return pointer to new prop
+	return p;
 }
 
 unsigned ReadUInt32(FILE* file) {
