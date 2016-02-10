@@ -117,6 +117,20 @@ void SYS_Mkdir(char* s) {
 #endif
 }
 
+bool SYS_DirExists(char* s) {
+	// Can't find a platform agnostic solution
+	// Just open a file in the dir and see what happens
+	/*FILE* f = fopen(s);
+	
+	if (f == NULL) 
+		return false;
+	else {
+		fclose(f);
+		return true;
+	}*/
+	return false; // I don't know
+}
+
 // Open and prepare a window for 3D accelerated rendering
 int SYS_OpenWindow() {
 	// Init the SDL video sub-system

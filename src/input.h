@@ -9,7 +9,7 @@ enum {
 	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, 
 	IN_TOGGLE, IN_CHAT
 };
-bool IN_readingText;
+extern bool IN_readingText;
 
 bool IN_IsKeyPressed(int key);
 

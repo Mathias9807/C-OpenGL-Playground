@@ -33,7 +33,7 @@ typedef struct {
 	list props;
 } level;
 
-level L_current;
+extern level L_current;
 
 
 void L_InitLevel(char* name);

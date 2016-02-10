@@ -9,11 +9,15 @@
 #include <linmath.h>
 #include <math.h>
 #include <string.h>
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 
 #define PITCH_LIMIT M_PI/2
 
 float G_moveSpeed = 8, G_rotSpeed = 3;
 vec3 G_camPos, G_camRot;
+list smokeParts, lights;
 cvar* fov, * adsFov;
 mat4x4 G_gunMat;
 vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5},
@@ -28,7 +32,10 @@ int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 AABB dummyBox = {-1, -1, -1, 2, 2, 2};
 float dummyXRot = 0;
 
+lua_State* luaState = NULL;
+
 void Shoot();
+void LoadScripting();
 
 void G_Init() {
 	L_InitLevel("writing");
@@ -48,6 +55,43 @@ void G_Init() {
 	
 	smokeParts = (list) {NULL, 0};
 	lights = (list) {NULL, 0};
+
+	LoadScripting();
+}
+
+void LoadScripting() {
+	// Initialize the interpreter
+	luaState = luaL_newstate();
+	luaL_openlibs(luaState);
+
+	// Get the path
+	char* path = malloc(PATH_LENGTH);
+	memset(path, 0, PATH_LENGTH);
+	SYS_GetResourcePath("/scripts/main.lua", path);
+
+	// Run the file
+	luaL_dofile(luaState, path);
+
+	// Call the 'init' function
+	lua_getglobal(luaState, "init");
+	int err = lua_pcall(luaState, 0, 0, 0);
+
+	// Add the props
+	for (int i = 0; i < L_current.props.size; i++) {
+		prop* p = ListGet(&L_current.props, i);
+
+		lua_getglobal(luaState, "addProp");
+		char propPath[PATH_LENGTH];
+		SYS_GetLevelPath(L_current.name, propPath);
+		strcat(propPath, "/resources/");
+		strcat(propPath, p->res->name);
+		strcat(propPath, "/script.lua");
+		lua_pushstring(luaState, propPath);
+		lua_pcall(luaState, 1, 0, 0);
+	}
+
+	// Check for errors
+	if (err != 0) SYS_Warning("A lua error occured!");
 }
 
 void G_Tick() {
@@ -201,4 +245,5 @@ void G_AddSmoke(vec3 pos, vec3 vel, float radius, int timeLeft) {
 }
 
 void G_Quit() {
+	lua_close(luaState);
 }

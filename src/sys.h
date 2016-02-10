@@ -8,10 +8,10 @@
 
 #define SYS_CLOSE_ON_ERROR 1
 
-int		SYS_argc;
-char**	SYS_argv;
+extern int		SYS_argc;
+extern char**		SYS_argv;
 
-uint32_t SYS_deltaMillis;
+extern uint32_t SYS_deltaMillis;
 
 void SYS_GetResourcePath(char* name, char* dest);
 void SYS_GetLevelPath(char* name, char* dest);
@@ -19,6 +19,7 @@ void SYS_CheckErrors();
 void SYS_Error(char* s);
 void SYS_Warning(char* s);
 void SYS_Mkdir(char* s);
+bool SYS_DirExists(char* s);
 
 // Video
 int SYS_OpenWindow();

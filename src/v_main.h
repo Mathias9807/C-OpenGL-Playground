@@ -10,8 +10,8 @@
 #define V_WIDTH 800
 #define V_HEIGHT 600
 
-bool V_reloadShaders;
-bool V_rendererUp;
+extern bool V_reloadShaders;
+extern bool V_rendererUp;
 
 void V_SetProj(float fov);
 void V_SetVSync(bool vsync);

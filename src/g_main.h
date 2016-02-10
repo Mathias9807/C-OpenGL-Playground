@@ -9,25 +9,25 @@
 #include "g_physics.h"
 #include "cvar.h"
 
-float G_moveSpeed;
-float G_rotSpeed;
-vec3 G_camPos;
-vec3 G_camRot;
+extern float G_moveSpeed;
+extern float G_rotSpeed;
+extern vec3 G_camPos;
+extern vec3 G_camRot;
 
 typedef struct {
 	vec3 pos, col;
 	bool directional;
 } light;
-list lights;
+extern list lights;
 
 typedef struct {
 	point p;
 	float radius;
 	int timeLeft;
 } smoke;
-list smokeParts;
+extern list smokeParts;
 
-mat4x4 G_gunMat;
+extern mat4x4 G_gunMat;
 
 void G_Init();
 void G_Tick();

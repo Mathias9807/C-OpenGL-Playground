@@ -24,8 +24,8 @@ typedef struct {
 	int		selectedRow;	// What row from history is copied to input line
 							// -1 is empty, 0 and up is copied from history
 } console;
-console C_console;
-int C_cursorBlinkTimer;
+extern console C_console;
+extern int C_cursorBlinkTimer;
 
 typedef struct {
 	char*	name;
@@ -47,7 +47,7 @@ void C_PrintCommand(char* s);
 void C_Execute(char* s);
 
 // Global list holding all cvars
-list C_cvars;
+extern list C_cvars;
 
 // Adds cvar v to C_cvars, does nothing if v already exists
 cvar* C_Add(char* name, float value);
