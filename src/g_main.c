@@ -9,15 +9,13 @@
 #include <linmath.h>
 #include <math.h>
 #include <string.h>
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include "g_lua.h"
 
 #define PITCH_LIMIT M_PI/2
 
 float G_moveSpeed = 8, G_rotSpeed = 3;
 vec3 G_camPos, G_camRot;
-list smokeParts, lights;
+list smokeParts, smokeGens, lights;
 cvar* fov, * adsFov;
 mat4x4 G_gunMat;
 vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5},
@@ -32,7 +30,7 @@ int lastSmokeSpawn = 0, smokeSpawnInterval = 250;
 AABB dummyBox = {-1, -1, -1, 2, 2, 2};
 float dummyXRot = 0;
 
-lua_State* luaState = NULL;
+lua_State* G_luaState = NULL;
 
 void Shoot();
 void LoadScripting();
@@ -41,12 +39,12 @@ void G_Init() {
 	L_InitLevel("writing");
 	
 	resource* r = L_AddResource("house");
-	L_AddProp(r, (float[3]) {5, 0, -5}, (float[3]) {0, 45, 0});
+	L_AddProp(r, (float[3]) {0, 0, 0}, (float[3]) {0, 0, 45});
 	
 	L_WriteLevel();
 	L_LoadLevel("writing");
 	
-	G_camPos[2] = 2.5;
+	//G_camPos[2] = 2.5;
 	
 	C_console.selectedRow = -1;
 	
@@ -54,6 +52,7 @@ void G_Init() {
 	adsFov = C_Get("adsFov");
 	
 	smokeParts = (list) {NULL, 0};
+	smokeGens = (list) {NULL, 0};
 	lights = (list) {NULL, 0};
 
 	LoadScripting();
@@ -61,8 +60,8 @@ void G_Init() {
 
 void LoadScripting() {
 	// Initialize the interpreter
-	luaState = luaL_newstate();
-	luaL_openlibs(luaState);
+	G_luaState = luaL_newstate();
+	luaL_openlibs(G_luaState);
 
 	// Get the path
 	char* path = malloc(PATH_LENGTH);
@@ -70,24 +69,28 @@ void LoadScripting() {
 	SYS_GetResourcePath("/scripts/main.lua", path);
 
 	// Run the file
-	luaL_dofile(luaState, path);
+	luaL_dofile(G_luaState, path);
 
-	// Call the 'init' function
-	lua_getglobal(luaState, "init");
-	int err = lua_pcall(luaState, 0, 0, 0);
+	// Load the engines interface
+	G_LoadLuaFunctions();
 
-	// Add the props
+	// Call the main script's 'init' function
+	lua_getglobal(G_luaState, "init");
+	int err = lua_pcall(G_luaState, 0, 0, 0);
+
+	// Add all prop scripts
 	for (int i = 0; i < L_current.props.size; i++) {
 		prop* p = ListGet(&L_current.props, i);
+		G_currentProp = p;
 
-		lua_getglobal(luaState, "addProp");
+		lua_getglobal(G_luaState, "addProp");
 		char propPath[PATH_LENGTH];
 		SYS_GetLevelPath(L_current.name, propPath);
 		strcat(propPath, "/resources/");
 		strcat(propPath, p->res->name);
 		strcat(propPath, "/script.lua");
-		lua_pushstring(luaState, propPath);
-		lua_pcall(luaState, 1, 0, 0);
+		lua_pushstring(G_luaState, propPath);
+		lua_pcall(G_luaState, 1, 0, 0);
 	}
 
 	// Check for errors
@@ -195,10 +198,16 @@ void G_Tick() {
 		dummyXRot = M_PI / -2 * G_Valuef((function) {0, 1, 1, &((termf) {1, 3})},
 			SYS_TimeMillis() / 1000.0 - dummyHitTime);
 	
-	/*if (lastSmokeSpawn - SYS_TimeMillis() > smokeSpawnInterval) {
-		G_AddSmoke((vec3) {2, 0, 0}, (vec3) {0, 0, 0}, 0.5, 5000);
-		lastSmokeSpawn += smokeSpawnInterval;
-	}*/
+
+	for (int i = 0; i < ListSize(&smokeGens); i++) {
+		smokeGen* gen = ListGet(&smokeGens, i);
+
+		while (SYS_TimeMillis() - gen->lastSpawn > gen->interval) {
+			gen->lastSpawn = SYS_TimeMillis();
+			G_AddSmoke(gen->pos, (vec3) {0, 0, 0}, 0.4, 5000);
+		}
+	}
+
 	for (int i = 0; i < ListSize(&smokeParts); i++) {
 		smoke* s = (smoke*) ListGet(&smokeParts, i);
 		
@@ -245,5 +254,5 @@ void G_AddSmoke(vec3 pos, vec3 vel, float radius, int timeLeft) {
 }
 
 void G_Quit() {
-	lua_close(luaState);
+	lua_close(G_luaState);
 }

@@ -27,6 +27,15 @@ typedef struct {
 } smoke;
 extern list smokeParts;
 
+typedef struct {
+	vec3 pos;
+	vec3 vel;
+	vec3 acc;
+	double interval;
+	double lastSpawn;
+} smokeGen;
+extern list smokeGens;
+
 extern mat4x4 G_gunMat;
 
 void G_Init();

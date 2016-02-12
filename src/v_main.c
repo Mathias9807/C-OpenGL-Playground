@@ -87,9 +87,9 @@ void V_RenderScene() {
 		V_BindTexture(whiteTexture, texSpec);
 		V_BindTexture(flatNormal, texNormal);
 		mat4x4_translate(matModel, p->pos[0], p->pos[1], p->pos[2]);
-		mat4x4_rotate_Y(matModel, matModel, p->rot[1]);
-		mat4x4_rotate_Z(matModel, matModel, p->rot[2]);
-		mat4x4_rotate_X(matModel, matModel, p->rot[0]);
+		mat4x4_rotate_Y(matModel, matModel, p->rot[1] * M_PI / 180);
+		mat4x4_rotate_Z(matModel, matModel, p->rot[2] * M_PI / 180);
+		mat4x4_rotate_X(matModel, matModel, p->rot[0] * M_PI / 180);
 		V_SetParam4m("matModel", matModel);
 		V_RenderModel(&p->res->model);
 	}

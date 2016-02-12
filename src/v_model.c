@@ -17,7 +17,6 @@ int V_LoadAssimp(char* path, model_t* m) {
 	
 	const struct aiScene* scene = aiImportFile(fullPath, 
 		aiProcess_Triangulate 
-		| aiProcess_GenNormals 
 		| aiProcess_JoinIdenticalVertices 
 		| aiProcess_FlipUVs 
 		| aiProcess_CalcTangentSpace);
@@ -132,12 +131,14 @@ int V_LoadAssimp(char* path, model_t* m) {
 	
 	vao->tangents.bufferSize = 3 * vertCount * sizeof(float);
 	vao->tangents.buffer = malloc(vao->tangents.bufferSize);
-	for (int i = 0; i < vertCount; i++) {
-		struct aiVector3D v = mesh->mTangents[i];
-		((float*)vao->tangents.buffer)[i * 3 + 0] = v.x;
-		((float*)vao->tangents.buffer)[i * 3 + 1] = v.y;
-		((float*)vao->tangents.buffer)[i * 3 + 2] = v.z;
-	}
+	if (mesh->mTangents) 
+		for (int i = 0; i < vertCount; i++) {
+			struct aiVector3D v = mesh->mTangents[i];
+			((float*)vao->tangents.buffer)[i * 3 + 0] = v.x;
+			((float*)vao->tangents.buffer)[i * 3 + 1] = v.y;
+			((float*)vao->tangents.buffer)[i * 3 + 2] = v.z;
+		}
+	else memset(vao->tangents.buffer, 0, vao->tangents.bufferSize);
 	V_InitVBO(&vao->tangents, 4, 3, GL_FLOAT);
 	
 	glGenBuffers(1, &vao->index.id);
