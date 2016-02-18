@@ -13,8 +13,12 @@
 extern bool V_reloadShaders;
 extern bool V_rendererUp;
 
+extern unsigned V_skyMap;
+extern float* 	V_skyColor;
+
 void V_SetProj(float fov);
 void V_SetVSync(bool vsync);
+void V_UpdateLighting();
 
 void V_Init();
 void V_Tick();

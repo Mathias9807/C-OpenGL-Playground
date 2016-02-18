@@ -18,6 +18,21 @@ void* ListGet(list* l, int index) {
 	return NULL;
 }
 
+int ListFind(list* l, void* value) {
+	listEntry* cur = l->first;
+	
+	int index = 0;
+
+	while (cur) {
+		if (cur->value == value) return index;
+		
+		index++;
+		cur = cur->next;
+	}
+
+	return -1;
+}
+
 int ListSize(list* l) {
 	listEntry* cur = l->first;
 	int i = 0;

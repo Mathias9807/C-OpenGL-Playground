@@ -17,10 +17,11 @@ GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;
 
 struct fbo post0, post1, depth, shadow;
 
-GLuint grassDTexture, grassSTexture, grassNTexture, roughTexture, skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
+unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;
 enum {
 	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI
 };
+float* V_skyColor = NULL;
 
 float V_vertFov;
 bool V_reloadShaders = true;
@@ -58,7 +59,6 @@ void V_Init() {
 	cliffTexture = V_LoadTexture("Cliffside.png");
 	heightTexture = V_LoadTexture("Terrain.png");
 	roughTexture = V_LoadTexture("Fabric.png");
-	skyMap = V_LoadCubeMap("Dark night");
 	weaponTexture = V_LoadTexture("SKS.png");
 	specTexture = V_LoadTexture("SpecularGrain.png");
 	normalTexture = V_LoadTexture("NormalMap.png");
@@ -93,83 +93,6 @@ void V_RenderScene() {
 		V_SetParam4m("matModel", matModel);
 		V_RenderModel(&p->res->model);
 	}
-	
-	/*V_BindTexture(normalTexture, texNormal);
-	mat4x4_translate(matModel, 0, -1, 0);
-	mat4x4_rotate_X(matModel, matModel, -M_PI / 2);
-	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
-	V_SetParam4m("matModel", matModel);
-	V_SetParam1f("uvScale", 10);
-	V_BindTexture(whiteTexture, texDiff0);
-	V_BindTexture(specTexture, texSpec);
-	V_RenderModel(&plane);
-	
-	mat4x4_translate(matModel, 0, 5, -5);
-	V_SetParam4m("matModel", matModel);
-	V_BindTexture(whiteTexture, texDiff0);
-	V_BindTexture(whiteTexture, texSpec);
-	V_RenderModel(&sphere);
-	V_BindTexture(flatNormal, texNormal);
-	V_SetParam1f("uvScale", 1);
-	for (int x = -2; x <= 2; x++) 
-		for (int y = -2; y <= 2; y++) {
-			V_BindTexture(grassTexture, texDiff0);
-			V_BindTexture(blackTexture, texSpec);
-			mat4x4_translate(matModel, x * 128, 0, y * 128);
-			V_SetParam4m("matModel", matModel);
-			V_RenderModel(&model);
-			V_BindTexture(whiteTexture, texDiff0);
-			V_BindTexture(specTexture, texSpec);
-			mat4x4_translate_in_place(matModel, 0, -4, 0);
-			V_SetParam4m("matModel", matModel);
-			V_RenderModel(&pillar);
-		}
-
-	mat4x4_translate(matModel, dummyBox.x + dummyBox.w / 2, dummyBox.y, dummyBox.z + dummyBox.d / 2);
-	mat4x4_rotate_X(matModel, matModel, -M_PI / 2 + dummyXRot);
-	V_SetParam4m("matModel", matModel);
-	V_SetParam1f("uvScale", 1);
-	V_BindTexture(scareTexture, texDiff0);
-	V_BindTexture(blackTexture, texSpec);
-	V_BindTexture(flatNormal, texNormal);
-	V_RenderModel(&scarecrow);
-
-	V_SetParam1f("materialWeight", 0.5);
-	V_SetParam1f("materialGloss", 20);
-	V_SetParam1f("uvScale", 1);
-	V_BindTexture(whiteTexture, texDiff0);
-	V_BindTexture(whiteTexture, texSpec);
-	V_BindTexture(flatNormal, texNormal);
-	for (int i = -16; i < 16; i++) {
-		mat4x4_translate(matModel, i * 3, 5, i * 3);
-		mat4x4_rotate_Z(matModel, matModel, 45);
-		V_SetParam4m("matModel", matModel);
-		V_RenderModel(&cube);
-	}
-
-	V_SetParam1f("materialWeight", 0.9);
-	V_SetParam1f("materialGloss", 1);
-	V_SetParam1f("uvScale", 1);
-	V_BindTexture(whiteTexture, texDiff0);
-	V_BindTexture(blackTexture, texSpec);
-	V_BindTexture(flatNormal, texNormal);
-	mat4x4_translate(matModel, -10, 3, 5);
-	mat4x4_rotate_Z(matModel, matModel, 45);
-	V_SetParam4m("matModel", matModel);
-	V_RenderModel(&cube);
-
-	mat4x4_translate(matModel, -120, -1, -120);
-	mat4x4_scale_aniso(matModel, matModel, 10, 10, 10);
-	V_SetParam4m("matModel", matModel);
-	V_SetParam1f("uvScale", 1);
-	V_SetParam1i("terrain", 1);
-	V_SetParam1f("materialWeight", 0.7);	
-	V_SetParam1f("materialGloss", 10);
-	V_BindTexture(grassDTexture, texDiff0);
-	V_BindTexture(grassSTexture, texSpec);
-	V_BindTexture(grassNTexture, texNormal);
-	V_RenderModel(&heightMap);
-	V_SetParam1i("terrain", 0);*/
 }
 
 void V_RenderSmoke() {
@@ -236,14 +159,22 @@ void V_Tick() {
 	V_SetFBO(post0);
 	V_ClearDepth();
 	
-	V_SetShader(skyShader);
-	V_SetDepthTesting(false);
-	V_SetParam4m("matView", matView);
-	V_RenderModel(&cube);
+	if (V_skyColor == NULL) {
+		V_SetShader(skyShader);
+		V_SetDepthTesting(false);
+		V_SetParam4m("matView", matView);
+		V_RenderModel(&cube);
+		V_SetFaceCullingBack(true);
+		V_SetDepthTesting(true);
+	}else 
+		V_ClearColor(V_skyColor[0], V_skyColor[1], V_skyColor[2], 0);
+
 	V_SetFaceCullingBack(true);
 	V_SetDepthTesting(true);
 	
 	V_SetShader(shader);
+
+	V_UpdateLighting();
 	
 	// V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("camPos", G_camPos[0], G_camPos[1], G_camPos[2]);
@@ -343,7 +274,7 @@ void BindTextures() {
 	V_BindTexture(depth.attD, texDepth);
 	V_BindTexture(shadow.attD, texShadow);
 	V_SetTexInterLinear(true);
-	V_BindCubeMap(skyMap, texSky);
+	V_BindCubeMap(V_skyMap, texSky);
 	V_BindTexture(grassDTexture, texDiff0);
 	V_BindTexture(grassSTexture, texSpec);
 	V_BindTexture(grassNTexture, texNormal);
@@ -396,14 +327,8 @@ void LoadShaders() {
 	V_SetParam1f("uvScale", 1);
 	V_SetParam3f("lightDir", -lightDir[0], -lightDir[1], -lightDir[2]);
 	V_SetParam1i("terrain", 0);
-	V_SetParam1i("lightNum", 2);
-	V_SetParam3f("lights[0].pos", 1, 1, 1);
-	V_SetParam3f("lights[0].col", 0.5, 0.5, 0.75);
-	V_SetParam1i("lights[0].directional", 1);
-	V_SetParam3f("lights[1].pos", 0, 5, 0);
-	V_SetParam3f("lights[1].col", 50, 50, 75);
-	V_SetParam1i("lights[1].directional", 0);
-	
+	V_SetParam1i("lightNum", 0);
+
 	V_SetShader(skyShader);
 	V_SetParam1i("tex", texSky);
 	V_SetParam4m("matProj", matProj);
@@ -436,6 +361,15 @@ void LoadShaders() {
 	V_SetParam1i("tex0", texGUI);
 	
 	V_reloadShaders = false;
+}
+
+void V_UpdateLighting() {
+	int lightNum = lights.size > 8 ? 8 : lights.size;
+	V_SetParam1i("lightNum", lightNum);
+
+	for (int i = 0; i < lightNum; i++) {
+		V_SetParamLight(i, *((light*)ListGet(&lights, i)));
+	}
 }
 
 void V_SetProj(float fov) {

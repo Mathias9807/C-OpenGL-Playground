@@ -33,6 +33,7 @@ typedef struct {
 } sprite;
 
 void* ListGet(list* l, int index);
+int ListFind(list* l, void* value);
 int ListSize(list* l);
 void ListAdd(list* l, void* value);
 void ListRemove(list* l, int index);

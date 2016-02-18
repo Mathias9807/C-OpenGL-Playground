@@ -113,7 +113,7 @@ void V_SetParam3f(const char* var, float x, float y, float z);
 void V_SetParam4f(const char* var, float x, float y, float z, float a);
 void V_SetParam1i(const char* var, int i);
 void V_SetParam4m(const char* var, mat4x4 mat);
-void V_SetParamLight(const char* var, light l);
+void V_SetParamLight(int i, light l);
 void V_PrintMat(mat4x4 mat);
 
 

@@ -127,7 +127,8 @@ void L_LoadLevel(char* name) {
 
 // Writes L_current to the file 'L_current.name' in the levels folder
 void L_WriteLevel() {
-	char* path = malloc(32);
+	char* path = malloc(PATH_LENGTH);
+	memset(path, 0, PATH_LENGTH);
 	SYS_GetLevelPath(L_current.name, path);
 	SYS_Mkdir(path);
 	strcat(path, "/level");
@@ -173,10 +174,10 @@ void L_WriteLevel() {
 	// Print prop data
 	
 	for (int i = 0; i < L_current.props.size; i++) {
-		// Index of resource
-		WriteUInt32(file, 0);
-		
 		prop* p = (prop*) ListGet(&L_current.props, i);
+
+		// Index of resource
+		WriteUInt32(file, ListFind(&L_current.res, p->res));
 		
 		// Write position and rotation of prop
 		WriteFloat32(file, p->pos[0]);

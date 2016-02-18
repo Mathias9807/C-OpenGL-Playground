@@ -321,7 +321,7 @@ GLuint V_LoadCubeMap(char* name) {
 	glGenTextures(1, &cubeTex);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
 	for (int i = 0; i < 6; i++) {
-		char path[64]; SYS_GetResourcePath(name, path); strcat(path, faces[i]);
+		char path[PATH_LENGTH]; SYS_GetResourcePath(name, path); strcat(path, faces[i]);
 		unsigned char* data;
 		int w, h, n;
 		data = stbi_load(path, &w, &h, &n, 4);
@@ -389,8 +389,25 @@ void V_SetParam1i(const char* var, int i) {
 	glUniform1i(id, i);
 }
 
-void V_SetParamLight(const char* var, light l) {
-	printf("Not implemented\n");
+void V_SetParamLight(int i, light l) {
+	char name[32] = "lights[";
+	char num[8];
+	sprintf(num, "%d", i);
+	strcat(name, num);
+	strcat(name, "]");
+	int length = strlen(name);
+
+	strcat(name, ".pos");
+	V_SetParam3f(name, l.pos[0], l.pos[1], l.pos[2]);
+	name[length] = 0;
+
+	strcat(name, ".col");
+	V_SetParam3f(name, l.col[0], l.col[1], l.col[2]);
+	name[length] = 0;
+
+	strcat(name, ".directional");
+	V_SetParam1i(name, l.directional);
+	name[length] = 0;
 }
 
 void V_PrintMat(mat4x4 mat) {

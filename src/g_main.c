@@ -38,13 +38,12 @@ void LoadScripting();
 void G_Init() {
 	L_InitLevel("writing");
 	
-	resource* r = L_AddResource("house");
-	L_AddProp(r, (float[3]) {0, 0, 0}, (float[3]) {0, 0, 45});
+	L_AddProp(L_AddResource("house"), (float[3]) {0, 0, -5}, (float[3]) {0, 0, 0});
+	
+	L_AddProp(L_AddResource("street"), (float[3]) {5, 0, -15}, (float[3]) {0, 45, 0});
 	
 	L_WriteLevel();
 	L_LoadLevel("writing");
-	
-	//G_camPos[2] = 2.5;
 	
 	C_console.selectedRow = -1;
 	
@@ -76,7 +75,10 @@ void LoadScripting() {
 
 	// Call the main script's 'init' function
 	lua_getglobal(G_luaState, "init");
-	int err = lua_pcall(G_luaState, 0, 0, 0);
+	char levelPath[PATH_LENGTH];
+	SYS_GetLevelPath(L_current.name, levelPath);
+	lua_pushstring(G_luaState, levelPath);
+	int err = lua_pcall(G_luaState, 1, 0, 0);
 
 	// Add all prop scripts
 	for (int i = 0; i < L_current.props.size; i++) {
@@ -193,11 +195,6 @@ void G_Tick() {
 	resultant[0] += d * 0.01 * cos(SYS_TimeMillis() / 2000.0);
 	resultant[1] += d * 0.005 * cos(SYS_TimeMillis() / 1500.0);
 	mat4x4_translate_in_place(G_gunMat, resultant[0], resultant[1], resultant[2]);
-	
-	if (dummyHitTime)
-		dummyXRot = M_PI / -2 * G_Valuef((function) {0, 1, 1, &((termf) {1, 3})},
-			SYS_TimeMillis() / 1000.0 - dummyHitTime);
-	
 
 	for (int i = 0; i < ListSize(&smokeGens); i++) {
 		smokeGen* gen = ListGet(&smokeGens, i);
