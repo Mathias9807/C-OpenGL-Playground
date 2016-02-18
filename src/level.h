@@ -17,7 +17,7 @@
 typedef struct {
 	char name[L_NAME_LENGTH];
 	
-	model_t model;
+	list models;
 } resource;
 
 typedef struct {

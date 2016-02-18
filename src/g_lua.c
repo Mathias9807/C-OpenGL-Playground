@@ -63,6 +63,25 @@ int setSky() {
 	return 0;
 }
 
+// addModel(modelName.dae)
+int addModel() {
+	char* path = calloc(PATH_LENGTH, sizeof(char));
+	const char* name = lua_tostring(G_luaState, -1);
+
+	strcat(path, "../levels/");
+	strcat(path, L_current.name);
+	strcat(path, "/resources/");
+	strcat(path, G_currentProp->res->name);
+	strcat(path, "/");
+	strcat(path, name);
+	
+	model_t* m = calloc(1, sizeof(model_t));
+	V_LoadAssimp(path, m);
+	ListAdd(&G_currentProp->res->models, m);
+
+	return 0;
+}
+
 int addLight() {
 	light* l = calloc(1, sizeof(light));
 
@@ -92,6 +111,9 @@ void G_LoadLuaFunctions() {
 	
 	lua_pushcfunction(G_luaState, addLight);
 	lua_setglobal(G_luaState, "addLight");
+
+	lua_pushcfunction(G_luaState, addModel);
+	lua_setglobal(G_luaState, "addModel");
 }
 
 double ReadNum(int i) {
@@ -106,6 +128,8 @@ bool ReadBool(int i) {
 
 // Convert local coordinates to global
 void LocalToGlobal(vec4 p) {
+	if (G_currentProp == NULL) return;
+
 	double angX = G_currentProp->rot[0] * M_PI / 180;
 	double angY = G_currentProp->rot[1] * M_PI / 180;
 	double angZ = G_currentProp->rot[2] * M_PI / 180;

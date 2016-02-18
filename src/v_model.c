@@ -12,7 +12,7 @@ void V_InitVBO(VBO_t* vbo, int index, int dim, GLenum type);
 void V_AiToLinMat(struct aiMatrix4x4* ai, mat4x4 lin);
 
 int V_LoadAssimp(char* path, model_t* m) {
-	char fullPath[PATH_LENGTH];
+	char* fullPath = calloc(PATH_LENGTH, sizeof(char));
 	SYS_GetResourcePath(path, fullPath);
 	
 	const struct aiScene* scene = aiImportFile(fullPath, 

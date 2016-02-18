@@ -74,23 +74,12 @@ void L_LoadLevel(char* name) {
 	int numObjects = ReadUInt32B();
 	
 	// Load resources
-	char modelPath[PATH_LENGTH];
 	for (int i = 0; i < numRes; i++) {
 		resource* r = malloc(sizeof(resource));
 		memset(r, 0, sizeof(resource));
 		
 		for (int j = 0; j < 32; j++) 
 			r->name[j] = buffer[bufferIndex++];
-		
-		// Load the model if it exists and OpenGL is working
-		if (V_rendererUp) {
-			memcpy(modelPath, "../levels/", 11);
-			strcat(modelPath, L_current.name);
-			strcat(modelPath, "/resources/");
-			strcat(modelPath, r->name);
-			strcat(modelPath, "/model.dae");
-			V_LoadAssimp(modelPath, &r->model);
-		}
 		
 		ListAdd(&L_current.res, (void*) r);
 	}
