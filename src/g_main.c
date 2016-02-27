@@ -34,16 +34,10 @@ lua_State* G_luaState = NULL;
 
 void Shoot();
 void LoadScripting();
+void ReloadLevel();
 
 void G_Init() {
-	L_InitLevel("writing");
-	
-	L_AddProp(L_AddResource("house"), (float[3]) {0, 0, -5}, (float[3]) {0, 0, 0});
-	
-	L_AddProp(L_AddResource("street"), (float[3]) {5, 0, -15}, (float[3]) {0, 45, 0});
-	
-	L_WriteLevel();
-	L_LoadLevel("writing");
+	L_LoadLevel("Writing");
 	
 	C_console.selectedRow = -1;
 	
@@ -159,6 +153,10 @@ void G_Tick() {
 		}
 	}else chatHeld = false;
 	
+	if (IN_IsKeyPressed(IN_RELOAD)) {
+		ReloadLevel();
+	}
+	
 	if (G_camRot[0] > PITCH_LIMIT) G_camRot[0] = PITCH_LIMIT;
 	else if (G_camRot[0] < -PITCH_LIMIT) G_camRot[0] = -PITCH_LIMIT;
 	
@@ -248,6 +246,12 @@ void G_AddSmoke(vec3 pos, vec3 vel, float radius, int timeLeft) {
 	s->timeLeft	= timeLeft;
 	
 	ListAdd(&smokeParts, s);
+}
+
+void ReloadLevel() {
+	lua_close(G_luaState);
+	
+	LoadScripting();
 }
 
 void G_Quit() {
