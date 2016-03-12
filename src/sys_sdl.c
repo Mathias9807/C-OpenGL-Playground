@@ -34,7 +34,7 @@ SDL_GLContext SYS_glContext;
 bool IN_readingText = false;
 
 // Returns a file path to the resource directory
-void SYS_GetResourcePath(char* name, char* dest) {
+void SYS_GetResourcePath(const char* name, char* dest) {
 	// Set string to be empty
 	dest[0] = 0;
 	
@@ -55,7 +55,7 @@ void SYS_GetResourcePath(char* name, char* dest) {
 }
 
 // Get a file path to the level directory
-void SYS_GetLevelPath(char* name, char* dest) {
+void SYS_GetLevelPath(const char* name, char* dest) {
 	// Set string to be empty
 	dest[0] = 0;
 	

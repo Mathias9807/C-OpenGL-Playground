@@ -33,6 +33,7 @@ void BindTextures();
 void LoadShaders();
 
 cvar* shadowDim, * shadowSize;
+vec3 lightDir = {-1, -1, -1};
 
 void V_Init() {
 	shadowDim = C_Get("shadowDim");
@@ -50,7 +51,7 @@ void V_Init() {
 	fails += V_LoadAssimp("CollisionBox.obj", &collBox);
 	sprite heightSprite;
 	V_LoadSprite("Terrain.png", &heightSprite);
-	V_CreateHeightMap(&heightMap, &heightSprite, 5);
+	//V_CreateHeightMap(&heightMap, &heightSprite, 5);
 	if (fails < 0) SYS_Error("Failed to load a model");
 
 	grassDTexture = V_LoadTexture("Grass0138_35_S.jpg");
@@ -156,6 +157,7 @@ void V_Tick() {
 	V_SetShader(depthShader);
 	V_SetDepthTesting(true);
 	V_SetParam3f("shadowOffs", -G_camPos[0], -G_camPos[1], -G_camPos[2]);
+	V_SetParam4m("matProj", matShadow);
 	V_RenderScene();
 	
 	V_SetFBO(post0);
@@ -178,7 +180,7 @@ void V_Tick() {
 
 	V_UpdateLighting();
 	
-	// V_SetParam4m("matShadow", matShadow);
+	V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("camPos", G_camPos[0], G_camPos[1], G_camPos[2]);
 	V_SetParam4m("matView", matView);
 	V_SetParam3f("shadowOffs", -G_camPos[0], -G_camPos[1], -G_camPos[2]);
@@ -300,7 +302,6 @@ void LoadShaders() {
 
 	V_SetProj(65);
 	mat4x4_identity(matShadow);
-	vec3 lightDir = {-1, -1, -1};
 	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
 	mat4x4_ortho(matShadow, (int) -shadowSize->value, (int) shadowSize->value, 
 		(int) -shadowSize->value, (int) shadowSize->value, 
@@ -318,6 +319,7 @@ void LoadShaders() {
 	V_SetParam1i("tex2", texNormal);
 	V_SetParam1i("texShadow", texShadow);
 	V_SetParam1i("texShadowD", texShadow);
+
 	V_SetParam1i("texSky", texSky);
 	V_SetParam1f("materialWeight", 0.9);
 	V_SetParam1f("materialGloss", 80);

@@ -65,15 +65,6 @@ typedef struct model_s {
 	vectorKey_t* posKeys;
 } model_t;
 
-struct fbo {
-	int id;
-	int w;
-	int h;
-	int numAtt;
-	unsigned* att;
-	unsigned attD;
-};
-
 extern GLuint curShader;
 extern float V_vertFov;
 
@@ -81,7 +72,7 @@ int V_LoadAssimp(char* path, model_t* m);
 void V_InitOpenGL();
 void V_QuitOpenGL();
 void V_RenderModel(model_t* m);
-void V_CreateHeightMap(model_t* m, sprite* s, int height);
+void V_CreateHeightMap(model_t* m, sprite* s, double size, double height);
 void V_ClearColor(float r, float g, float b, float a);
 void V_ClearDepth();
 void V_SetDepthTesting(bool b);
@@ -103,7 +94,6 @@ GLuint V_LoadShader(char* name);
 void V_DeleteShader(int programId);
 GLuint V_LoadTexture(char* name);
 GLuint V_LoadCubeMap(char* name);
-void V_LoadSprite(char* name, sprite* s);
 void V_SetAnimMatrix(model_t* m, unsigned int time, mat4x4 r);
 void V_GetBoneMatrix(bone_t* bone, unsigned int time, mat4x4 r);
 void V_SetShader(GLuint id);

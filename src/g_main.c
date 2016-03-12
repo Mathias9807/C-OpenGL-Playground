@@ -37,7 +37,18 @@ void LoadScripting();
 void ReloadLevel();
 
 void G_Init() {
-	L_LoadLevel("Writing");
+	L_InitLevel("writing");
+
+	resource* r0 = L_AddResource("house");
+	L_AddProp(r0, (vec3){0, 0, -5}, (vec3){0, 0, 0});
+
+	resource* r1 = L_AddResource("street");
+	L_AddProp(r1, (vec3){5, 0, -15}, (vec3){0, 45, 0});
+	
+	resource* r3 = L_AddResource("heightmap");
+	L_AddProp(r3, (vec3){-50, -10, -50}, (vec3){0, 0, 0});
+
+	L_WriteLevel();
 	
 	C_console.selectedRow = -1;
 	

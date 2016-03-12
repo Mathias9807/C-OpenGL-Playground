@@ -1,0 +1,397 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AABB	g_physics.h	/^} AABB;$/;"	t	typeref:struct:__anon11
+BindTextures	v_main.c	/^void BindTextures() {$/;"	f
+CVAR_H	cvar.h	4;"	d
+C_Add	cvar.c	/^cvar* C_Add(char* name, float value) {$/;"	f
+C_CONSOLE_BLINKMS	cvar.h	13;"	d
+C_CONSOLE_DISP	cvar.h	11;"	d
+C_CONSOLE_FADEMS	cvar.h	12;"	d
+C_CONSOLE_LENGTH	cvar.h	9;"	d
+C_CONSOLE_ROWS	cvar.h	10;"	d
+C_Execute	cvar.c	/^void C_Execute(char* s) {$/;"	f
+C_Get	cvar.c	/^cvar* C_Get(char* name) {$/;"	f
+C_Init	cvar.c	/^void C_Init() {$/;"	f
+C_Print	cvar.c	/^void C_Print(char* s) {$/;"	f
+C_PrintCommand	cvar.c	/^void C_PrintCommand(char* s) {$/;"	f
+C_Set	cvar.c	/^void C_Set(char* name, float value) {$/;"	f
+C_console	cvar.c	/^console C_console;$/;"	v
+C_cursorBlinkTimer	cvar.c	/^int C_cursorBlinkTimer = 0;$/;"	v
+C_cvars	cvar.c	/^list C_cvars = {NULL, 0};$/;"	v
+DEF_H	def.h	4;"	d
+G_ANIMATION_H	g_animation.h	4;"	d
+G_AddSmoke	g_main.c	/^void G_AddSmoke(vec3 pos, vec3 vel, float radius, int timeLeft) {$/;"	f
+G_CollidingAABB	g_physics.c	/^bool G_CollidingAABB(AABB a, AABB b) {$/;"	f
+G_ContainsAABB	g_physics.c	/^bool G_ContainsAABB(AABB t, vec3 v) {$/;"	f
+G_Init	g_main.c	/^void G_Init() {$/;"	f
+G_LUA_H	g_lua.h	4;"	d
+G_LoadLuaFunctions	g_lua.c	/^void G_LoadLuaFunctions() {$/;"	f
+G_MAIN_H	g_main.h	4;"	d
+G_PHYSICS_H	g_physics.h	4;"	d
+G_Quit	g_main.c	/^void G_Quit() {$/;"	f
+G_RayHitsAABB	g_physics.c	/^bool G_RayHitsAABB(AABB t, vec3 p, vec3 dir) {$/;"	f
+G_Tick	g_main.c	/^void G_Tick() {$/;"	f
+G_TickPointPhysics	g_physics.c	/^void G_TickPointPhysics(point* p, vec3 a) {$/;"	f
+G_Valuef	g_animation.c	/^float G_Valuef(function f, float x) {$/;"	f
+G_Valuel	g_animation.c	/^float G_Valuel(linearf f, float x) {$/;"	f
+G_camPos	g_main.c	/^vec3 G_camPos, G_camRot;$/;"	v
+G_camRot	g_main.c	/^vec3 G_camPos, G_camRot;$/;"	v
+G_currentProp	g_lua.c	/^prop* G_currentProp = NULL;$/;"	v
+G_gunMat	g_main.c	/^mat4x4 G_gunMat;$/;"	v
+G_luaState	g_main.c	/^lua_State* G_luaState = NULL;$/;"	v
+G_moveSpeed	g_main.c	/^float G_moveSpeed = 8, G_rotSpeed = 3;$/;"	v
+G_rotSpeed	g_main.c	/^float G_moveSpeed = 8, G_rotSpeed = 3;$/;"	v
+INPUT_H	input.h	4;"	d
+IN_A	input.h	/^	IN_W, IN_A, IN_S, IN_D, IN_LEFT, IN_RIGHT, $/;"	e	enum:__anon15
+IN_ACTION	input.h	/^	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, $/;"	e	enum:__anon15
+IN_CHAT	input.h	/^	IN_TOGGLE, IN_CHAT$/;"	e	enum:__anon15
+IN_D	input.h	/^	IN_W, IN_A, IN_S, IN_D, IN_LEFT, IN_RIGHT, $/;"	e	enum:__anon15
+IN_DOWN	input.h	/^	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, $/;"	e	enum:__anon15
+IN_IsKeyPressed	sys_sdl.c	/^bool IN_IsKeyPressed(int key) {$/;"	f
+IN_LEFT	input.h	/^	IN_W, IN_A, IN_S, IN_D, IN_LEFT, IN_RIGHT, $/;"	e	enum:__anon15
+IN_PITCH_DOWN	input.h	/^	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, $/;"	e	enum:__anon15
+IN_PITCH_UP	input.h	/^	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, $/;"	e	enum:__anon15
+IN_RELOAD	input.h	/^	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, $/;"	e	enum:__anon15
+IN_RIGHT	input.h	/^	IN_W, IN_A, IN_S, IN_D, IN_LEFT, IN_RIGHT, $/;"	e	enum:__anon15
+IN_ReadTextInput	sys_sdl.c	/^int IN_ReadTextInput(char* text, int length) {$/;"	f
+IN_S	input.h	/^	IN_W, IN_A, IN_S, IN_D, IN_LEFT, IN_RIGHT, $/;"	e	enum:__anon15
+IN_StartTextInput	sys_sdl.c	/^void IN_StartTextInput() {$/;"	f
+IN_StopTextInput	sys_sdl.c	/^void IN_StopTextInput() {$/;"	f
+IN_TOGGLE	input.h	/^	IN_TOGGLE, IN_CHAT$/;"	e	enum:__anon15
+IN_UP	input.h	/^	IN_PITCH_UP, IN_PITCH_DOWN, IN_UP, IN_DOWN, IN_ACTION, IN_RELOAD, $/;"	e	enum:__anon15
+IN_W	input.h	/^	IN_W, IN_A, IN_S, IN_D, IN_LEFT, IN_RIGHT, $/;"	e	enum:__anon15
+IN_readingText	sys_sdl.c	/^bool IN_readingText = false;$/;"	v
+LEVEL_H	level.h	4;"	d
+LIGHT_DEFAULT	v_opengl.h	16;"	d
+LVL_DIR	sys_sdl.c	20;"	d	file:
+L_AddProp	level.c	/^prop* L_AddProp(resource* r, float* pos, float* rot) {$/;"	f
+L_AddResource	level.c	/^resource* L_AddResource(char* name) {$/;"	f
+L_HEADER_SIZE	level.h	13;"	d
+L_INDEX_SIZE	level.h	14;"	d
+L_InitLevel	level.c	/^void L_InitLevel(char* name) {$/;"	f
+L_LoadLevel	level.c	/^void L_LoadLevel(char* name) {$/;"	f
+L_NAME_LENGTH	level.h	10;"	d
+L_PROP_SIZE	level.h	15;"	d
+L_RES_LENGTH	level.h	11;"	d
+L_WriteLevel	level.c	/^void L_WriteLevel() {$/;"	f
+L_current	level.c	/^level L_current = {$/;"	v
+ListAdd	def.c	/^void ListAdd(list* l, void* value) {$/;"	f
+ListFind	def.c	/^int ListFind(list* l, void* value) {$/;"	f
+ListGet	def.c	/^void* ListGet(list* l, int index) {$/;"	f
+ListRemove	def.c	/^void ListRemove(list* l, int index) {$/;"	f
+ListSize	def.c	/^int ListSize(list* l) {$/;"	f
+LoadScripting	g_main.c	/^void LoadScripting() {$/;"	f
+LoadShaders	v_main.c	/^void LoadShaders() {$/;"	f
+LocalToGlobal	g_lua.c	/^void LocalToGlobal(vec4 p) {$/;"	f
+PATH_LENGTH	def.h	16;"	d
+PITCH_LIMIT	g_main.c	14;"	d	file:
+PrintUsage	sys_sdl.c	/^void PrintUsage() {$/;"	f
+RES_DIR	sys_sdl.c	19;"	d	file:
+ReadBool	g_lua.c	/^bool ReadBool(int i) {$/;"	f
+ReadFloat32B	level.c	/^float ReadFloat32B() {$/;"	f
+ReadNum	g_lua.c	/^double ReadNum(int i) {$/;"	f
+ReadUInt32	level.c	/^unsigned ReadUInt32(FILE* file) {$/;"	f
+ReadUInt32B	level.c	/^unsigned ReadUInt32B() {$/;"	f
+ReloadLevel	g_main.c	/^void ReloadLevel() {$/;"	f
+STB_IMAGE_IMPLEMENTATION	v_opengl.c	9;"	d	file:
+SYS_CLOSE_ON_ERROR	sys.h	9;"	d
+SYS_CheckErrors	sys_sdl.c	/^void SYS_CheckErrors() {$/;"	f
+SYS_CloseWindow	sys_sdl.c	/^void SYS_CloseWindow() {$/;"	f
+SYS_DirExists	sys_sdl.c	/^bool SYS_DirExists(char* s) {$/;"	f
+SYS_Error	sys_sdl.c	/^void SYS_Error(char* s) {$/;"	f
+SYS_GetLevelPath	sys_sdl.c	/^void SYS_GetLevelPath(char* name, char* dest) {$/;"	f
+SYS_GetResourcePath	sys_sdl.c	/^void SYS_GetResourcePath(char* name, char* dest) {$/;"	f
+SYS_H	sys.h	4;"	d
+SYS_HasParam	sys_sdl.c	/^bool SYS_HasParam(char* p) {$/;"	f
+SYS_Mkdir	sys_sdl.c	/^void SYS_Mkdir(char* s) {$/;"	f
+SYS_OpenWindow	sys_sdl.c	/^int SYS_OpenWindow() {$/;"	f
+SYS_Sleep	sys_sdl.c	/^void SYS_Sleep(uint32_t millis) {$/;"	f
+SYS_TimeMillis	sys_sdl.c	/^uint32_t SYS_TimeMillis() {$/;"	f
+SYS_UpdateWindow	sys_sdl.c	/^void SYS_UpdateWindow() {$/;"	f
+SYS_Warning	sys_sdl.c	/^void SYS_Warning(char* s) {$/;"	f
+SYS_WindowClosed	sys_sdl.c	/^bool SYS_WindowClosed() {$/;"	f
+SYS_argc	sys_sdl.c	/^int	SYS_argc = 0;$/;"	v
+SYS_argv	sys_sdl.c	/^char** SYS_argv = NULL;$/;"	v
+SYS_deltaMillis	sys_sdl.c	/^uint32_t SYS_deltaMillis;$/;"	v
+SYS_glContext	sys_sdl.c	/^SDL_GLContext SYS_glContext;$/;"	v
+SYS_window	sys_sdl.c	/^SDL_Window* SYS_window;$/;"	v
+Shoot	g_main.c	/^void Shoot() {$/;"	f
+TITLE	def.h	14;"	d
+VAO_t	v_opengl.h	/^} VAO_t;$/;"	t	typeref:struct:__anon21
+VBO_t	v_opengl.h	/^} VBO_t;$/;"	t	typeref:struct:__anon20
+V_AiToLinMat	v_model.c	/^void V_AiToLinMat(struct aiMatrix4x4* ai, mat4x4 lin) {$/;"	f
+V_BindCubeMap	v_opengl.c	/^void V_BindCubeMap(unsigned id, int pos) {$/;"	f
+V_BindTexture	v_opengl.c	/^void V_BindTexture(unsigned id, int pos) {$/;"	f
+V_CheckProgram	v_opengl.c	/^void V_CheckProgram(GLuint id) {$/;"	f
+V_CheckShader	v_opengl.c	/^void V_CheckShader(GLuint id) {$/;"	f
+V_ClearColor	v_opengl.c	/^void V_ClearColor(float r, float g, float b, float a) {$/;"	f
+V_ClearDepth	v_opengl.c	/^void V_ClearDepth() {$/;"	f
+V_CreateDepthFBO	v_opengl.c	/^void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {$/;"	f
+V_CreateFBO	v_opengl.c	/^void V_CreateFBO(struct fbo* fbo, int w, int h, int attachments) {$/;"	f
+V_CreateHeightMap	v_model.c	/^void V_CreateHeightMap(model_t* m, sprite* s, int height) {$/;"	f
+V_DeleteFBO	v_opengl.c	/^void V_DeleteFBO(struct fbo* fbo) {$/;"	f
+V_DeleteShader	v_opengl.c	/^void V_DeleteShader(int programId) {$/;"	f
+V_FAR	v_opengl.h	14;"	d
+V_GetBoneMatrix	v_opengl.c	/^void V_GetBoneMatrix(bone_t* bone, unsigned int time, mat4x4 r) {$/;"	f
+V_HEIGHT	v_main.h	11;"	d
+V_Init	v_main.c	/^void V_Init() {$/;"	f
+V_InitOpenGL	v_opengl.c	/^void V_InitOpenGL() {$/;"	f
+V_InitVBO	v_model.c	/^void V_InitVBO(VBO_t* vbo, int index, int dim, GLenum type) {$/;"	f
+V_LoadAssimp	v_model.c	/^int V_LoadAssimp(char* path, model_t* m) {$/;"	f
+V_LoadCubeMap	v_opengl.c	/^GLuint V_LoadCubeMap(char* name) {$/;"	f
+V_LoadShader	v_opengl.c	/^GLuint V_LoadShader(char* name) {$/;"	f
+V_LoadSprite	v_opengl.c	/^void V_LoadSprite(char* name, sprite* s) {$/;"	f
+V_LoadTexture	v_opengl.c	/^GLuint V_LoadTexture(char* name) {$/;"	f
+V_MAIN_H	v_main.h	4;"	d
+V_MakeProjection	v_opengl.c	/^void V_MakeProjection(mat4x4 m, float fov, float aspect, float near, float far) {$/;"	f
+V_NEAR	v_opengl.h	13;"	d
+V_OPENGL_H	v_opengl.h	4;"	d
+V_PrintMat	v_opengl.c	/^void V_PrintMat(mat4x4 mat) {$/;"	f
+V_Quit	v_main.c	/^void V_Quit() {$/;"	f
+V_QuitOpenGL	v_opengl.c	/^void V_QuitOpenGL() {$/;"	f
+V_RenderModel	v_model.c	/^void V_RenderModel(model_t* m) {$/;"	f
+V_RenderNearScene	v_main.c	/^void V_RenderNearScene() {$/;"	f
+V_RenderScene	v_main.c	/^void V_RenderScene() {$/;"	f
+V_RenderSmoke	v_main.c	/^void V_RenderSmoke() {$/;"	f
+V_SetAlphaBlending	v_opengl.c	/^void V_SetAlphaBlending(bool b) {$/;"	f
+V_SetAnimMatrix	v_opengl.c	/^void V_SetAnimMatrix(model_t* m, unsigned int time, mat4x4 r) {$/;"	f
+V_SetDepthTesting	v_opengl.c	/^void V_SetDepthTesting(bool b) {$/;"	f
+V_SetDepthWriting	v_opengl.c	/^void V_SetDepthWriting(bool b) {$/;"	f
+V_SetFBO	v_opengl.c	/^void V_SetFBO(struct fbo fbo) {$/;"	f
+V_SetFaceCullingBack	v_opengl.c	/^void V_SetFaceCullingBack(bool back) {$/;"	f
+V_SetParam1f	v_opengl.c	/^void V_SetParam1f(const char* var, float f) {$/;"	f
+V_SetParam1i	v_opengl.c	/^void V_SetParam1i(const char* var, int i) {$/;"	f
+V_SetParam2f	v_opengl.c	/^void V_SetParam2f(const char* var, float x, float y) {$/;"	f
+V_SetParam3f	v_opengl.c	/^void V_SetParam3f(const char* var, float x, float y, float z) {$/;"	f
+V_SetParam4m	v_opengl.c	/^void V_SetParam4m(const char* var, mat4x4 mat) {$/;"	f
+V_SetParamLight	v_opengl.c	/^void V_SetParamLight(int i, light l) {$/;"	f
+V_SetProj	v_main.c	/^void V_SetProj(float fov) {$/;"	f
+V_SetShader	v_opengl.c	/^void V_SetShader(GLuint id) {$/;"	f
+V_SetTexInterLinear	v_opengl.c	/^void V_SetTexInterLinear(bool b) {$/;"	f
+V_SetTexMipmapLinear	v_opengl.c	/^void V_SetTexMipmapLinear(bool b) {$/;"	f
+V_SetTexRepeating	v_opengl.c	/^void V_SetTexRepeating(bool b) {$/;"	f
+V_SetVSync	sys_sdl.c	/^void V_SetVSync(bool vsync) {$/;"	f
+V_Tick	v_main.c	/^void V_Tick() {$/;"	f
+V_UpdateLighting	v_main.c	/^void V_UpdateLighting() {$/;"	f
+V_WIDTH	v_main.h	10;"	d
+V_WINDOW_FBO	v_opengl.h	15;"	d
+V_reloadShaders	v_main.c	/^bool V_reloadShaders = true;$/;"	v
+V_rendererUp	v_opengl.c	/^bool V_rendererUp = false;$/;"	v
+V_skyColor	v_main.c	/^float* V_skyColor = NULL;$/;"	v
+V_skyMap	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+V_vertFov	v_main.c	/^float V_vertFov;$/;"	v
+WriteFloat32	level.c	/^void WriteFloat32(FILE* file, float value) {$/;"	f
+WriteUInt32	level.c	/^void WriteUInt32(FILE* file, unsigned value) {$/;"	f
+acc	g_main.h	/^	vec3 acc;$/;"	m	struct:__anon10
+actionHeld	g_main.c	/^bool actionHeld = false, toggleHeld = false, chatHeld = false;$/;"	v
+addLight	g_lua.c	/^int addLight() {$/;"	f
+addModel	g_lua.c	/^int addModel() {$/;"	f
+addSmokeGenerator	g_lua.c	/^int addSmokeGenerator(lua_State* l) {$/;"	f
+ads	g_main.c	/^bool ads = false;$/;"	v
+adsFov	g_main.c	/^cvar* fov, * adsFov;$/;"	v
+animStartTime	v_opengl.c	/^int animStartTime;$/;"	v
+att	v_opengl.h	/^	unsigned* att;$/;"	m	struct:fbo
+attD	v_opengl.h	/^	unsigned attD;$/;"	m	struct:fbo
+bindPose	v_opengl.h	/^	mat4x4 bindPose;$/;"	m	struct:bone_s
+blackTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+boneCount	v_opengl.h	/^	int boneCount;$/;"	m	struct:model_s
+bone_s	v_opengl.h	/^typedef struct bone_s {$/;"	s
+bone_t	v_opengl.h	/^} bone_t;$/;"	t	typeref:struct:bone_s
+bones	v_opengl.h	/^	bone_t* bones;$/;"	m	struct:model_s
+buffer	level.c	/^char* buffer;$/;"	v
+buffer	v_opengl.h	/^	GLvoid* buffer;$/;"	m	struct:__anon20
+bufferIndex	level.c	/^int bufferIndex = 0;$/;"	v
+bufferSize	v_opengl.h	/^	int bufferSize;$/;"	m	struct:__anon20
+chatHeld	g_main.c	/^bool actionHeld = false, toggleHeld = false, chatHeld = false;$/;"	v
+cliffTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+coeff	g_animation.h	/^	float coeff;$/;"	m	struct:__anon6
+col	g_main.h	/^	vec3 pos, col;$/;"	m	struct:__anon8
+collBox	v_main.c	/^model_t plane, heightMap, cube, weapon, collBox;$/;"	v
+commandHistory	cvar.h	/^	list	commandHistory; \/\/ Commands only$/;"	m	struct:__anon1
+console	cvar.h	/^} console;$/;"	t	typeref:struct:__anon1
+cube	v_main.c	/^model_t plane, heightMap, cube, weapon, collBox;$/;"	v
+curGunXRot	g_main.c	/^float curGunXRot = 0, curGunYRot = 0, curGunZRot = 0;$/;"	v
+curGunYRot	g_main.c	/^float curGunXRot = 0, curGunYRot = 0, curGunZRot = 0;$/;"	v
+curGunZRot	g_main.c	/^float curGunXRot = 0, curGunYRot = 0, curGunZRot = 0;$/;"	v
+curShader	v_opengl.c	/^GLuint curShader;$/;"	v
+cursorTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+cvar	cvar.h	/^} cvar;$/;"	t	typeref:struct:__anon2
+cylinder	g_physics.h	/^} cylinder;$/;"	t	typeref:struct:__anon12
+d	g_physics.h	/^	double x, y, z, w, h, d;$/;"	m	struct:__anon11
+defGunPos	g_main.c	/^vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5},$/;"	v
+depth	v_main.c	/^struct fbo post0, post1, depth, shadow;$/;"	v	typeref:struct:
+depthShader	v_main.c	/^GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;$/;"	v
+dim	v_opengl.h	/^	int dim; \/\/ 2, 3 or 4$/;"	m	struct:__anon20
+directional	g_main.h	/^	bool directional;$/;"	m	struct:__anon8
+dummyBox	g_main.c	/^AABB dummyBox = {-1, -1, -1, 2, 2, 2};$/;"	v
+dummyHitTime	g_main.c	/^double lastAdsTime = -1, lastShootTime = -1, dummyHitTime = 0;$/;"	v
+dummyXRot	g_main.c	/^float dummyXRot = 0;$/;"	v
+exp	g_animation.h	/^	float exp;$/;"	m	struct:__anon6
+fbo	v_opengl.h	/^struct fbo {$/;"	s
+fireGunPos	g_main.c	/^fireGunPos = {-0.004, 0.0125, -0.03}, hipFireGunPos = {0, 0.1, -0.4};$/;"	v
+first	def.h	/^	listEntry* first;$/;"	m	struct:__anon3
+flatNormal	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+fontTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+fov	g_main.c	/^cvar* fov, * adsFov;$/;"	v
+function	g_animation.h	/^} function;$/;"	t	typeref:struct:__anon7
+grassDTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+grassNTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+grassSTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+grayTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+guiShader	v_main.c	/^GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;$/;"	v
+h	def.h	/^	int h;$/;"	m	struct:__anon4
+h	g_physics.h	/^	double x, y, z, w, h, d;$/;"	m	struct:__anon11
+h	v_opengl.h	/^	int h;$/;"	m	struct:fbo
+heightMap	v_main.c	/^model_t plane, heightMap, cube, weapon, collBox;$/;"	v
+heightTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+hipFireGunPos	g_main.c	/^fireGunPos = {-0.004, 0.0125, -0.03}, hipFireGunPos = {0, 0.1, -0.4};$/;"	v
+hipGunPos	g_main.c	/^vec3 defGunPos = {0, 0, 0.2}, hipGunPos = {-0.2, -0.15, 0.5},$/;"	v
+history	cvar.h	/^	list 	history; \/\/ Previously printed lines, newest last$/;"	m	struct:__anon1
+id	v_opengl.h	/^	GLuint id;$/;"	m	struct:__anon20
+id	v_opengl.h	/^	GLuint id;$/;"	m	struct:__anon21
+id	v_opengl.h	/^	int id;$/;"	m	struct:fbo
+identity	v_main.c	/^mat4x4 matProj, matView, matModel, matShadow, identity;$/;"	v
+index	v_opengl.h	/^	VBO_t index;$/;"	m	struct:__anon21
+indexCount	v_opengl.h	/^	int indexCount;$/;"	m	struct:__anon21
+indices	g_physics.h	/^	void* indices;$/;"	m	struct:__anon13
+inputActive	cvar.h	/^	bool 	inputActive; \/\/ If console is waiting for input$/;"	m	struct:__anon1
+interval	g_main.h	/^	double interval;$/;"	m	struct:__anon10
+k	g_animation.h	/^	float k;$/;"	m	struct:__anon5
+keyCount	v_opengl.h	/^	int keyCount;$/;"	m	struct:bone_s
+keyCount	v_opengl.h	/^	int keyCount;$/;"	m	struct:model_s
+keys	v_opengl.h	/^	quatKey_t* keys;$/;"	m	struct:bone_s
+lastActive	cvar.h	/^	int 	lastActive; \/\/ Time in ms when something was last printed$/;"	m	struct:__anon1
+lastAdsTime	g_main.c	/^double lastAdsTime = -1, lastShootTime = -1, dummyHitTime = 0;$/;"	v
+lastShootTime	g_main.c	/^double lastAdsTime = -1, lastShootTime = -1, dummyHitTime = 0;$/;"	v
+lastSmokeSpawn	g_main.c	/^int lastSmokeSpawn = 0, smokeSpawnInterval = 250;$/;"	v
+lastSpawn	g_main.h	/^	double lastSpawn;$/;"	m	struct:__anon10
+level	level.h	/^} level;$/;"	t	typeref:struct:__anon18
+light	g_main.h	/^} light;$/;"	t	typeref:struct:__anon8
+lights	g_main.c	/^list smokeParts, smokeGens, lights;$/;"	v
+linearf	g_animation.h	/^} linearf;$/;"	t	typeref:struct:__anon5
+list	def.h	/^} list;$/;"	t	typeref:struct:__anon3
+listEntry	def.h	/^} listEntry;$/;"	t	typeref:struct:listEntryStruct
+listEntryStruct	def.h	/^typedef struct listEntryStruct {$/;"	s
+m	g_animation.h	/^	float m;$/;"	m	struct:__anon5
+main	sys_sdl.c	/^int main(int argc, char** argv) {$/;"	f
+matModel	v_main.c	/^mat4x4 matProj, matView, matModel, matShadow, identity;$/;"	v
+matProj	v_main.c	/^mat4x4 matProj, matView, matModel, matShadow, identity;$/;"	v
+matShadow	v_main.c	/^mat4x4 matProj, matView, matModel, matShadow, identity;$/;"	v
+matView	v_main.c	/^mat4x4 matProj, matView, matModel, matShadow, identity;$/;"	v
+matrixKey_s	v_opengl.h	/^typedef struct matrixKey_s {$/;"	s
+matrixKey_t	v_opengl.h	/^} matrixKey_t;$/;"	t	typeref:struct:matrixKey_s
+max	g_physics.c	/^float max(float a, float b) {$/;"	f
+mesh	g_physics.h	/^} mesh;$/;"	t	typeref:struct:__anon13
+model_s	v_opengl.h	/^typedef struct model_s {$/;"	s
+model_t	v_opengl.h	/^} model_t;$/;"	t	typeref:struct:model_s
+models	level.h	/^	list models;$/;"	m	struct:__anon16
+modified	cvar.h	/^	bool 	modified;$/;"	m	struct:__anon2
+name	cvar.h	/^	char*	name;$/;"	m	struct:__anon2
+name	level.h	/^	char name[L_NAME_LENGTH];$/;"	m	struct:__anon16
+name	level.h	/^	char name[L_NAME_LENGTH];$/;"	m	struct:__anon18
+name	v_opengl.h	/^	char* name;$/;"	m	struct:bone_s
+next	def.h	/^	struct listEntryStruct* next;$/;"	m	struct:listEntryStruct	typeref:struct:listEntryStruct::listEntryStruct
+normal	v_opengl.h	/^	VBO_t normal;$/;"	m	struct:__anon21
+normalTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+numAtt	v_opengl.h	/^	int numAtt;$/;"	m	struct:fbo
+numPoints	g_physics.h	/^	int numPoints;$/;"	m	struct:__anon13
+numTerms	g_animation.h	/^	int numTerms;$/;"	m	struct:__anon7
+p	g_main.h	/^	point p;$/;"	m	struct:__anon9
+p	g_physics.h	/^	vec3 p;$/;"	m	struct:__anon14
+pix	def.h	/^	uint32_t* pix;	\/\/ Pixel array in format ARGB$/;"	m	struct:__anon4
+plane	v_main.c	/^model_t plane, heightMap, cube, weapon, collBox;$/;"	v
+planeShader	v_main.c	/^GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;$/;"	v
+point	g_physics.h	/^} point;$/;"	t	typeref:struct:__anon14
+points	g_physics.h	/^	void* points;$/;"	m	struct:__anon13
+pos	g_main.h	/^	vec3 pos, col;$/;"	m	struct:__anon8
+pos	g_main.h	/^	vec3 pos;$/;"	m	struct:__anon10
+pos	level.h	/^	float pos[3];$/;"	m	struct:__anon17
+posKeys	v_opengl.h	/^	vectorKey_t* posKeys;$/;"	m	struct:model_s
+post0	v_main.c	/^struct fbo post0, post1, depth, shadow;$/;"	v	typeref:struct:fbo
+post1	v_main.c	/^struct fbo post0, post1, depth, shadow;$/;"	v	typeref:struct:
+prev	def.h	/^	struct listEntryStruct* prev;$/;"	m	struct:listEntryStruct	typeref:struct:listEntryStruct::listEntryStruct
+prop	level.h	/^} prop;$/;"	t	typeref:struct:__anon17
+props	level.h	/^	list props;$/;"	m	struct:__anon18
+quatKey_s	v_opengl.h	/^typedef struct quatKey_s {$/;"	s
+quatKey_t	v_opengl.h	/^} quatKey_t;$/;"	t	typeref:struct:quatKey_s
+r	g_physics.h	/^	double x, z, r;$/;"	m	struct:__anon12
+radius	g_main.h	/^	float radius;$/;"	m	struct:__anon9
+res	level.h	/^	list res;$/;"	m	struct:__anon18
+res	level.h	/^	resource* res;$/;"	m	struct:__anon17
+resource	level.h	/^} resource;$/;"	t	typeref:struct:__anon16
+rot	level.h	/^	float rot[3];$/;"	m	struct:__anon17
+roughTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+scareTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+selectedRow	cvar.h	/^	int		selectedRow;	\/\/ What row from history is copied to input line$/;"	m	struct:__anon1
+setPlayerPos	g_lua.c	/^int setPlayerPos(lua_State* l) {$/;"	f
+setSky	g_lua.c	/^int setSky() {$/;"	f
+shader	v_main.c	/^GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;$/;"	v
+shadow	v_main.c	/^struct fbo post0, post1, depth, shadow;$/;"	v	typeref:struct:
+shadowDim	v_main.c	/^cvar* shadowDim, * shadowSize;$/;"	v
+shadowSize	v_main.c	/^cvar* shadowDim, * shadowSize;$/;"	v
+size	def.h	/^	int size;$/;"	m	struct:__anon3
+skyShader	v_main.c	/^GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;$/;"	v
+smoke	g_main.h	/^} smoke;$/;"	t	typeref:struct:__anon9
+smokeAcc	g_main.c	/^vec3 smokeAcc = {0, 1, 0};$/;"	v
+smokeGen	g_main.h	/^} smokeGen;$/;"	t	typeref:struct:__anon10
+smokeGens	g_main.c	/^list smokeParts, smokeGens, lights;$/;"	v
+smokeParts	g_main.c	/^list smokeParts, smokeGens, lights;$/;"	v
+smokeShader	v_main.c	/^GLuint shader, planeShader, depthShader, skyShader, smokeShader, guiShader;$/;"	v
+smokeSpawnInterval	g_main.c	/^int lastSmokeSpawn = 0, smokeSpawnInterval = 250;$/;"	v
+smokeTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+specTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+sprite	def.h	/^} sprite;$/;"	t	typeref:struct:__anon4
+start	g_animation.h	/^	float start;$/;"	m	struct:__anon5
+start	g_animation.h	/^	float start;$/;"	m	struct:__anon7
+stop	g_animation.h	/^	float stop;$/;"	m	struct:__anon5
+stop	g_animation.h	/^	float stop;$/;"	m	struct:__anon7
+tangents	v_opengl.h	/^	VBO_t tangents;$/;"	m	struct:__anon21
+term	g_animation.h	/^	termf* term;$/;"	m	struct:__anon7
+termf	g_animation.h	/^} termf;$/;"	t	typeref:struct:__anon6
+texDepth	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texDiff0	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texDiff1	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texFBO0	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texFBO1	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texGUI	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texNormal	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texShadow	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texSky	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+texSpec	v_main.c	/^	texFBO0, texFBO1, texDepth, texSky, texShadow, texDiff0, texDiff1, texSpec, texNormal, texGUI$/;"	e	enum:__anon19	file:
+text	cvar.h	/^	char 	text[C_CONSOLE_LENGTH]; \/\/ Input row$/;"	m	struct:__anon1
+time	v_opengl.h	/^	unsigned int time;$/;"	m	struct:matrixKey_s
+time	v_opengl.h	/^	unsigned int time;$/;"	m	struct:quatKey_s
+time	v_opengl.h	/^	unsigned int time;$/;"	m	struct:vectorKey_s
+timeLeft	g_main.h	/^	int timeLeft;$/;"	m	struct:__anon9
+toggleHeld	g_main.c	/^bool actionHeld = false, toggleHeld = false, chatHeld = false;$/;"	v
+type	v_opengl.h	/^	GLenum type;$/;"	m	struct:__anon20
+uv	v_opengl.h	/^	VBO_t uv;$/;"	m	struct:__anon21
+v	g_physics.h	/^	vec3 v;$/;"	m	struct:__anon14
+value	cvar.h	/^	float	value;$/;"	m	struct:__anon2
+value	def.h	/^	void* value;$/;"	m	struct:listEntryStruct
+value	v_opengl.h	/^	mat4x4 value;$/;"	m	struct:matrixKey_s
+value	v_opengl.h	/^	quat value;$/;"	m	struct:quatKey_s
+value	v_opengl.h	/^	vec3 value;$/;"	m	struct:vectorKey_s
+vao	v_opengl.h	/^	VAO_t vao;$/;"	m	struct:model_s
+vec3_dot	g_physics.c	/^float vec3_dot(vec3 a, vec3 b) {$/;"	f
+vectorKey_s	v_opengl.h	/^typedef struct vectorKey_s {$/;"	s
+vectorKey_t	v_opengl.h	/^} vectorKey_t;$/;"	t	typeref:struct:vectorKey_s
+vel	g_main.h	/^	vec3 vel;$/;"	m	struct:__anon10
+vert	v_opengl.h	/^	VBO_t vert;$/;"	m	struct:__anon21
+vertCount	v_opengl.h	/^	int vertCount;$/;"	m	struct:__anon21
+w	def.h	/^	int w;			\/\/ Dimensions of pixel array$/;"	m	struct:__anon4
+w	g_physics.h	/^	double x, y, z, w, h, d;$/;"	m	struct:__anon11
+w	v_opengl.h	/^	int w;$/;"	m	struct:fbo
+weapon	v_main.c	/^model_t plane, heightMap, cube, weapon, collBox;$/;"	v
+weaponTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+weights	v_opengl.h	/^	VBO_t weights;$/;"	m	struct:__anon21
+whiteTexture	v_main.c	/^unsigned grassDTexture, grassSTexture, grassNTexture, roughTexture, V_skyMap, weaponTexture, specTexture, normalTexture, blackTexture, whiteTexture, grayTexture, flatNormal, scareTexture, smokeTexture, fontTexture, cursorTexture, cliffTexture, heightTexture;$/;"	v
+x	g_physics.h	/^	double x, y, z, w, h, d;$/;"	m	struct:__anon11
+x	g_physics.h	/^	double x, z, r;$/;"	m	struct:__anon12
+y	g_physics.h	/^	double x, y, z, w, h, d;$/;"	m	struct:__anon11
+z	g_physics.h	/^	double x, y, z, w, h, d;$/;"	m	struct:__anon11
+z	g_physics.h	/^	double x, z, r;$/;"	m	struct:__anon12

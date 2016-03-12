@@ -13,8 +13,8 @@ extern char**		SYS_argv;
 
 extern uint32_t SYS_deltaMillis;
 
-void SYS_GetResourcePath(char* name, char* dest);
-void SYS_GetLevelPath(char* name, char* dest);
+void SYS_GetResourcePath(const char* name, char* dest);
+void SYS_GetLevelPath(const char* name, char* dest);
 void SYS_CheckErrors();
 void SYS_Error(char* s);
 void SYS_Warning(char* s);

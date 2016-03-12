@@ -177,7 +177,7 @@ int V_LoadAssimp(char* path, model_t* m) {
 	return 0;
 }
 
-void V_CreateHeightMap(model_t* m, sprite* s, int height) {
+void V_CreateHeightMap(model_t* m, sprite* s, double size, double height) {
 	int w = s->w, h = s->h;
 	if (w < 1 || h < 1)
 		SYS_Error("Heightmap has an invalid width or height. ");
@@ -199,12 +199,13 @@ void V_CreateHeightMap(model_t* m, sprite* s, int height) {
 
 	vao->vert.bufferSize = 3 * vertCount * sizeof(float);
 	vao->vert.buffer = malloc(vao->vert.bufferSize);
+	double hScale = size / w, vScale = size / h;
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 			double sampleHeight = ((s->pix[y * w + x] & 0xFF000000) >> 24) / 256.0;
-			((float*)vao->vert.buffer)[y * w * 3 + x * 3 + 0] = x;
+			((float*)vao->vert.buffer)[y * w * 3 + x * 3 + 0] = x * hScale;
 			((float*)vao->vert.buffer)[y * w * 3 + x * 3 + 1] = sampleHeight * height;
-			((float*)vao->vert.buffer)[y * w * 3 + x * 3 + 2] = y;
+			((float*)vao->vert.buffer)[y * w * 3 + x * 3 + 2] = y * vScale;
 		}
 	}
 	V_InitVBO(&vao->vert, 0, 3, GL_FLOAT);
