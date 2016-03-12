@@ -9,6 +9,7 @@ layout(location = 4)in vec3 tangent_in;
 out vec3 uv, normal;
 out vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
 out mat3 matNormal;
+out vec4 sVertices[8];
 
 uniform mat4 matProj, matView, matModel, matShadow;
 uniform mat4 bindPose[2];
@@ -16,6 +17,11 @@ uniform mat4 bones[2];
 uniform vec3 shadowOffs;
 uniform float shadowDim;
 uniform float uvScale;
+uniform int	lightNum;
+uniform struct light_t {
+	vec3 pos, col;
+	bool directional, shadowed;
+} lights[8];
 
 void main() {
 	uv = uv_in * uvScale;
@@ -34,8 +40,10 @@ void main() {
 	vertex_w = matModel * vec4(vertex_in, 1);
 	vertex_c = matView * vertex_w;
 	vertex_p = matProj * vertex_c;
-	vertex_shadow = matShadow * vertex_w;
-	vec4 vertex_offs = matShadow * vec4(shadowOffs, 0);
-	vertex_shadow.xyz += floor(vertex_offs.xyz * shadowDim / 2) / shadowDim * 2;
 	gl_Position = vertex_p;
+
+	// Shadows
+	vec4 vertex_offs = matShadow * vec4(shadowOffs, 0);
+	vertex_shadow = matShadow * vertex_w;
+	vertex_shadow.xyz += floor(vertex_offs.xyz * shadowDim / 2) / shadowDim * 2;
 }

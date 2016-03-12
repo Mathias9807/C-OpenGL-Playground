@@ -12,6 +12,34 @@ double ReadNum(int i);
 bool ReadBool(int i);
 void LocalToGlobal(vec3 p);
 
+// addHeightMap("HeightMap.png", widthScale, heightScale)
+int addHeightMap(lua_State* l) {
+	if (!G_currentProp) return 0;
+
+	sprite s;
+	memset(&s, 0, sizeof(sprite));
+	const char* name = lua_tostring(G_luaState, -3);
+	char path[PATH_LENGTH];
+	memset(path, 0, PATH_LENGTH);
+	strcat(path, "../levels/");
+	strcat(path, L_current.name);
+	strcat(path, "/resources/");
+	strcat(path, G_currentProp->res->name);
+	strcat(path, "/");
+	strcat(path, name);
+	V_LoadSprite(path, &s);
+
+	double h = lua_tonumber(G_luaState, -2);
+	double size = lua_tonumber(G_luaState, -1);
+
+	model_t* m = calloc(1, sizeof(model_t));
+	V_CreateHeightMap(m, &s, size, h);
+
+	ListAdd(&G_currentProp->res->models, m);
+
+	return 0;
+}
+
 int addSmokeGenerator(lua_State* l) {
 	if (!G_currentProp) return 0;
 
@@ -63,7 +91,7 @@ int setSky() {
 	return 0;
 }
 
-// addModel(modelName.dae)
+// addModel("modelName.dae")
 int addModel() {
 	char* path = calloc(PATH_LENGTH, sizeof(char));
 	const char* name = lua_tostring(G_luaState, -1);
@@ -86,13 +114,35 @@ int addLight() {
 	light* l = calloc(1, sizeof(light));
 
 	for (int i = 0; i < 3; i++) 
-		l->pos[i] = ReadNum(-7 + i);
+		l->pos[i] = ReadNum(-6 + i);
 	LocalToGlobal(l->pos);
 
 	for (int i = 0; i < 3; i++) 
-		l->col[i] = ReadNum(-4 + i);
+		l->col[i] = ReadNum(-3 + i);
 
-	l->directional = ReadBool(-1);
+	l->directional = false;
+	l->shadowed = false;
+
+	ListAdd(&lights, l);
+
+	return 0;
+}
+
+int addSun() {
+	light* l = calloc(1, sizeof(light));
+
+	for (int i = 0; i < 3; i++) 
+		l->pos[i] = ReadNum(-6 + i);
+
+	for (int i = 0; i < 3; i++) 
+		l->col[i] = ReadNum(-3 + i);
+
+	l->directional = true;
+
+	// Only the first light should be affected by shadows
+	static bool shadowed = true;
+	l->shadowed = shadowed;
+	shadowed = false;
 
 	ListAdd(&lights, l);
 
@@ -112,8 +162,14 @@ void G_LoadLuaFunctions() {
 	lua_pushcfunction(G_luaState, addLight);
 	lua_setglobal(G_luaState, "addLight");
 
+	lua_pushcfunction(G_luaState, addSun);
+	lua_setglobal(G_luaState, "addSun");
+
 	lua_pushcfunction(G_luaState, addModel);
 	lua_setglobal(G_luaState, "addModel");
+
+	lua_pushcfunction(G_luaState, addHeightMap);
+	lua_setglobal(G_luaState, "addHeightMap");
 }
 
 double ReadNum(int i) {

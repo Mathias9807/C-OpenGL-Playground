@@ -1,5 +1,5 @@
-setSky("nightsky")
+setSky("daysky")
 
 setPlayerPos(0, 2, 10)
 
-addLight(1, 1, 1, 2, 1, 0, true)
+addSun(1, 1, 1, 3, 3, 2)

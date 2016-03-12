@@ -8,6 +8,7 @@
 #include <linmath.h>
 #include "g_physics.h"
 #include "cvar.h"
+#include "v_main.h"
 
 extern float G_moveSpeed;
 extern float G_rotSpeed;
@@ -16,7 +17,7 @@ extern vec3 G_camRot;
 
 typedef struct {
 	vec3 pos, col;
-	bool directional;
+	bool directional, shadowed;
 } light;
 extern list lights;
 

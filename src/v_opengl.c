@@ -99,6 +99,8 @@ void V_CreateFBO(struct fbo* fbo, int w, int h, int attachments) {
 }
 
 void V_CreateDepthFBO(struct fbo* fbo, int w, int h) {
+	memset(fbo, 0, sizeof(struct fbo));
+
 	glGenFramebuffers(1, (GLuint*) &fbo->id);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo->id);
 	fbo->w = w;
@@ -235,8 +237,11 @@ void V_CheckProgram(GLuint id) {
 }
 
 GLuint V_LoadShader(char* name) {
-	char fragPath[64]; SYS_GetResourcePath("shaders/", fragPath); strcat(fragPath, name); strcat(fragPath, ".fsh");
-	char vertPath[64]; SYS_GetResourcePath("shaders/", vertPath); strcat(vertPath, name); strcat(vertPath, ".vsh");
+	// Print name of shader if compilation fails
+	printf("%s\t", name);
+	
+	char fragPath[PATH_LENGTH]; SYS_GetResourcePath("shaders/", fragPath); strcat(fragPath, name); strcat(fragPath, ".fsh");
+	char vertPath[PATH_LENGTH]; SYS_GetResourcePath("shaders/", vertPath); strcat(vertPath, name); strcat(vertPath, ".vsh");
 	
 	GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
@@ -281,6 +286,8 @@ GLuint V_LoadShader(char* name) {
 	glDeleteShader(fragId);
 	glDeleteShader(vertId);
 	
+	// Clear it if everything works
+	printf("\r");
 	return programId;
 }
 
@@ -340,13 +347,17 @@ GLuint V_LoadCubeMap(char* name) {
 	return cubeTex;
 }
 
-void V_LoadSprite(char* name, sprite* s) {
-	char path[64]; SYS_GetResourcePath(name, path);
+void V_LoadSprite(const char* name, sprite* s) {
+	char path[PATH_LENGTH]; SYS_GetResourcePath(name, path);
 	unsigned char* data;
 	int w, h, n;
 	data = stbi_load(path, &w, &h, &n, 4);
-	if (data == NULL) 
-		SYS_Error("Couldn't load sprite");
+	if (data == NULL) {
+		char error[64];
+		strcpy(error, "Couldn't load sprite: ");
+		strcat(error, name);
+		SYS_Error(error);
+	}
 	
 	s->w = w;
 	s->h = h;
@@ -360,6 +371,24 @@ void V_LoadSprite(char* name, sprite* s) {
 	}
 
 	stbi_image_free(data);
+}
+
+void V_CreateShadowMap(shadowMap* sMap, vec3 dir) {
+	// Create the framebuffer
+	int size = C_Get("shadowSize")->value;
+	int dim = C_Get("shadowDim")->value;
+	V_CreateDepthFBO(&sMap->map, dim, dim);
+
+	// Convert direction vector to a transformation matrix
+	mat4x4_identity(sMap->trans);
+	vec3_scale(sMap->dir, dir, 1.0 / vec3_len(dir));
+	mat4x4_ortho(sMap->trans, -size, size, 
+		-size, size, 
+		-size * 3, size);
+	mat4x4 matShadowView;
+	mat4x4_identity(matShadowView);
+	mat4x4_look_at(matShadowView, (vec3){0, 0, 0}, sMap->dir, (vec3){0, 1, 0});
+	mat4x4_mul(sMap->trans, sMap->trans, matShadowView);
 }
 
 void V_SetParam1f(const char* var, float f) {
@@ -407,6 +436,10 @@ void V_SetParamLight(int i, light l) {
 
 	strcat(name, ".directional");
 	V_SetParam1i(name, l.directional);
+	name[length] = 0;
+
+	strcat(name, ".shadowed");
+	V_SetParam1i(name, l.shadowed);
 	name[length] = 0;
 }
 
