@@ -1,1 +1,1 @@
-addHeightMap("heightmap.png", 10, 100)
+addHeightMap("heightmap.png", 10, 200)

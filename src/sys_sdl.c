@@ -369,12 +369,15 @@ int main(int argc, char** argv) {
 
 	// Initialize OpenGL
 	V_InitOpenGL();
+	fflush(stdout);
 
 	// Initialize main engine
 	G_Init();
+	fflush(stdout);
 	
 	// Initialize rendering system
 	V_Init();
+	fflush(stdout);
 	
 	// Main game loop
 	uint32_t current = SYS_TimeMillis();

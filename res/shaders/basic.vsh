@@ -9,7 +9,6 @@ layout(location = 4)in vec3 tangent_in;
 out vec3 uv, normal;
 out vec4 vertex_w, vertex_c, vertex_p, vertex_shadow;
 out mat3 matNormal;
-out vec4 sVertices[8];
 
 uniform mat4 matProj, matView, matModel, matShadow;
 uniform mat4 bindPose[2];

@@ -2,4 +2,4 @@ setSky("nightsky")
 
 setPlayerPos(0, 2, 10)
 
-addLight(1, 1, 1, 0.2, 0.2, 0.2, true)
+addSun(1, 1, 1, 1.5, 1.5, 1.4)

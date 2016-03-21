@@ -236,7 +236,7 @@ void V_CheckProgram(GLuint id) {
 	printf("%s\n", log);
 }
 
-GLuint V_LoadShader(char* name) {
+GLuint V_LoadShader(const char* name) {
 	// Print name of shader if compilation fails
 	printf("%s\t", name);
 	
