@@ -110,6 +110,7 @@ int addModel() {
 	return 0;
 }
 
+// addLight(x, y, z, r, g, b)
 int addLight() {
 	light* l = calloc(1, sizeof(light));
 
@@ -128,6 +129,7 @@ int addLight() {
 	return 0;
 }
 
+// addSun(x, y, z, r, g, b)
 int addSun() {
 	light* l = calloc(1, sizeof(light));
 
@@ -142,9 +144,23 @@ int addSun() {
 	// Only the first light should be affected by shadows
 	static bool shadowed = true;
 	l->shadowed = shadowed;
-	shadowed = false;
 
 	ListAdd(&lights, l);
+	
+	if (shadowed) {
+		V_skyDir[0] = -l->pos[0];
+		V_skyDir[1] = -l->pos[1];
+		V_skyDir[2] = -l->pos[2];
+	}
+	shadowed = false;
+
+	return 0;
+}
+
+// fogDistance(float dist)
+int fogDistance() {
+	V_far = ReadNum(-1);
+	V_reloadShaders = true;
 
 	return 0;
 }
@@ -170,6 +186,9 @@ void G_LoadLuaFunctions() {
 
 	lua_pushcfunction(G_luaState, addHeightMap);
 	lua_setglobal(G_luaState, "addHeightMap");
+
+	lua_pushcfunction(G_luaState, fogDistance);
+	lua_setglobal(G_luaState, "fogDistance");
 }
 
 double ReadNum(int i) {

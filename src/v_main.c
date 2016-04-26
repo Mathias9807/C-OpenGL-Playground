@@ -26,6 +26,8 @@ float* V_skyColor = NULL;
 float V_vertFov;
 bool V_reloadShaders = true;
 
+float V_near = 0.02, V_far = 800;
+
 extern AABB dummyBox;
 extern float dummyXRot;
 
@@ -33,7 +35,7 @@ void BindTextures();
 void LoadShaders();
 
 cvar* shadowDim, * shadowSize;
-vec3 lightDir = {-1, -1, -1};
+vec3 V_skyDir = {-1, -1, -1};
 
 void V_Init() {
 	shadowDim = C_Get("shadowDim");
@@ -302,13 +304,13 @@ void LoadShaders() {
 
 	V_SetProj(65);
 	mat4x4_identity(matShadow);
-	vec3_scale(lightDir, lightDir, 1 / vec3_len(lightDir));
+	vec3_scale(V_skyDir, V_skyDir, 1 / vec3_len(V_skyDir));
 	mat4x4_ortho(matShadow, (int) -shadowSize->value, (int) shadowSize->value, 
 		(int) -shadowSize->value, (int) shadowSize->value, 
 		(int) -shadowSize->value * 3, (int) shadowSize->value);
 	mat4x4 matShadowView;
 	mat4x4_identity(matShadowView);
-	mat4x4_look_at(matShadowView, (vec3){0, 0, 0}, lightDir, (vec3){0, 1, 0});
+	mat4x4_look_at(matShadowView, (vec3){0, 0, 0}, V_skyDir, (vec3){0, 1, 0});
 	mat4x4_mul(matShadow, matShadow, matShadowView);
 	mat4x4_identity(identity);
 	
@@ -326,10 +328,10 @@ void LoadShaders() {
 	V_SetParam4m("matProj", matProj);
 	V_SetParam4m("matShadow", matShadow);
 	V_SetParam3f("ambient", 0, 0, 0.1f);
-	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam1f("farPlane", V_far);
 	V_SetParam1f("shadowDim", shadowDim->value);
 	V_SetParam1f("uvScale", 1);
-	V_SetParam3f("lightDir", -lightDir[0], -lightDir[1], -lightDir[2]);
+	V_SetParam3f("V_skyDir", -V_skyDir[0], -V_skyDir[1], -V_skyDir[2]);
 	V_SetParam1i("terrain", 0);
 	V_SetParam1i("lightNum", 0);
 
@@ -344,7 +346,7 @@ void LoadShaders() {
 	V_SetParam1i("tex1", texFBO1);
 	V_SetParam1i("shadow", texShadow);
 	V_SetParam1i("depth", 1);
-	V_SetParam1f("farPlane", V_FAR);
+	V_SetParam1f("farPlane", V_far);
 	V_SetParam3f("modColor", 1, 0.96f, 0.92f);
 	
 	V_SetShader(depthShader);
@@ -357,8 +359,8 @@ void LoadShaders() {
 	V_SetParam1i("texSky", texSky);
 	V_SetParam4m("matProj", matProj);
 	V_SetParam3f("bgColor", 0, 0, 0.3f);
-	V_SetParam1f("farPlane", V_FAR);
-	V_SetParam3f("lightDir", lightDir[0], lightDir[1], lightDir[2]);
+	V_SetParam1f("farPlane", V_far);
+	V_SetParam3f("lightDir", V_skyDir[0], V_skyDir[1], V_skyDir[2]);
 	
 	V_SetShader(guiShader);
 	V_SetParam2f("screenSize", V_WIDTH, V_HEIGHT);
@@ -379,7 +381,7 @@ void V_UpdateLighting() {
 void V_SetProj(float fov) {
 	if (fov == V_vertFov) return;
 	V_vertFov = fov;
-	V_MakeProjection(matProj, fov / 180 * M_PI, (float) V_WIDTH / V_HEIGHT, V_NEAR, V_FAR);
+	V_MakeProjection(matProj, fov / 180 * M_PI, (float) V_WIDTH / V_HEIGHT, V_near, V_far);
 
 	V_SetShader(shader);
 	V_SetParam4m("matProj", matProj);

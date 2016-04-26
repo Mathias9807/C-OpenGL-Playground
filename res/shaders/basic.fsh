@@ -88,3 +88,4 @@ void main() {
 
 	color_out = vec4(light, 1);
 }
+

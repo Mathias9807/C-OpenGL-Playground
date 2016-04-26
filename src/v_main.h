@@ -27,9 +27,11 @@ typedef struct {
 
 extern bool V_reloadShaders;
 extern bool V_rendererUp;
+extern float V_near, V_far; // V_wherever you are
 
 extern unsigned V_skyMap;
 extern float* 	V_skyColor;
+extern vec3	V_skyDir;
 
 void V_SetProj(float fov);
 void V_SetVSync(bool vsync);
