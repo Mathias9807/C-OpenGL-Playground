@@ -32,9 +32,13 @@ float dummyXRot = 0;
 
 lua_State* G_luaState = NULL;
 
+list G_staticMeshes;
+
 void Shoot();
 void LoadScripting();
 void ReloadLevel();
+void BufferTextInput();
+void HandleSmoke();
 
 void G_Init() {
 	L_InitLevel("writing");
@@ -73,7 +77,7 @@ void LoadScripting() {
 	SYS_GetResourcePath("/scripts/main.lua", path);
 
 	// Run the file
-	luaL_dofile(G_luaState, path);
+	if (luaL_dofile(G_luaState, path));
 
 	// Load the engines interface
 	G_LoadLuaFunctions();
@@ -105,31 +109,11 @@ void LoadScripting() {
 }
 
 void G_Tick() {
-	int stopReading = IN_ReadTextInput(C_console.text, C_CONSOLE_LENGTH);
-	if (stopReading) {
-		IN_StopTextInput();
-		C_console.inputActive = false;
-	}
-	for (int i = 0; C_console.text[i]; i++) {
-		if (C_console.text[i] == '\n') {
-			C_console.text[i] = 0;
-			C_PrintCommand(C_console.text);
-			C_Execute(C_console.text);
-			for (int j = 0; j < C_CONSOLE_LENGTH; j++)
-				C_console.text[j] = 0;
-			IN_StopTextInput();
-			C_console.inputActive = false;
-			actionHeld = true;
-			C_console.selectedRow = -1;
-			
-			break;
-		}
-		if (C_console.text[i] == '\t') {
-			C_console.text[i] = 0;
-			break;
-		}
-	}
-	
+	BufferTextInput();
+
+	if (G_ContainsHeightMap(*((heightmap*)((object*)G_staticMeshes.first->value)->shape), G_camPos)) 
+		printf("\rYes\n");
+
 	vec3 dir = {0, 0, 0};
 	float moveSpeed = G_moveSpeed * (SYS_deltaMillis / 1000.0);
 	float rotSpeed = G_rotSpeed * (SYS_deltaMillis / 1000.0);
@@ -204,7 +188,40 @@ void G_Tick() {
 	resultant[0] += d * 0.01 * cos(SYS_TimeMillis() / 2000.0);
 	resultant[1] += d * 0.005 * cos(SYS_TimeMillis() / 1500.0);
 	mat4x4_translate_in_place(G_gunMat, resultant[0], resultant[1], resultant[2]);
+	
+	HandleSmoke();
 
+	if (IN_IsKeyPressed(IN_RELOAD)) V_reloadShaders = true;
+}
+
+void BufferTextInput() {
+	int stopReading = IN_ReadTextInput(C_console.text, C_CONSOLE_LENGTH);
+	if (stopReading) {
+		IN_StopTextInput();
+		C_console.inputActive = false;
+	}
+	for (int i = 0; C_console.text[i]; i++) {
+		if (C_console.text[i] == '\n') {
+			C_console.text[i] = 0;
+			C_PrintCommand(C_console.text);
+			C_Execute(C_console.text);
+			for (int j = 0; j < C_CONSOLE_LENGTH; j++)
+				C_console.text[j] = 0;
+			IN_StopTextInput();
+			C_console.inputActive = false;
+			actionHeld = true;
+			C_console.selectedRow = -1;
+			
+			break;
+		}
+		if (C_console.text[i] == '\t') {
+			C_console.text[i] = 0;
+			break;
+		}
+	}
+}
+
+void HandleSmoke() {
 	for (int i = 0; i < ListSize(&smokeGens); i++) {
 		smokeGen* gen = ListGet(&smokeGens, i);
 
@@ -227,8 +244,6 @@ void G_Tick() {
 		G_TickPointPhysics(&s->p, smokeAcc);
 		s->radius *= pow(1.2, SYS_deltaMillis / 1000.0);
 	}
-	
-	if (IN_IsKeyPressed(IN_RELOAD)) V_reloadShaders = true;
 }
 
 void Shoot() {

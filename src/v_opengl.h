@@ -7,61 +7,12 @@
 #include "def.h"
 #include "v_main.h"
 #include "g_main.h"
+#include "v_model.h"
 #include <GL/glew.h>
 #include <linmath.h>
 
 #define V_WINDOW_FBO ((struct fbo){0,V_WIDTH,V_HEIGHT})
 #define LIGHT_DEFAULT {{0, 0, 0}, {1, 1, 1}, false}
-
-typedef struct {
-	GLuint id;
-	GLenum type;
-	int dim; // 2, 3 or 4
-	int bufferSize;
-	GLvoid* buffer;
-} VBO_t;
-
-typedef struct {
-	GLuint id;
-	VBO_t vert;
-	VBO_t uv;
-	VBO_t normal;
-	VBO_t weights;
-	VBO_t tangents;
-	VBO_t index;
-	int vertCount;
-	int indexCount;
-} VAO_t;
-
-typedef struct vectorKey_s {
-	vec3 value;
-	unsigned int time;
-} vectorKey_t;
-
-typedef struct matrixKey_s {
-	mat4x4 value;
-	unsigned int time;
-} matrixKey_t;
-
-typedef struct quatKey_s {
-	quat value;
-	unsigned int time;
-} quatKey_t;
-
-typedef struct bone_s {
-	char* name;
-	int keyCount;
-	quatKey_t* keys;
-	mat4x4 bindPose;
-} bone_t;
-
-typedef struct model_s {
-	VAO_t vao;
-	int boneCount;
-	bone_t* bones;
-	int keyCount;
-	vectorKey_t* posKeys;
-} model_t;
 
 extern GLuint curShader;
 extern float V_vertFov;

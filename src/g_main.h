@@ -37,6 +37,8 @@ typedef struct {
 } smokeGen;
 extern list smokeGens;
 
+extern list G_staticMeshes;
+
 extern mat4x4 G_gunMat;
 
 void G_Init();

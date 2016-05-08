@@ -17,6 +17,27 @@ bool G_ContainsAABB(AABB t, vec3 v) {
 			&& (v[2] >= t.z && v[2] <= t.z + t.d);
 }
 
+// TODO: Check interpolated values
+bool G_ContainsHeightMap(heightmap h, vec3 v) {
+	VAO_t vao = h.m->vao;
+
+	// Assumes the heightmaps vertices begin at (0, y, 0)
+	if (v[0] < h.pos[0] || v[2] < h.pos[2]) 
+		return false;
+
+	if (v[0] >= h.pos[0] + h.size || v[2] >= h.pos[2] + h.size) 
+		return false;
+
+	int xPos = (v[0] - h.pos[0]) / h.size * h.res;
+	int yPos = (v[2] - h.pos[2]) / h.size * h.res;
+	float height = ((float*)vao.vert.buffer)[xPos * 3 + yPos * h.res * 3 + 1];
+	
+	if (v[1] > height + h.pos[1]) 
+		return false;
+
+	return true;
+}
+
 bool G_CollidingAABB(AABB a, AABB b) {
 	return (a.x <= b.x + b.w && a.x + a.w >= b.x)
 			&& (a.y <= b.y + b.h && a.y + a.h >= b.y)

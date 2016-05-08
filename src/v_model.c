@@ -185,9 +185,7 @@ void V_CreateHeightMap(model_t* m, sprite* s, double size, double height) {
 	int vertCount = w * h;
 	int indexCount = (w - 1) * (h - 1) * 6;
 
-	m->keyCount = 0;
-	m->boneCount = 0;
-	m->bones = NULL;
+	memset(m, 0, sizeof(model_t));
 
 	for (int i = 0; i < m->boneCount; i++) m->bones[i].keyCount = 0;
 

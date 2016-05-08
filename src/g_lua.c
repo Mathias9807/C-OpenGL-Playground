@@ -1,6 +1,7 @@
 // g_lua.c - Defines functions used in the lua scripts
 
 #include "g_lua.h"
+#include "g_main.h"
 #include "v_main.h"
 #include "v_opengl.h"
 #include "sys.h"
@@ -29,6 +30,10 @@ int addHeightMap(lua_State* l) {
 	strcat(path, name);
 	V_LoadSprite(path, &s);
 
+	if (s.w != s.h) {
+		SYS_Warning("Heightmaps width and height mustn't differ");
+	}
+
 	double h = lua_tonumber(G_luaState, -2);
 	double size = lua_tonumber(G_luaState, -1);
 
@@ -36,6 +41,16 @@ int addHeightMap(lua_State* l) {
 	V_CreateHeightMap(m, &s, size, h);
 
 	ListAdd(&G_currentProp->res->models, m);
+
+	heightmap* hMap = calloc(1, sizeof(heightmap));
+	*hMap = (heightmap) {G_HEIGHTMAP_TYPE, m, {0, 0, 0}, size, s.w};
+	object* obj = calloc(1, sizeof(object));
+	*obj = (object) {
+		hMap, 
+		(point) {G_POINT_TYPE, {0, 0, 0}, {0, 0, 0}}
+	};
+	memcpy(&hMap->pos, G_currentProp->pos, 3 * sizeof(float));
+	ListAdd(&G_staticMeshes, obj);
 
 	return 0;
 }
